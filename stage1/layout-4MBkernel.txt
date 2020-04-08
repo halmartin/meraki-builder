@@ -1,0 +1,4 @@
+00000000:0003ffff redboot
+00040000:003fffff kernel
+00400000:00bfffff root
+00c00000:00ffffff jffs2

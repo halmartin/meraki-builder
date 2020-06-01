@@ -22,7 +22,7 @@ HEADER_PATH=bin/boot1-header
 # MIPS magic
 printf '\x53\x50\x49\x4d' > $HEADER_PATH
 # load address: 0x80100000
-echo 00000000 00 00 10 80 | xxd -r >> $HEADER_PATH
+echo 00000000 00 00 00 81 | xxd -r >> $HEADER_PATH
 LENGTH_HEX=$(printf '%x' $(sizekernel))
 
 if [ ${#LENGTH_HEX} -eq 6 ]; then
@@ -59,7 +59,7 @@ fi
 #dd if=bin/crc.bin of=bin/boot1-new bs=1 seek=16 conv=notrunc
 
 SIZE_BOOT1=$(wc -c bin/boot1-new | awk '{print $1}')
-NEEDED_WHITESPACE=$((0x4c0000 - $SIZE_BOOT1))
+NEEDED_WHITESPACE=$((0x2c0000 - $SIZE_BOOT1))
 echo "Padding boot1-new with $NEEDED_WHITESPACE bytes"
 if [ $NEEDED_WHITESPACE -gt 0 ]; then
   dd if=/dev/zero of=bin/boot1-new bs=1 seek=$SIZE_BOOT1 count=$NEEDED_WHITESPACE conv=notrunc

@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# Mount/create JFFS2; bind mount /etc from /config/etc
+#
+
+mount_jffs2() {
+	mount -t jffs2 /dev/mtdblock4 /config
+	# successfully mounted /config
+	if [ $? -eq 0 ]; then
+		# check again
+		if [ $(grep -c "/config" /proc/mounts) -gt 0 ]; then
+			# bind mount over existing /etc
+			if [ -d /config/etc ]; then
+				mount -o bind /config/etc /etc
+			fi
+			# bind mount /config/bin as /usr/local/bin
+			if [ -d /config/bin ]; then
+				mount -o bind /config/bin /usr/local/bin
+			fi
+		fi
+	else
+		# format /config; COULD BE DANGEROUS!
+		#TMPDIR=$(mktemp -d)
+		#mkfs.jffs2 -o /dev/mtdblock4 -l -n -r ${TMPDIR}/
+		#rm -rf $TMPDIR
+		#mount -t jffs2 /dev/mtdblock4 /config
+
+		# skip it for now, don't want to accidentally nuke the persistent configuration
+		/bin/true
+	fi
+}
+
+start() {
+	mount_jffs2
+}
+
+stop() {
+	umount /config
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

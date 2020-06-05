@@ -1,0 +1,42 @@
+#!/bin/sh
+#
+# Load kernel modules for managing the Vitesse ASIC
+#
+
+start() {
+	modules="proclikefs merakiclick elts_meraki vc_click"
+	insmod /lib/modules/vtss_core.ko board_desc=MERAKI_BOARD_MS220_8
+	for mod in $modules; do
+		insmod /lib/modules/${mod}.ko
+		if [ $? -ne 0 ]; then
+			echo "Error inserting ${mod}.ko" > /dev/kmsg
+		fi
+		sleep 1
+	done
+}
+
+stop() {
+	/bin/true
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

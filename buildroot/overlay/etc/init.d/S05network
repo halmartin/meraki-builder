@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# Configure networking
+#
+
+start() {
+	ifconfig lo 127.0.0.1 netmask 255.255.255.255 up
+}
+
+stop() {
+	/bin/true
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

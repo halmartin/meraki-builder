@@ -4,50 +4,59 @@
 #
 
 start() {
-	if [ -f /config/MERAKI_MAC ]; then
-		# copy to /tmp/
-		cp /config/MERAKI_MAC /tmp/
-	else
-		# generate a random MAC address
-		echo 88:15:44:$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2) > /tmp/MERAKI_MAC
-	fi
-	# extract the bottom three octets to use as IP
-	cat /MERAKI_MAC | sed -n 's/.*:.*:.*:\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\).*/printf 6.%d.%d.%d\\\\n 0x\1 0x\2 0x\3/p' | xargs -0 sh -c > /tmp/MERAKI_IP
-	cat /MERAKI_MAC | sed -n 's/\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\).*/printf fd0a:9b09:1f7:0:%02x%02x:%xff:fe%02x:%02x%02x $((0x\1^0x2)) 0x\2 0x\3 0x\4 0x\5 0x\6/p' | xargs -0 sh -c > /tmp/MERAKI_IP6
-	# set the hostname based on the MAC address
-	# Meraki does this in S10boot
-	sysctl -qw kernel.hostname=$(echo m$(cat /MERAKI_MAC) | sed -e 's/://g')
-	if fgrep -q click /proc/filesystems; then
-		mount -t click none /click
-		# restore the default click configuration
-		if [ -f /etc/switch.template.gz ]; then
-			gzip -dc /etc/switch.template.gz | sed -e 's/__PORT_POE_MW__/0/g' -e 's/__MTUN_IP__/192.168.254.1/g' -e 's/__NUM_SWITCHPORTS__/10/g' -e "s/__MY_MAC_ADDRESS__/$(cat /MERAKI_MAC)/g" > /click/config
-		fi
-	fi
+    if [ -f /config/MERAKI_MAC ]; then
+        # copy to /tmp/
+        cp /config/MERAKI_MAC /tmp/
+    else
+        # generate a random MAC address
+        echo 88:15:44:$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2) > /tmp/MERAKI_MAC
+    fi
+    # extract the bottom three octets to use as IP
+    # Meraki's logic, not mine
+    cat /MERAKI_MAC | sed -n 's/.*:.*:.*:\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\).*/printf 6.%d.%d.%d\\\\n 0x\1 0x\2 0x\3/p' | xargs -0 sh -c > /tmp/MERAKI_IP
+    cat /MERAKI_MAC | sed -n 's/\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\).*/printf fd0a:9b09:1f7:0:%02x%02x:%xff:fe%02x:%02x%02x $((0x\1^0x2)) 0x\2 0x\3 0x\4 0x\5 0x\6/p' | xargs -0 sh -c > /tmp/MERAKI_IP6
+    # set the hostname based on the MAC address
+    # Meraki does this in S10boot
+    sysctl -qw kernel.hostname=$(echo m$(cat /MERAKI_MAC) | sed -e 's/://g')
+    if fgrep -q click /proc/filesystems; then
+        mount -t click none /click
+        # restore the default click configuration
+        if [ -f /etc/switch.template.gz ]; then
+            if [ -f /tmp/NUM_PORTS ]; then
+                NUM_PORTS=$(cat /tmp/NUM_PORTS)
+            else
+                # default to MS220-8P
+                NUM_PORTS=10
+            fi
+	    # not sure about PORT_POE_MW for non-POE models :shrug:
+	    # replace MTUN_IP with a link-local address to defang (not that we run mtunnel)
+	    gzip -dc /etc/switch.template.gz | sed  -e 's/__MTUN_IP__/169.254.0.1/g' -e "s/__MY_MAC_ADDRESS__/$(cat /MERAKI_MAC)/g" -e "s/__NUM_SWITCHPORTS__/$NUM_PORTS/g" -e 's/__PORT_POE_MW__/30000/g'  > /click/config
+        fi
+    fi
 }
 
 stop() {
-	/bin/true
+    /bin/true
 }
 
 restart() {
-	stop
-	start
+    stop
+    start
 }
 
 case "$1" in
   start)
-  	start
-	;;
+      start
+    ;;
   stop)
-  	stop
-	;;
+      stop
+    ;;
   restart|reload)
-  	restart
-	;;
+      restart
+    ;;
   *)
-	echo "Usage: $0 {start|stop|restart}"
-	exit 1
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
 esac
 
 exit $?

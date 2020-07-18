@@ -4,39 +4,106 @@
 #
 
 start() {
-	modules="proclikefs merakiclick elts_meraki vc_click"
-	insmod /lib/modules/vtss_core.ko board_desc=MERAKI_BOARD_MS220_8
-	for mod in $modules; do
-		insmod /lib/modules/${mod}.ko
-		if [ $? -ne 0 ]; then
-			echo "Error inserting ${mod}.ko" > /dev/kmsg
-		fi
-		sleep 1
-	done
+    # first, try to get the board info from /etc/boardinfo
+    if [ -f /etc/boardinfo ]; then
+        switch_board=$(grep MERAKI_BOARD /etc/boardinfo)
+    # next, try to get the board info from the board-config partition on NAND
+    elif [ $(grep -c "board-config" /proc/mtd) -ne 0 ]; then
+        MTD_PART=$(grep "board-config" /proc/mtd | awk -F':' '{print $1}')
+        echo board-config is /dev/$MTD_PART
+        if [ $(strings /dev/${MTD_PART} | grep -c meraki_) -eq 1 ]; then
+            model=$(strings /dev/${MTD_PART} | grep -Eo "^m\S+")
+	    if [ $(echo $model | grep -c MS220-8P) -eq 1 ]; then
+		mod_dir=luton26
+                switch_board=MERAKI_BOARD_MS220_8
+		echo 10 > /tmp/NUM_PORTS
+	    elif [ $(echo $model | grep -c MS220-24) -eq 1 ]; then
+		mod_dir=luton26
+                switch_board=MERAKI_BOARD_MS220_24
+		echo 24 > /tmp/NUM_PORTS
+	    elif [ $(echo $model | grep -c MS220-48) -eq 1 ]; then
+		mod_dir=jaguar_dual
+                switch_board=MERAKI_BOARD_MS220_48
+		# this might be 52...
+		echo 48 > /tmp/NUM_PORTS
+	    elif [ $(echo $model | grep -c MS320-24) -eq 1 ]; then
+		mod_dir=jaguar
+                switch_board=MERAKI_BOARD_MS320_24
+		echo 24 > /tmp/NUM_PORTS
+	    elif [ $(echo $model | grep -c MS320-48) -eq 1 ]; then
+		mod_dir=jaguar_dual
+                switch_board=MERAKI_BOARD_MS320_48
+		# this might be 52...
+		echo 48 > /tmp/NUM_PORTS
+	    elif [ $(echo $model | grep -c MS22) -eq 1 ]; then
+		mod_dir=luton26
+                switch_board=MERAKI_BOARD_MS22
+		echo 24 > /tmp/NUM_PORTS
+	    elif [ $(echo $model | grep -c MS42) -eq 1 ]; then
+		mod_dir=jaguar_dual
+                switch_board=MERAKI_BOARD_MS42
+		# this might be 52...
+		echo 48 > /tmp/NUM_PORTS
+            fi
+        fi
+    else
+        # fall back to detection based on cpuinfo, WILL PROBABLY BE WRONG
+        cpuinfo=$(cat /proc/cpuinfo)
+        if echo $cpuinfo | egrep -q "VSC7425$"; then
+          mod_dir=luton26
+          switch_board=MERAKI_BOARD_MS220_8
+        elif echo $cpuinfo | egrep -q "VSC7427$"; then
+          # MS22 and MS220-24 use luton26
+          mod_dir=luton26
+          switch_board=MERAKI_BOARD_MS22
+        elif echo $cpuinfo | egrep -q "VSC7434 Dual$"; then
+          # MS220-48 and MS320-48 also use jaguar_dual
+          mod_dir=jaguar_dual
+          switch_board=MERAKI_BOARD_MS42
+        fi
+    fi
+    # we have to load vtss_core first
+    insmod /lib/modules/${mod_dir}/vtss_core.ko board_desc=${switch_board}
+    if [ $? -ne 0 ]; then
+        echo "Error inserting '${mod_dir}/vtss_core.ko board_desc=${switch_board}'" > /dev/kmsg
+    fi
+    modules="proclikefs merakiclick elts_meraki"
+    for mod in $modules; do
+        insmod /lib/modules/${mod}.ko
+        if [ $? -ne 0 ]; then
+            echo "Error inserting ${mod}.ko" > /dev/kmsg
+        fi
+        sleep 1
+    done
+    # vc_click is loaded last
+    insmod /lib/modules/${mod_dir}/vc_click.ko
+    if [ $? -ne 0 ]; then
+        echo "Error inserting '${mod_dir}/vc_click.ko'" > /dev/kmsg
+    fi
 }
 
 stop() {
-	/bin/true
+    /bin/true
 }
 
 restart() {
-	stop
-	start
+    stop
+    start
 }
 
 case "$1" in
   start)
-  	start
-	;;
+      start
+    ;;
   stop)
-  	stop
-	;;
+      stop
+    ;;
   restart|reload)
-  	restart
-	;;
+      restart
+    ;;
   *)
-	echo "Usage: $0 {start|stop|restart}"
-	exit 1
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
 esac
 
 exit $?

@@ -1,0 +1,221 @@
+#!/bin/sh
+#
+# Copyright (C) 2020 - Hal Martin (github.com/halmartin)
+#
+# This was written by reverse engineering the functionality
+# of switch_brain, included in Meraki's stock firmware
+# It configures the switch as it would be configured by
+# switch_brain with a BLANK configuration
+#
+
+start() {
+    if [ -f /tmp/NUM_PORTS ]; then
+        NUM_PORTS=$(cat /tmp/NUM_PORTS)
+	echo "Switch port count: ${NUM_PORTS}"
+    else
+        # fail-safe value is MS220-8P NUM_PORTS
+        NUM_PORTS=10
+	echo "Default port count: ${NUM_PORTS}"
+    fi
+
+    sysctl -w net.ipv4.ip_local_reserved_ports=50000-50127
+    echo -e "0" > /click/client_ip_table/boot_count
+    echo -e "1" > /click/switch_port_table/snooptable_version
+    if [ -d  /sys/class/net/wired0 ]; then
+        ifconfig wired0 txqueuelen 80
+    fi
+    if [ -d /sys/class/net/linux_mgmt ]; then
+        ifconfig linux_mgmt 10.128.128.130 netmask 255.255.255.254
+    fi
+    echo -e "0" > /click/live_traffic/period
+    echo -e "0" > /click/cli_h/traffic_analysis/tick_interval_sec
+    echo -e "false" > /click/cli_h/traffic_analysis/ta2_enabled
+    echo -e "*.co.? 3" > /click/cli_h/traffic_analysis/ta2_domain_lengths
+    echo -e "6" > /click/cli_h/traffic_analysis/ta2_sig_shifter
+    echo -e "8" > /click/cli_h/traffic_analysis/ta2_promised_slots
+    echo -e "20000" > /click/cli_h/traffic_analysis/ta2_min_score_thresh
+    echo -e "2000000" > /click/cli_h/traffic_analysis/ta2_max_score_thresh
+    echo -e "40" > /click/cli_h/traffic_analysis/ta2_buckets
+    echo -e "180" > /click/cli_h/traffic_analysis/ta2_ewma_interval
+    echo -e "false" > /click/cli_h/traffic_analysis/ta2_track_hostnames
+    echo -e "false" > /click/cli_h/traffic_analysis/ta2_track_hostnames_agg
+    echo -e "false" > /click/cli_h/traffic_analysis/ta2_track_ports
+    echo -e "false" > /click/cli_h/traffic_analysis/ta2_track_rule_groups
+    echo -e "false" > /click/cli_h/traffic_analysis/ta2_track_country
+    echo -e "0" > /click/cli_h/traffic_analysis/ta2_counterset_id
+    echo -e "true" > /click/cli_h/traffic_analysis/skip_ignored_traffic
+    echo -e "false" > /click/set_snmp_state/run
+    # consider removing mtun
+    echo -e "mtun_filtering_enabled true" > /click/sw0_pcap_process/mtun_filter_config/set
+    echo -e " events" > /click/syslog_event_log/syslog_name
+    echo -e "46 48" > /click/cli_h/traffic_analysis/realtime_dscps
+    echo -e "90" > /click/client_ip_table/realtime_limit
+    echo -e "1" > /click/uplinkstate/preferred_dhcp_vid
+    echo -e "1 1 1 1 1 1 1 1 1 1 1" > /click/uplinkstate/set_dhcp_vlans
+    echo -e "true" > /click/wan0_pinger/active
+    echo -e "1.1.1.1" > /click/wan0_pinger/set_dst
+    echo -e "1" > /click/wan0_dns_lookup/clear_hosts
+    echo -e "www.watchmysys.com" > /click/wan0_dns_lookup/add_host
+    echo -e "true" > /click/enable_lldp/run
+    echo -e "30000" > /click/lldp_source/interval_ms
+    echo -e "2000" > /click/lldp_source/fast_start_interval_ms
+    echo -e "16" > /click/lldp_source/fast_start_count
+    echo -e "255" > /click/lldp_source/port_poe_budget
+    echo -e "true \"\" 180 \"\" 60000" > /click/set_cdp_config/run
+    echo -e "disc_packets 16" > /click/switch_pport_change_script/set
+    echo -e "disc_interval 2000" > /click/switch_pport_change_script/set
+    echo -e "true" > /click/set_cdp_steal/run
+    echo -e "PRIORITY 61440, HELLO_TIME 2, FORWARD_DELAY 15, MAX_AGE 20, HOLDCOUNT 6" > /click/stp/set_params
+    echo -e "true" > /click/switch_port_table/enable_lacp_on_single_ports
+    MAC=$(cat /MERAKI_MAC)
+    for i in $(seq 1 $NUM_PORTS); do
+    echo -e "PORT $MAC/$i, ENABLED true, AUTOEDGE true, EDGE false, AUTOPTP true, PTP false, PRI 128, COST 0" > /click/stp/set_many_port_cfgs
+    done
+    echo -e "DSCP_TRUST \"none\", DSCP_CLASS \"\", DSCP_DP \"\", QOS_RULES \"\"" > /click/sw0_ctrl/set_qos_conf
+    for i in $(seq 1 $NUM_PORTS); do
+      echo -e "PORT $i, DSCP_EN true, DSCP_EGRESS_MODE remark" > /click/sw0_ctrl/set_port_qos_conf
+    done
+    echo -e "route_ip 1.1.2.2" > /click/set_alt_conf/set
+    echo -e "1024" > /click/sw0_ctrl/set_default_queue_rate_limit
+    echo -e "HYBRID_8021x_TIMEOUT 8000, HYBRID_MAC_RADIUS_TIMEOUT 8000 " > /click/switch_auth_port_table/set_hybrid_auth_timeouts
+    for i in $(seq 0 8); do
+      echo -e "NUM $i, ENABLED false" > /click/switch_auth_port_table/set_access_policies
+    done
+    for i in $(seq 1 $NUM_PORTS); do
+      echo -e "PORT $i, LEARN_LIMIT 0, MAC \"\"" > /click/switch_auth_port_table/set_port_mac_whitelist
+      echo -e "PORT $i, STATUS 0" > /click/switch_auth_port_table/allow_unauth_egress
+      echo -e "PORT $i, ERROR_STATUS 0, EAP_MULTICAST 0" > /click/switch_auth_port_table/set_auth_port
+    done
+    echo -e "-1 -1 -1 -1 -1 -1 -1 -1 -1 -1" > /click/switch_auth_port_table/set_access_policy_ports
+    echo -e "3000" > /click/switch_auth_port_table/1x_auth_listen_msec
+    echo -e "1000" > /click/switch_auth_port_table/auth_table_size
+    echo -e "1000" > /click/switch_auth_port_table/pending_table_size
+    echo -e "1000" > /click/switch_auth_port_table/1x_auth_timer_table_size
+    echo -e "-1" > /click/switch_auth_port_table/auth_expiry_threshold_sec
+    echo -e "150" > /click/switch_auth_port_table/pending_expiry_threshold_sec
+    for i in $(seq 1 $NUM_PORTS); do
+      echo -e "$i, true" > /click/cdp_source/active_ports
+      echo -e "$i, 0" > /click/cdp_source/voice_vlans
+      echo -e "$i, true" > /click/lldp_source/active_ports
+      echo -e "PORT $i, ALLOWED_VLANS \"\", ALLOW_TAGGED_IN true, ALLOW_UNTAGGED_IN true, INGRESS_FILTER true, RADIUS_CAN_ASSIGN_VLAN true, PVID 1, UNTAGGED_VID 1" > /click/switch_port_table/set_vlan_allports_conf
+      echo -e "PORT $i, VID 0" > /click/switch_auth_port_table/set_port_voice_vid
+    done
+    echo -e "ips " > /click/l2_intfs/set
+    echo -e "vlans " > /click/l2_intfs/set
+    echo -e "0" > /click/l2_dhcp_relay_sw/switch
+    echo -e "0" > /click/l2_dhcp_relay_arp_sw/switch
+    echo -e "allow all" > /click/acl_ip_filter/config
+    echo -e "ipv4 allow all" > /click/sw0_ctrl/set_acl_rules
+    for i in $(seq 1 $NUM_PORTS); do
+      echo -e "$i true" > /click/switch_port_table/set_sflow_ports
+    done
+    echo -e "none" > /click/switch_port_table/set_local_stacking_ports
+    for i in $(seq 1 $NUM_PORTS); do
+      echo -e "PORT $i, ENABLED true, ENFORCING false" > /click/udld/set_ports
+    done
+    for i in $(seq 1 $NUM_PORTS); do
+      echo -e "PORT $i, ENABLED true" > /click/switch_port_table/set_port_storm_control
+    done
+    echo -e "10" > /click/set_dhcp_traffic_vlan_max/run
+    echo -e "true true \"\"" > /click/configure_dhcp_blocker/run
+    echo -e "SMAC true, DMAC true, SIP_DIP true, SPORT_DPORT true" > /click/sw0_ctrl/aggr_conf
+    echo -e "0" > /click/set_network_id_hash/run
+    echo -e "allow all" > /click/nat/common_switch_nat/from_sw0_filter/config
+    echo -e "allow all" > /click/nat/common_switch_nat/from_sw0_filter6/config
+    echo -e "true 1.1.1.100" > /click/set_switch_meraki_com_ip/run
+    echo -e "allow all" > /click/nat/common_switch_nat/from_smc_filter/config
+    echo -e "allow all" > /click/nat/common_switch_nat/from_mgmt_filter/config
+    for i in $(seq 1 $NUM_PORTS); do
+      echo -e "PORT $i, FC_OBEY false, EEE_ADV_ENABLED true, MODE aneg" > /click/switch_port_table/set_port_phy_cfgs
+    done
+    echo -e "125000" > /click/igmp_snoop/default_querier_interval_msec
+    echo -e "125" > /click/igmp_querier/query_interval
+    echo -e "125000" > /click/mld_snoop/default_querier_interval_msec
+    echo -e "125" > /click/mld_querier/query_interval
+    echo -e "true" > /click/configure_igmp_snoop/run
+    echo -e "true" > /click/init_l2_mcast_flood_ctrl/run
+    echo -e "true" > /click/configure_mld_snoop/run
+    echo -e "true true true" > /click/configure_ns_handling/run
+    ifconfig wired0 1.1.2.2 netmask 255.255.255.252
+    ip route replace default dev wired0;
+    echo -e "1.1.2.2" > /click/set_internal_ip/run
+    ifconfig wired0 fd0a:9b09:1f7:10c1::2/64
+    ip -6 route replace default dev wired0;
+    echo -e "fd0a:9b09:1f7:10c1::2" > /click/set_internal_ip6/run
+    echo -e "100ms" > /click/interface_announce/ival
+    echo -e "3" > /click/interface_announce/announce_count
+    echo -e "100" > /click/arp_table/packet_capacity
+    echo -e "5" > /click/arp_table/entry_packet_capacity
+    echo -e "0 false" > /click/client_ip_table/set_vap_track_by_ip
+    echo -e "false" > /click/switch_port_table/enable_traffic_analysis_on_same_network_switch_ports
+    echo -e "classifier_src_pattern \"false\"" > /click/set_alt_conf/set
+    echo -e "classifier_dst_pattern \"false\"" > /click/set_alt_conf/set
+    echo -e "0" > /click/syslog_mgmt_vid_check/switch
+    echo -e "0.0.0.0" > /click/syslog_event_log/src_ip
+    # consider removing mtun
+    echo -e "gateway_check 0" > /click/mtun_client_state/update_node_state
+    echo -e "gateway_good 0" > /click/mtun_client_state/update_node_state
+    MY_IP=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep ip= | awk -F'=' '{print $2}')
+    TRIES=0
+    while [ "$MY_IP" == "" ]; do
+      echo "Waiting for IP address..."
+      sleep 1
+      MY_IP=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep ip= | awk -F'=' '{print $2}')
+      SUBNET=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep subnet= | awk -F'=' '{print $2}')
+      GATEWAY=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep router= | awk -F'=' '{print $2}')
+      BROADCAST=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep broadcast= | awk -F'=' '{print $2}')
+      TRIES=$(($TRIES+1))
+      if [ $TRIES -gt 60 ]; then
+        # we failed to DHCP after 60 seconds, set some sane defaults
+        MY_IP=169.254.0.10
+	SUBNET=169.254.0.0
+	GATEWAY=169.254.0.1
+	BROADCAST=169.254.255.255
+        break
+      fi
+    done
+    echo -e "$MY_IP $SUBNET $GATEWAY 1500 $BROADCAST 1" > /click/set_host_ip/run
+    echo -e "fe80::8a15:44ff:fe23:1115 :: 0 :: 1500 0" > /click/set_host_ip6/run
+    # consider removing mtun
+    echo -e "0" > /click/mtun_client_state/static_ip_failover
+    echo -e "0" > /click/mtun_client_state/dhcp_vlan_failover
+    echo -e "true" > /click/switch_port_table/have_network_connection
+    echo -e "route_ip 1.1.2.2" > /click/set_alt_conf/set
+    echo -e "0" > /click/syslog_mgmt_vid_check/switch
+    echo -e "$MY_IP" > /click/syslog_event_log/src_ip
+    echo -e "$GATEWAY" > /click/wan0_resolver/dst
+    echo -e "true" > /click/wan0_pinger/active
+    echo -e "true" > /click/wan0_pinger/reset
+    echo -e "true" > /click/wan0_dns_lookup/reset
+    echo -e "true" > /click/wan0_dns_lookup/active
+    echo -e "true" > /click/wan0_dns_nxlookup/reset
+    echo -e "true" > /click/wan0_dns_nxlookup/active
+    # consider removing mtun
+    echo -e "gateway_good 0" > /click/mtun_client_state/update_node_state
+}
+
+stop() {
+    /bin/true
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+      start
+    ;;
+  stop)
+      stop
+    ;;
+  restart|reload)
+      restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?

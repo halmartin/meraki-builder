@@ -18,7 +18,7 @@ If you use [switch-11-22-ms220](https://github.com/halmartin/switch-11-22-ms220/
 
 Currently, the stage1 build scripts expect a SquashFS filesystem produced by buildroot. See the `buildroot` directory for the configuration and filesystem overlay.
 
-The output of the `make.sh` script is a flashable image.
+The output of the `make.sh` script is a flashable image called `switch-new.bin`.
 
 ## stage2
 
@@ -32,4 +32,4 @@ If your switch is running a newer kernel than 3.18.123, demand the GPL archive c
 
 If you are interested in examining the Meraki management binaries (e.g. `switch_brain` or `poe_server`) they are present in this firmware image.
 
-You will need to build find_hdr.c (used by `extract.sh`) or substitute `find_hdr.py` to extract the gzip compressed CPIO archive. 
+You will need to build `find_hdr.c` (used by `extract.sh`) or substitute `find_hdr.py` to extract the gzip compressed CPIO archive. 

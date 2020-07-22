@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# Mount/create JFFS2; bind mount /etc from /overlay/etc
+#
+
+OVERLAY_DIRS="etc opt"
+
+mount_overlay() {
+    if [ $(grep -c "/overlay" /proc/mounts) -eq 1 ]; then
+        for dir in $OVERLAY_DIRS; do
+            mount -t overlay overlay -o lowerdir=/${dir},upperdir=/overlay/${dir},workdir=/overlay/work /${dir}
+        done
+    fi
+}
+
+start() {
+    mount_overlay
+}
+
+stop() {
+    for dir in $OVERLAY_DIRS; do
+        umount /${dir}
+    done
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+      start
+    ;;
+  stop)
+      stop
+    ;;
+  restart|reload)
+      restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?

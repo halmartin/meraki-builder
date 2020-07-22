@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+# Start the fans; we don't want to cook ourselves
+#
+
+start() {
+    # avoid the output from ls during boot that the directory doesn't exist
+    # only some models have fans (e.g. MS220-8P does not)
+    if [ -d /sys/class/thermal/cooling_device0 ]; then
+        # ASIC temperature is in /sys/class/thermal/thermal_zone[0-1]/trip_point_0_temp
+        FANS=$(ls -1 -d /sys/class/thermal/cooling_device*)
+        for fan in $FANS; do
+            echo 1 > $fan/cur_state
+        done
+    fi
+}
+
+stop() {
+    if [ -d /sys/class/thermal/cooling_device0 ]; then
+        FANS=$(ls -1 -d /sys/class/thermal/cooling_device*)
+        for fan in $FANS; do
+            echo 0 > $fan/cur_state
+        done
+    fi
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

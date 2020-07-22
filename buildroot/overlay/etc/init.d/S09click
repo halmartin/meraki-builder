@@ -4,9 +4,9 @@
 #
 
 start() {
-    if [ -f /config/MERAKI_MAC ]; then
+    if [ -f /etc/MERAKI_MAC ]; then
         # copy to /tmp/
-        cp /config/MERAKI_MAC /tmp/
+        cp /etc/MERAKI_MAC /tmp/
     else
         # generate a random MAC address
         echo 88:15:44:$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2) > /tmp/MERAKI_MAC

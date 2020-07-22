@@ -19,6 +19,13 @@ start() {
     fi
 
     sysctl -w net.ipv4.ip_local_reserved_ports=50000-50127
+    if [ $(lsmod | grep -v vc_click) -eq 0 ]; then
+        echo "vc_click isn't loaded; aborting!"
+        exit
+    elif [ ! -d /click/client_ip_table ]; then
+        echo "vc_click is loaded, but something is wrong with the /click configuration; aborting!"
+        exit
+    fi
     echo -e "0" > /click/client_ip_table/boot_count
     echo -e "1" > /click/switch_port_table/snooptable_version
     if [ -d  /sys/class/net/wired0 ]; then
@@ -174,6 +181,7 @@ start() {
         break
       fi
     done
+    echo "Using IP address: $MY_IP"
     echo -e "$MY_IP $SUBNET $GATEWAY 1500 $BROADCAST 1" > /click/set_host_ip/run
     echo -e "fe80::8a15:44ff:fe23:1115 :: 0 :: 1500 0" > /click/set_host_ip6/run
     # consider removing mtun

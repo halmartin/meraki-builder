@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# Make the power LED green
+#
+
+start() {
+    if [ -d /click/sw0_ctrl ]; then
+        echo 0 > /click/sw0_ctrl/power_led_orange
+        echo 1 > /click/sw0_ctrl/power_led_green
+    fi
+}
+
+stop() {
+    if [ -d /click/sw0_ctrl ]; then
+        echo 1 > /click/sw0_ctrl/power_led_orange
+        echo 0 > /click/sw0_ctrl/power_led_green
+    fi
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+      start
+    ;;
+  stop)
+      stop
+    ;;
+  restart|reload)
+      restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?

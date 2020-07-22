@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# Mount/create JFFS2; bind mount /etc from /overlay/etc
+#
+
+mount_jffs2() {
+    if [ $(grep -c "/overlay" /proc/mounts) -eq 0 ]; then
+        # handle the mtdblock number changing
+        MTD_NUM=$(grep \"overlay\" /proc/mtd | awk -F':' '{print $1}' | grep -Eo '[0-9]{1,2}')
+        mount -t jffs2 /dev/mtdblock${MTD_NUM} /overlay
+        if [ $? -eq 0 ]; then
+            # successfully mounted /overlay
+            echo "Mounted /overlay"
+        else
+            # format /overlay; COULD BE DANGEROUS!
+            echo "First boot, formatting /overlay"
+            SIZE=$((0x$(grep \"overlay\" /proc/mtd | awk '{print $2}')))
+            TMPDIR=$(mktemp -d)
+            dirs="work etc opt"
+            for dir in $dirs; do
+                mkdir -p ${TMPDIR}/${dir}
+            done
+            # suppress error output
+            #mkfs.jffs2 -o /dev/mtdblock${MTD_NUM} -l -n -r ${TMPDIR}/ 2>/dev/null
+            mkfs.jffs2 -p $SIZE -l -n -X lzo -x zlib -y 40:lzo -r ${TMPDIR}/ | dd of=/dev/mtdblock${MTD_NUM} bs=65536
+            rm -rf $TMPDIR
+            mount -t jffs2 /dev/mtdblock${MTD_NUM} /overlay
+        fi
+    else
+        echo "/overlay is already mounted"
+    fi
+}
+
+start() {
+    mount_jffs2
+}
+
+stop() {
+    umount /overlay
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+      start
+    ;;
+  stop)
+      stop
+    ;;
+  restart|reload)
+      restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?

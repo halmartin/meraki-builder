@@ -1,5 +1,9 @@
 # meraki-builder
-Scripts and tools to assemble firmware images for Meraki MS220, MS22, MS42, MS320 switches
+Scripts and tools to assemble firmware images for the following Meraki switches:
+* MS220-8(P)
+* MS220-24(P), MS220-48(LP|FP)
+* MS22(P) and MS42(P)
+* MS320-24(P) and MS320-48(LP|FP)
 
 ## Acknowledgements
 

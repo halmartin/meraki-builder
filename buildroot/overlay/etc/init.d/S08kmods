@@ -1,5 +1,7 @@
 #!/bin/sh
 #
+# Copyright (C) 2020 - Hal Martin (github.com/halmartin)
+#
 # Load kernel modules for managing the Vitesse ASIC
 #
 
@@ -46,7 +48,6 @@ start() {
     elif [ $(echo $model | grep -c MS220-48) -eq 1 ]; then
         mod_dir=jaguar_dual
         switch_board=MERAKI_BOARD_MS220_48
-        # this might be 52...
          echo 52 > /tmp/NUM_PORTS
     elif [ $(echo $model | grep -c MS320-24) -eq 1 ]; then
         mod_dir=jaguar
@@ -55,7 +56,6 @@ start() {
     elif [ $(echo $model | grep -c MS320-48) -eq 1 ]; then
         mod_dir=jaguar_dual
         switch_board=MERAKI_BOARD_MS320_48
-        # this might be 52...
         echo 52 > /tmp/NUM_PORTS
     elif [ $(echo $model | grep -c MS22) -eq 1 ]; then
         mod_dir=luton26
@@ -64,7 +64,6 @@ start() {
     elif [ $(echo $model | grep -c MS42) -eq 1 ]; then
         mod_dir=jaguar_dual
         switch_board=MERAKI_BOARD_MS42
-        # this might be 52...
         echo 52 > /tmp/NUM_PORTS
     fi
     # we have to load vtss_core first

@@ -171,7 +171,7 @@ start() {
       SUBNET=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep subnet= | awk -F'=' '{print $2}')
       GATEWAY=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep router= | awk -F'=' '{print $2}')
       BROADCAST=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep broadcast= | awk -F'=' '{print $2}')
-      TRIES=$(($TRIES+1))
+      TRIES=$((TRIES+1))
       if [ $TRIES -gt 60 ]; then
         # we failed to DHCP after 60 seconds, set some sane defaults
         MY_IP=169.254.0.10

@@ -1,0 +1,72 @@
+#!/bin/sh
+#
+# Set up GPIO for the PD690xx
+#
+
+start() {
+    # libmeraki.so: get_switch_type
+    # MS22P: switch_type 1 (VSC7427)
+    # MS42P: switch_type 2 (VSC7434 dual)
+    # MS220-8P:  switch_type 3 (VSC7425)
+    # MS220-24P: switch_type 5 (VSC7427)
+    # MS220-48P: switch_type 6 (VSC7434 dual)
+    # this is to configure the PD690xx (to auto mode?)
+    # libpoecore.so: hard_init
+    if [ $(cat /proc/cpuinfo | grep -c 7425) -eq 1 ]; then
+      # switch_type 3
+      GPIO1=7
+      GPIO2=12
+    elif [ $(cat /proc/cpuinfo | grep -c 7427) -eq 1 ]; then
+      # switch_type 1, 4, or 5
+      GPIO1=82
+      GPIO2=81
+    elif [ $(cat /proc/cpuinfo | grep -c 7434) -eq 1 ]; then
+      # switch_type 6
+      GPIO1=41
+      GPIO2=40
+      # switch_type 2 sets GPIO2 to 8 (I think?)
+      # so this might not work for MS42P
+      # we'd have to use /etc/boardinfo for that?
+      # someone with an MS42P can strace poe_server and find out
+    fi
+    echo $GPIO1 > /sys/class/gpio/export
+    echo $GPIO2 > /sys/class/gpio/export
+    # N/A in VDMS-10393, 1588 in VDMS-10394 (Carcal)
+    echo out > /sys/class/gpio/gpio${GPIO1}/direction
+    # SFP17_SD or PHY7_LED1 in VDMS-10393 (Luton26/Jaguar)
+    echo out > /sys/class/gpio/gpio${GPIO2}/direction
+    echo 1 > /sys/class/gpio/gpio${GPIO1}/value
+    echo 0 > /sys/class/gpio/gpio${GPIO2}/value
+    # usleep(10000)
+    sleep 0.1
+    echo 1 > /sys/class/gpio/gpio${GPIO2}/value
+    echo 0 > /sys/class/gpio/gpio${GPIO1}/value
+    echo 1 > /sys/class/gpio/gpio${GPIO2}/value
+    # usleep(500000)
+}
+
+stop() {
+    /bin/true
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

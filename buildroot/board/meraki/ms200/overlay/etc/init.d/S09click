@@ -32,7 +32,7 @@ start() {
             fi
 	    # not sure about PORT_POE_MW for non-POE models :shrug:
 	    # replace MTUN_IP with a link-local address to defang (not that we run mtunnel)
-	    gzip -dc /etc/switch.template.gz | sed  -e 's/__MTUN_IP__/169.254.0.1/g' -e "s/__MY_MAC_ADDRESS__/$(cat /MERAKI_MAC)/g" -e "s/__NUM_SWITCHPORTS__/$NUM_PORTS/g" -e 's/__PORT_POE_MW__/30000/g'  > /click/config
+	    gzip -dc /etc/switch.template.gz | sed  -e 's/__MTUN_IP__/169.254.0.1/g' -e "s/__MY_MAC_ADDRESS__/$(cat /tmp/MERAKI_MAC)/g" -e "s/__NUM_SWITCHPORTS__/$NUM_PORTS/g" -e 's/__PORT_POE_MW__/30000/g'  > /click/config
         fi
     fi
 }

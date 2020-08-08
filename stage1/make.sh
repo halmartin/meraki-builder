@@ -51,13 +51,6 @@ else
     cat $HEADER_PATH bin/boot1-kernel > bin/boot1-new
 fi
 
-# CRC is over the header + kernel
-# disabled CRC check in redboot, don't need to populate
-#CRC=$(crc_32 bin/boot1-new | awk '{print $1}')
-#printf "\x$(echo $CRC | cut -b7-8)\x$(echo $CRC | cut -b5-6)\x$(echo $CRC | cut -b3-4)\x$(echo $CRC | cut -b0-2)" > bin/crc.bin
-#echo "Patching boot1-new with CRC: $CRC"
-#dd if=bin/crc.bin of=bin/boot1-new bs=1 seek=16 conv=notrunc
-
 SIZE_BOOT1=$(wc -c bin/boot1-new | awk '{print $1}')
 NEEDED_WHITESPACE=$((0x2c0000 - $SIZE_BOOT1))
 echo "Padding boot1-new with $NEEDED_WHITESPACE bytes"
@@ -79,7 +72,16 @@ function padubi() {
     fi
 }
 
+function create_jffs2() {
+    rm bin/jffs2
+    mkdir -p bin/jffs2-root/.upper/etc bin/jffs2-root/.work/etc
+    mkdir -p bin/jffs2-root/.upper/root bin/jffs2-root/.work/root
+    echo "Generating JFFS2..."
+    mkfs.jffs2 --pad=5242880 -l -n -X lzo -x zlib -y 40:lzo -r bin/jffs2-root/ -o bin/jffs2
+}
+
 padubi
+create_jffs2
 cat bin/loader1 bin/boot1-new bin/bootubi bin/jffs2 > switch-new.bin
 
 Size=$(wc -c switch-new.bin | awk '{print $1}')

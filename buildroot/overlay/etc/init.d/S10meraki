@@ -74,7 +74,7 @@ start() {
     echo -e "true" > /click/set_cdp_steal/run
     echo -e "PRIORITY 61440, HELLO_TIME 2, FORWARD_DELAY 15, MAX_AGE 20, HOLDCOUNT 6" > /click/stp/set_params
     echo -e "true" > /click/switch_port_table/enable_lacp_on_single_ports
-    MAC=$(cat /MERAKI_MAC)
+    MAC=$(cat /tmp/MERAKI_MAC)
     for i in $(seq 1 $NUM_PORTS); do
     echo -e "PORT $MAC/$i, ENABLED true, AUTOEDGE true, EDGE false, AUTOPTP true, PTP false, PRI 128, COST 0" > /click/stp/set_many_port_cfgs
     done

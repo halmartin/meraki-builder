@@ -15,11 +15,11 @@ start() {
     fi
     # extract the bottom three octets to use as IP
     # Meraki's logic, not mine
-    cat /MERAKI_MAC | sed -n 's/.*:.*:.*:\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\).*/printf 6.%d.%d.%d\\\\n 0x\1 0x\2 0x\3/p' | xargs -0 sh -c > /tmp/MERAKI_IP
-    cat /MERAKI_MAC | sed -n 's/\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\).*/printf fd0a:9b09:1f7:0:%02x%02x:%xff:fe%02x:%02x%02x $((0x\1^0x2)) 0x\2 0x\3 0x\4 0x\5 0x\6/p' | xargs -0 sh -c > /tmp/MERAKI_IP6
+    cat /tmp/MERAKI_MAC | sed -n 's/.*:.*:.*:\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\).*/printf 6.%d.%d.%d\\\\n 0x\1 0x\2 0x\3/p' | xargs -0 sh -c > /tmp/MERAKI_IP
+    cat /tmp/MERAKI_MAC | sed -n 's/\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\):\([0-9A-Za-z]*\).*/printf fd0a:9b09:1f7:0:%02x%02x:%xff:fe%02x:%02x%02x $((0x\1^0x2)) 0x\2 0x\3 0x\4 0x\5 0x\6/p' | xargs -0 sh -c > /tmp/MERAKI_IP6
     # set the hostname based on the MAC address
     # Meraki does this in S10boot
-    sysctl -qw kernel.hostname=$(echo m$(cat /MERAKI_MAC) | sed -e 's/://g')
+    sysctl -qw kernel.hostname=$(echo m$(cat /tmp/MERAKI_MAC) | sed -e 's/://g')
     if fgrep -q click /proc/filesystems; then
         mount -t click none /click
         # restore the default click configuration

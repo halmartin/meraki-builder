@@ -3,12 +3,14 @@
 # Mount/create JFFS2; bind mount /etc from /overlay/etc
 #
 
-OVERLAY_DIRS="etc opt"
+OVERLAY_DIRS="etc"
 
 mount_overlay() {
     if [ $(grep -c "/overlay" /proc/mounts) -eq 1 ]; then
         for dir in $OVERLAY_DIRS; do
-            mount -t overlay overlay -o lowerdir=/${dir},upperdir=/overlay/${dir},workdir=/overlay/work /${dir}
+            mkdir -p /overlay/.work/${dir}
+            mkdir -p /overlay/.upper/${dir}
+            mount -t overlay overlay -o rw,noatime,lowerdir=/${dir},upperdir=/overlay/.upper/${dir},workdir=/overlay/.work/${dir} /${dir}
         done
     fi
 }

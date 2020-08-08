@@ -48,7 +48,7 @@ start() {
     elif [ $(echo $model | grep -c MS220-48) -eq 1 ]; then
         mod_dir=jaguar_dual
         switch_board=MERAKI_BOARD_MS220_48
-         echo 52 > /tmp/NUM_PORTS
+        echo 52 > /tmp/NUM_PORTS
     elif [ $(echo $model | grep -c MS320-24) -eq 1 ]; then
         mod_dir=jaguar
         switch_board=MERAKI_BOARD_MS320_24

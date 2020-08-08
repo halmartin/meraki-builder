@@ -5,7 +5,7 @@
 # Load kernel modules for managing the Vitesse ASIC
 #
 
-start() {
+determine_board() {
     # first, try to get the board info from /etc/boardinfo
     if [ -f /etc/boardinfo ]; then
         model=$(grep MODEL /etc/boardinfo | awk -F'=' '{print $2}')
@@ -66,8 +66,15 @@ start() {
         switch_board=MERAKI_BOARD_MS42
         echo 52 > /tmp/NUM_PORTS
     fi
+
+    export model
+    export mod_dir
+    export switch_board
+}
+
+load_modules() {
     # we have to load vtss_core first
-    insmod /lib/modules/${mod_dir}/vtss_core.ko board_desc=${switch_board}
+    insmod ${MOD_PATH}/${mod_dir}/vtss_core.ko board_desc=${switch_board}
     if [ $? -ne 0 ]; then
         echo "Error inserting '${mod_dir}/vtss_core.ko board_desc=${switch_board}'" > /dev/kmsg
     else
@@ -76,7 +83,7 @@ start() {
     # load the other modules
     modules="proclikefs merakiclick elts_meraki"
     for mod in $modules; do
-        insmod /lib/modules/${mod}.ko
+        insmod ${MOD_PATH}/${mod}.ko
         if [ $? -ne 0 ]; then
             echo "Error inserting ${mod}.ko" > /dev/kmsg
         else
@@ -85,12 +92,84 @@ start() {
         sleep 1
     done
     # vc_click is loaded last
-    insmod /lib/modules/${mod_dir}/vc_click.ko
+    insmod ${MOD_PATH}/${mod_dir}/vc_click.ko
     if [ $? -ne 0 ]; then
         echo "Error inserting '${mod_dir}/vc_click.ko'" > /dev/kmsg
     else
         echo "Loaded '${mod_dir}/vc_click.ko'"
     fi
+}
+
+# copying with bs=1 is slow, calculate the maximum blocksize we can use with dd
+largest_blocksize() {
+    header_offset=$1
+    max_size=1
+    for size in $(seq 2 6); do
+        if [ $(($header_offset % $((2**$size)))) -eq 0 ]; then
+          max_size=$((2**$size))
+        else
+          break
+        fi
+    done
+    echo $max_size
+}
+
+fwcutter() {
+    # check that the kernel modules exist
+    if [ ! -d /lib/modules/${mod_dir} ]; then
+        # deploy fwcutter!
+	command -v find_hdr
+	if [ $? -eq 0 ]; then
+            # store current kernel version
+	    KVER=$(uname -r | awk -F'-' '{print $1}')
+	    export KVER
+            # find the mtd partition
+	    fw_regions="part1 part2"
+	    for part in $fw_regions; do
+	        MTD_PART=$(grep ${part} /proc/mtd | awk -F':' '{print $1}' | grep -o '[[:digit:]]*')
+		dd if=/dev/mtdblock${MTD_PART} of=/tmp/${part}.bin bs=1M
+		RD_OFFSET=$(find_hdr -g /tmp/${part}.bin)
+		# no header, skip
+		if [ $RD_OFFSET -lt 0 ]; then
+                    rm /tmp/${part}.bin
+		else
+                    BLOCK_SIZE=$(largest_blocksize $RD_OFFSET)
+                    # found GZIP header, it's at RD_OFFSET
+		    dd if=/tmp/${part}.bin of=/tmp/initrd-${part}.gz bs=$BLOCK_SIZE skip=$(($RD_OFFSET/$BLOCK_SIZE))
+		    rm /tmp/${part}.bin
+		    # extract the kernel modules from initrd.gz
+		    cd /tmp && gzip -dc /tmp/initrd-${part}.gz | cpio -idu lib/modules/*.ko lib/modules/${mod_dir}
+                    rm /tmp/initrd-${part}.gz
+		    # check the module version
+		    RD_KVER=$(strings /tmp/lib/modules/${mod_dir}/vtss_core.ko | grep 'vermagic=' | awk -F'=' '{print $2}' | awk -F'-' '{print $1}')
+		    if [ "$RD_KVER" != "$KVER" ]; then
+                        echo "$part contains modules for $RD_KVER, but we booted $KVER"
+			# clean up modules
+			rm -rf /tmp/lib
+                    else
+                        echo "Found kernel modules in $part"
+	                export MOD_PATH=/tmp/lib/modules
+                        load_modules
+			# we loaded the modules, bail
+			return
+                    fi
+	        fi
+            done
+            echo "Couldn't find kernel modules for $KVER"
+        else
+            echo "Kernel modules are missing and find_hdr is not present!"
+        fi
+    else
+        # the modules exist in squashfs
+        export MOD_PATH=/lib/modules
+        load_modules
+    fi
+}
+
+start() {
+    # figure out the switch board
+    determine_board
+    fwcutter
 }
 
 stop() {

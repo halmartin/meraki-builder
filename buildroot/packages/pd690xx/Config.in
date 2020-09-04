@@ -1,0 +1,4 @@
+config BR2_PACKAGE_PD690XX
+bool "pd690xx"
+help
+The pd690xx utility is used to manage the Microsemi PD690xx series of PoE power management chips

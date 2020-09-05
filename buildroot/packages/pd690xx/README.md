@@ -4,9 +4,17 @@ The `pd690xx` program does basic PoE management on Meraki MS220-P series switche
 
 ## Usage
 
-* `-d #` (disable PoE on port number #)
-* `-e #` (enable PoE on port number #)
-* `-p` (get total PoE delivered power; Watts)
+```
+Usage: pd690xx [OPTIONS]
+Options:
+        -b [BUS]        Selects a different I2C bus (default 1)
+        -d [PORT]       Disable PoE on port PORT
+        -e [PORT]       Enable PoE on port PORT
+        -h              Program usage
+        -p [PORT]       Print PoE power consumption (system total, or on port PORT)
+        -r [PORT]       Reset PoE on port PORT
+        -t              Display average junction temperature (deg C) of pd690xx
+```
 
 **Example 1**: Disable PoE on port 2
 ```
@@ -17,10 +25,9 @@ Port 2 PoE disabled
 **Example 2**: Get total power delivered through PoE across all ports
 ```
 $ pd690xx -p
-2.3 W
+Total: 2.3 W
 ```
 
 ## Not implemented
 
 * `-b` (switch the I2C bus used to communicate with the pd690xx; on larger switches `/dev/i2c-2` is used)
-* `-t` (supposed to get the pd690xx temperature, but the formula to convert to Celsius in the datasheet makes ZERO SENSE)

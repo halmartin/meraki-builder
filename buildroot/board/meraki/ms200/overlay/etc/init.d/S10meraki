@@ -19,7 +19,11 @@ start() {
     fi
 
     sysctl -w net.ipv4.ip_local_reserved_ports=50000-50127
-    if [ $(lsmod | grep -v vc_click) -eq 0 ]; then
+
+    # Check to see if vc_click module has loaded
+    lsmod | grep -q vc_click
+
+    if [ $? -ne 0 ]; then
         echo "vc_click isn't loaded; aborting!"
         exit
     elif [ ! -d /click/client_ip_table ]; then

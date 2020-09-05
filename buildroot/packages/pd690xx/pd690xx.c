@@ -242,12 +242,12 @@ void usage(char **argv) {
     char* binary = basename(argv[0]);
     printf("Usage: %s [OPTIONS]\n", binary);
     printf("Options:\n");
-    printf("\t-b [BUS]\tSelects a different I2C bus (default 1)\n");
-    printf("\t-d [PORT]\tDisable PoE on port PORT\n");
-    printf("\t-e [PORT]\tEnable PoE on port PORT\n");
+    printf("\t-b <BUS>\tSelects a different I2C bus (default 1)\n");
+    printf("\t-d <PORT>\tDisable PoE on port PORT\n");
+    printf("\t-e <PORT>\tEnable PoE on port PORT\n");
     printf("\t-h\t\tProgram usage\n");
     printf("\t-p [PORT]\tPrint PoE power consumption (system total, or on port PORT)\n");
-    printf("\t-r [PORT]\tReset PoE on port PORT\n");
+    printf("\t-r <PORT>\tReset PoE on port PORT\n");
     printf("\t-t\t\tDisplay average junction temperature (deg C) of pd690xx\n");
 }
 

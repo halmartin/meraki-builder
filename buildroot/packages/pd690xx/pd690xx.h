@@ -52,4 +52,23 @@
 #define PORT_CONFIG 1
 #define PORT_POWER 2
 
+// Used for the port status
+#define PORT_DISABLED 0
+#define PORT_ENABLED 1
+#define PORT_FORCED 2
+#define PORT_MODE_AF 0
+#define PORT_MODE_AT 1
+#define PORT_PRIO_CRIT 0
+#define PORT_PRIO_HIGH 1
+#define PORT_PRIO_LOW 2
+
+int port_able(int, int);
+int port_enable(int);
+int port_disable(int);
+int port_force(int);
+int port_state(int);
+int port_type(int);
+int port_priority(int);
+void list_all();
+
 #endif

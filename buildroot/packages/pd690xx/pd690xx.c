@@ -3,9 +3,7 @@
 #include <fcntl.h>
 
 #include <linux/i2c-dev.h>
-#ifndef I2C_M_RD
 #include <linux/i2c.h>
-#endif
 
 // getopt
 #include <ctype.h>
@@ -28,11 +26,16 @@ typedef unsigned int   u16;
 
 // Global file descriptor used to talk to the I2C bus:
 int i2c_fd = -1;
-// Default RPi B device name for the I2C bus exposed on GPIO2,3 pins (GPIO2=SDA, GPIO3=SCL): 
-const char *i2c_fname = "/dev/i2c-1";
+// define the static part of the file path
+const char *i2c_fname_base = "/dev/i2c-";
+// global variable to allow changing with -b
+int i2c_dev = 1;
+char i2c_fname[11];
 
 // Returns a new file descriptor for communicating with the I2C bus:
 int i2c_init(void) {
+    strcat(i2c_fname, i2c_fname_base);
+    snprintf(&i2c_fname[9], 2, "%d", i2c_dev);
     if ((i2c_fd = open(i2c_fname, O_RDWR)) < 0) {
         char err[200];
         sprintf(err, "open('%s') in i2c_init", i2c_fname);
@@ -139,58 +142,53 @@ unsigned int port_base_addr(int type, int port) {
     return (port_base-2)+(unsigned int)(port*2);
 }
 
-int port_disable(int port) {
-    if (port > 11) {
+int port_able(int op, int port) {
+    const char *operation[4] = {"disabl", "enabl", "forc", "reserv"};
+    if (port > 12) {
         printf("Invalid port number: %d\n", port);
         return -1;
     }
     u16 res;
-    u16 port_addr;
-    port_addr = port_base_addr(PORT_CONFIG, port);
-    #ifdef DEBUG
-        printf("Port addr: %02X\n", port_addr);
-    #endif
-    // disable the port
-    res = i2c_write(PD690XX_I2C_ADDR, port_addr, 0x00);
-    if (res != 0) {
-        printf("Error disabling port %d\n", port);
-        return -1;
-    }
-    // sleep before we poll the port register
-    usleep(100000);
-    i2c_read(PD690XX_I2C_ADDR, port_addr, &res);
-    if ((res & 0x03) == 0) {
-        printf("Port %d PoE disabled\n", port);
-        return 0;
-    }
-    return -1;
-}
-
-int port_enable(int port) {
-    if (port > 11) {
-        printf("Invalid port number: %d\n", port);
-        return -1;
-    }
-    u16 res;
+    u16 reg;
     u16 port_addr = port_base_addr(PORT_CONFIG, port);
     #ifdef DEBUG
         printf("Port addr: %02X\n", port_addr);
     #endif
-    // disable the port
-    res = i2c_write(PD690XX_I2C_ADDR, port_addr, 0x01);
+    i2c_read(PD690XX_I2C_ADDR, port_addr, &reg);
+    switch(op) {
+        case PORT_DISABLED:
+            res = i2c_write(PD690XX_I2C_ADDR, port_addr, reg & 0xFC);
+            break;
+        case PORT_ENABLED:
+            res = i2c_write(PD690XX_I2C_ADDR, port_addr, (reg & 0xFD) | 0x01);
+            break;
+        case PORT_FORCED:
+            res = i2c_write(PD690XX_I2C_ADDR, port_addr, (reg & 0xFC) | 0x02);
+            break;
+    }
     if (res != 0) {
-        printf("Error enabling port %d\n", port);
+        printf("Error %sing port %d\n", operation[op], port);
         return -1;
     }
     // sleep before we poll the port register
     usleep(100000);
-    i2c_read(PD690XX_I2C_ADDR, port_addr, &res);
-    if ((res & 0x03) == 1) {
-        printf("Port %d PoE enabled\n", port);
-        return 0;
-    }
-    return -1;
+    i2c_read(PD690XX_I2C_ADDR, port_addr, &reg);
+    printf("Port %d: %sed\n", port, operation[(reg & 0x03)]);
+    return 0;
 }
+
+int port_disable(int port) {
+    return port_able(PORT_DISABLED, port);
+}
+
+int port_enable(int port) {
+    return port_able(PORT_ENABLED, port);
+}
+
+int port_force(int port) {
+    return port_able(PORT_FORCED, port);
+}
+
 
 int port_reset(int port) {
     port_disable(port);
@@ -203,6 +201,81 @@ float port_power(int port) {
     u16 res;
     i2c_read(PD690XX_I2C_ADDR, port_base_addr(PORT_POWER, port), &res);
     return (float)res/10;
+}
+
+int port_state(int port) {
+    u16 res;
+    int port_enabled = -1;
+    if (port > 12) {
+        return -1;
+    }
+    i2c_read(PD690XX_I2C_ADDR, port_base_addr(PORT_CONFIG, port), &res);
+    port_enabled = res & 0x03;
+    #ifdef DEBUG
+    switch(port_enabled) {
+        case PORT_DISABLED:
+            printf("Port %d: disabled\n", port);
+            break;
+        case PORT_ENABLED:
+            printf("Port %d: enabled\n", port);
+            break;
+        case PORT_FORCED:
+            printf("Port %d: forced\n", port);
+            break;
+        default:
+            printf("Port %d: unknown\n", port);
+    }
+    #endif
+    return port_enabled;
+}
+
+int port_type(int port) {
+    u16 res;
+    int port_mode = -1;
+    if (port > 12) {
+        return -1;
+    }
+    i2c_read(PD690XX_I2C_ADDR, port_base_addr(PORT_CONFIG, port), &res);
+    port_mode = (res & 0x30) >> 4;
+    #ifdef DEBUG
+    switch(port_mode) {
+        case PORT_MODE_AF:
+            printf("Port %d: 802.3af\n", port);
+            break;
+        case PORT_MODE_AT:
+            printf("Port %d: 802.3at\n", port);
+            break;
+        default:
+            printf("Port %d: unknown\n", port);
+    }
+    #endif
+    return port_mode;
+}
+
+int port_priority(int port) {
+    u16 res;
+    int port_prio = -1;
+    if (port > 12) {
+        return -1;
+    }
+    i2c_read(PD690XX_I2C_ADDR, port_base_addr(PORT_CONFIG, port), &res);
+    port_prio = res & 0xC0;
+    #ifdef DEBUG
+    switch(port_prio) {
+        case PORT_PRIO_CRIT:
+            printf("Port %d: Critical\n", port);
+            break;
+        case PORT_PRIO_HIGH:
+            printf("Port %d: High\n", port);
+            break;
+        case PORT_PRIO_LOW:
+            printf("Port %d: Low\n", port);
+            break;
+        default:
+            printf("Port %d: unknown\n", port);
+    }
+    #endif
+    return port_prio;
 }
 
 int get_temp(void) {
@@ -227,13 +300,70 @@ int get_power(int port) {
         printf("Total: %.1f W\n", (float)res/10);
     } else {
         // optarg was a port number, so get power for a specific port
-        if (port > 11) {
+        if (port > 12) {
             return -1;
         }
         float power = port_power(port);
         printf("Port %d: %.1f W\n", port, power);
     }
     return 0;
+}
+
+int get_voltage() {
+    u16 res;
+    i2c_read(PD690XX_I2C_ADDR, VMAIN, &res);
+    printf("%.1f V\n", (float)(res*0.061)); 
+    return 0;
+}
+
+void list_all() {
+    u16 res;
+    printf("Port\tStatus\t\tType\tPriority\tPower\n");
+    for (int i=1; i<13; i++) {
+        // print port number
+        printf("%d\t", i);
+        // print port status
+        switch(port_state(i)) {
+            case PORT_DISABLED:
+                printf("Disabled\t");
+                break;
+            case PORT_ENABLED:
+                printf("Enabled\t\t");
+                break;
+            case PORT_FORCED:
+                printf("Forced\t\t");
+                break;
+            default:
+                printf("Unknown\t");
+        }
+        // print port type
+        switch(port_type(i)) {
+            case PORT_MODE_AF:
+                printf("af\t");
+                break;
+            case PORT_MODE_AT:
+                printf("at\t");
+                break;
+            default:
+                printf("Unknown\t");
+        }
+        // print port priority
+        switch(port_priority(i)) {
+            case PORT_PRIO_CRIT:
+                printf("Critical\t");
+                break;
+            case PORT_PRIO_HIGH:
+                printf("High\t\t");
+                break;
+            case PORT_PRIO_LOW:
+                printf("Low\t\t");
+                break;
+            default:
+                printf("Unknown\t");
+        }
+        // print port power
+        printf("%.1f\n", port_power(i));
+    }
 }
 
 void usage(char **argv) {
@@ -245,36 +375,63 @@ void usage(char **argv) {
     printf("\t-b <BUS>\tSelects a different I2C bus (default 1)\n");
     printf("\t-d <PORT>\tDisable PoE on port PORT\n");
     printf("\t-e <PORT>\tEnable PoE on port PORT\n");
+    printf("\t-f <PORT>\tForce PoE on port PORT\n");
     printf("\t-h\t\tProgram usage\n");
+    printf("\t-l\t\tList all port statuses\n");
     printf("\t-p [PORT]\tPrint PoE power consumption (system total, or on port PORT)\n");
     printf("\t-r <PORT>\tReset PoE on port PORT\n");
+    printf("\t-s\t\tDisplay PoE voltage\n");
     printf("\t-t\t\tDisplay average junction temperature (deg C) of pd690xx\n");
 }
 
 int main (int argc, char **argv) {
-    // if no options provided, print help
-    if (argc == 1) {
-        usage(argv);
-    }
     u16 bus;
     int port = -1;
+    int ret_val = 0;
     int c;
     // https://www.gnu.org/savannah-checkouts/gnu/libc/manual/html_node/Example-of-Getopt.html
-    while (( c = getopt (argc, argv, "hd:e:tp::r:b:")) != -1) {
+    if (argc == 1) {
+        usage(argv);
+        return 0;
+    }
+    while (( c = getopt (argc, argv, "htsld:e:f:r:b:p::")) != -1) {
       switch(c) {
         case 'b':
-          bus = atoi(optarg);
+          i2c_dev = atoi(optarg);
+          if (i2c_dev < 1 || i2c_dev > 3) {
+              return 1;
+          }
           break;
         case 'd':
           i2c_init();
           if (i2c_fd > 0) {
               port_disable(atoi(optarg));
+          } else {
+              ret_val = 1;
           }
           break;
         case 'e':
           i2c_init();
           if (i2c_fd > 0) {
               port_enable(atoi(optarg));
+          } else {
+              ret_val = 1;
+          }
+          break;
+        case 'f':
+          i2c_init();
+          if (i2c_fd > 0) {
+              port_force(atoi(optarg));
+          } else {
+              ret_val = 1;
+          }
+          break;
+        case 'l':
+          i2c_init();
+          if (i2c_fd > 0) {
+              list_all();
+          } else {
+              ret_val = 1;
           }
           break;
         case 'p':
@@ -289,26 +446,41 @@ int main (int argc, char **argv) {
           i2c_init();
           if (i2c_fd > 0) {
               get_power(port);
-          }
-          break;
-        case 't':
-          i2c_init();
-          if (i2c_fd > 0) {
-              get_temp();
+          } else {
+              ret_val = 1;
           }
           break;
         case 'r':
           i2c_init();
           if (i2c_fd > 0) {
               port_reset(atoi(optarg));
+          } else {
+              ret_val = 1;
           }
           break;
+        case 's':
+          i2c_init();
+          if (i2c_fd > 0) {
+              get_voltage();
+          } else {
+              ret_val = 1;
+          }
+          break;
+        case 't':
+          i2c_init();
+          if (i2c_fd > 0) {
+              get_temp();
+          } else {
+              ret_val = 1;
+          }
+          break;
+        case 'h':
         case '?':
           usage(argv);
-          return 1;
-        case 'h':
+          break;
         default:
           usage(argv);
+          ret_val = 1;
           break;
       }
     }
@@ -317,4 +489,5 @@ int main (int argc, char **argv) {
     if (i2c_fd > 0) {
         i2c_close();
     }
+    return ret_val;
 }

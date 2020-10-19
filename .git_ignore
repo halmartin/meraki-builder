@@ -1,0 +1,5 @@
+# ignore local binaries
+nor/bin/*
+nor/vmlinux*
+nor/vmlinuz*
+nor/*.bin

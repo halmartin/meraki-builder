@@ -168,8 +168,9 @@ start() {
     echo -e "gateway_good 0" > /click/mtun_client_state/update_node_state
     MY_IP=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep ip= | awk -F'=' '{print $2}')
     TRIES=0
+    echo -n "Waiting for IP address"
     while [ "$MY_IP" == "" ]; do
-      echo "Waiting for IP address..."
+      echo -n "."
       sleep 1
       MY_IP=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep ip= | awk -F'=' '{print $2}')
       SUBNET=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep subnet= | awk -F'=' '{print $2}')
@@ -185,6 +186,7 @@ start() {
         break
       fi
     done
+    echo
     echo "Using IP address: $MY_IP"
     echo -e "$MY_IP $SUBNET $GATEWAY 1500 $BROADCAST 1" > /click/set_host_ip/run
     echo -e "fe80::8a15:44ff:fe23:1115 :: 0 :: 1500 0" > /click/set_host_ip6/run

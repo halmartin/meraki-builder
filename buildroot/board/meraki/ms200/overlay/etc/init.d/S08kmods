@@ -58,7 +58,7 @@ determine_board() {
         mod_dir=luton26
         switch_board=MERAKI_BOARD_MS220_24
         echo 24 > /tmp/NUM_PORTS
-    elif [ $(echo $model | grep -c MS220-48) -eq 1 ] || [ $(echo $model | grep -c meraki_elemental) -eq 1]; then
+    elif [ $(echo $model | grep -c MS220-48) -eq 1 ] || [ $(echo $model | grep -c meraki_elemental) -eq 1 ]; then
         mod_dir=jaguar_dual
         switch_board=MERAKI_BOARD_MS220_48
         echo 52 > /tmp/NUM_PORTS

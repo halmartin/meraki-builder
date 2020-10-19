@@ -20,8 +20,16 @@ determine_board() {
                 echo MODEL=${model} > /etc/boardinfo 
             fi
         fi
-    else
+    fi
+
+    if [ $(echo $model | grep -c -E "MS220-8P|MS220-24|MS220-48|MS320-24|MS320-48|MS22|MS42|meraki_elemental") -ne 1 ]; then
+        # boardinfo didn't have an expected model string, fall back to cpuinfo detection
         # fall back to detection based on cpuinfo, WILL PROBABLY BE WRONG
+        echo "!!! IMPORTANT !!!"
+        echo -n "Falling back to cpuinfo board detection, "
+        echo -n "your board model is: ${model}, "
+        echo "please open an issue on github.com/halmartin/meraki-builder"
+        echo "!!! IMPORTANT !!!"
         cpuinfo=$(cat /proc/cpuinfo)
         if echo $cpuinfo | egrep -q "VSC7425$"; then
             # MS220-8P use luton26
@@ -29,14 +37,19 @@ determine_board() {
         elif echo $cpuinfo | egrep -q "VSC7427$"; then
             # MS22 and MS220-24 use luton26
             model="MS22 MS220-24"
+            mod_dir=luton26
         elif echo $cpuinfo | egrep -q "VSC7434$"; then
             # not sure what the MS320-24 cpuinfo is, maybe someone can check
             model="MS320-24"
+            mod_dir=jaguar
         elif echo $cpuinfo | egrep -q "VSC7434 Dual$"; then
             # MS220-48 and MS320-48 also use jaguar_dual
             model="MS42 MS220-48 MS320-48"
+            mod_dir=jaguar_dual
         fi
     fi
+
+    # detect the mod_dir and switch_board from boardinfo
     if [ $(echo $model | grep -c MS220-8P) -eq 1 ]; then
         mod_dir=luton26
         switch_board=MERAKI_BOARD_MS220_8
@@ -45,7 +58,7 @@ determine_board() {
         mod_dir=luton26
         switch_board=MERAKI_BOARD_MS220_24
         echo 24 > /tmp/NUM_PORTS
-    elif [ $(echo $model | grep -c MS220-48) -eq 1 ]; then
+    elif [ $(echo $model | grep -c MS220-48) -eq 1 ] || [ $(echo $model | grep -c meraki_elemental) -eq 1]; then
         mod_dir=jaguar_dual
         switch_board=MERAKI_BOARD_MS220_48
         echo 52 > /tmp/NUM_PORTS
@@ -114,6 +127,51 @@ largest_blocksize() {
     echo $max_size
 }
 
+check_and_load() {
+    KVER=$(uname -r | awk -F'-' '{print $1}')
+    # check the module version
+    RD_KVER=$(strings /tmp/lib/modules/${mod_dir}/vtss_core.ko | grep 'vermagic=' | awk -F'=' '{print $2}' | awk -F'-' '{print $1}')
+    if [ "$RD_KVER" != "$KVER" ]; then
+        echo "$part contains modules for $RD_KVER, but we booted $KVER"
+        # clean up modules
+        rm -rf /tmp/lib/modules
+    else
+        echo "Found kernel modules in $part"
+        export MOD_PATH=/tmp/lib/modules
+        load_modules
+        # we loaded the modules, bail
+        return
+    fi
+}
+
+dump_modules() {
+    MTD_PART=$(grep ${part} /proc/mtd | awk -F':' '{print $1}' | grep -o '[[:digit:]]*')
+    MTD_SIZE=$(grep ${part} /proc/mtd | awk '{print $2}')
+    if [ $(df /tmp | tail -1 | awk '{print $4}') -lt $MTD_SIZE ]; then
+        # we don't have space in /tmp to dump the ${part}
+        echo "Insufficient space in /tmp, using slower dumping method"
+        RD_OFFSET=$(find_hdr -g /dev/mtdblock${MTD_PART})
+        BLOCK_SIZE=$(largest_blocksize $RD_OFFSET)
+        cd /tmp
+        dd if=/dev/mtdblock${MTD_PART} bs=$BLOCK_SIZE skip=$(($RD_OFFSET/$BLOCK_SIZE)) | gzip -dc | cpio -idu lib/modules/*.ko lib/modules/${mod_dir}
+        RD_KVER=$(strings /tmp/lib/modules/${mod_dir}/vtss_core.ko | grep 'vermagic=' | awk -F'=' '{print $2}' | awk -F'-' '{print $1}')
+   fi
+   dd if=/dev/mtdblock${MTD_PART} of=/tmp/${part}.bin bs=1M
+   RD_OFFSET=$(find_hdr -g /tmp/${part}.bin)
+   # no header, skip
+   if [ $RD_OFFSET -lt 0 ]; then
+       rm /tmp/${part}.bin
+   else
+       BLOCK_SIZE=$(largest_blocksize $RD_OFFSET)
+       # found GZIP header, it's at RD_OFFSET
+       dd if=/tmp/${part}.bin of=/tmp/initrd-${part}.gz bs=$BLOCK_SIZE skip=$(($RD_OFFSET/$BLOCK_SIZE))
+       rm /tmp/${part}.bin
+       # extract the kernel modules from initrd.gz
+       cd /tmp && gzip -dc /tmp/initrd-${part}.gz | cpio -idu lib/modules/*.ko lib/modules/${mod_dir}
+       rm /tmp/initrd-${part}.gz
+   fi
+}
+
 fwcutter() {
     # check that the kernel modules exist
     if [ ! -d /lib/modules/${mod_dir} ]; then
@@ -127,6 +185,16 @@ fwcutter() {
             fw_regions="part1 part2"
             for part in $fw_regions; do
                 MTD_PART=$(grep ${part} /proc/mtd | awk -F':' '{print $1}' | grep -o '[[:digit:]]*')
+                MTD_SIZE=$(grep ${part} /proc/mtd | awk '{print $2}')
+                if [ $(df /tmp | tail -1 | awk '{print $4}') -lt $MTD_SIZE ]; then
+                    # we don't have space in /tmp to dump the ${part}
+                    echo "Insufficient space in /tmp, using slower dumping method"
+                    RD_OFFSET=$(find_hdr -g /dev/mtdblock${MTD_PART})
+                    BLOCK_SIZE=$(largest_blocksize $RD_OFFSET)
+                    cd /tmp
+                    dd if=/dev/mtdblock${MTD_PART} bs=$BLOCK_SIZE skip=$(($RD_OFFSET/$BLOCK_SIZE)) | gzip -dc | cpio -idu lib/modules/*.ko lib/modules/${mod_dir}
+                    RD_KVER=$(strings /tmp/lib/modules/${mod_dir}/vtss_core.ko | grep 'vermagic=' | awk -F'=' '{print $2}' | awk -F'-' '{print $1}')
+                fi
                 dd if=/dev/mtdblock${MTD_PART} of=/tmp/${part}.bin bs=1M
                 RD_OFFSET=$(find_hdr -g /tmp/${part}.bin)
                 # no header, skip

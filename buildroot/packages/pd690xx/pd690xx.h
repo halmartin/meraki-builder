@@ -1,7 +1,10 @@
 #ifndef pd690xx
 #define pd690xx
 // gathered from I2C trace of libpoecore
-#define PD690XX_I2C_ADDR 0x30
+#define PD690XX0_I2C_ADDR 0x30
+#define PD690XX1_I2C_ADDR 0x31
+#define PD690XX2_I2C_ADDR 0x33
+#define PD690XX3_I2C_ADDR 0x35
 
 // All values sourced from Auto Mode PD690xx Registers Map
 
@@ -62,6 +65,14 @@
 #define PORT_PRIO_HIGH 1
 #define PORT_PRIO_LOW 2
 
+int i2c_init();
+void i2c_close();
+int i2c_write(int, unsigned char, unsigned int, unsigned int);
+int i2c_read(int, unsigned char, unsigned int, unsigned int *);
+unsigned char get_pd690xx_addr(int);
+int pd690xx_bus(int);
+int pd690xx_pres_count();
+unsigned int port_base_addr(int, int);
 int port_able(int, int);
 int port_enable(int);
 int port_disable(int);

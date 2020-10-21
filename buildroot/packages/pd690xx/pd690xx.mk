@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PD690XX_VERSION = 0.2
+PD690XX_VERSION = 0.31
 PD690XX_SITE = package/pd690xx
 PD690XX_SITE_METHOD = local
 PD690XX_INSTALL_TARGET = YES

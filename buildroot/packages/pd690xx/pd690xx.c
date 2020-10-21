@@ -24,40 +24,77 @@
 typedef unsigned char   u8;
 typedef unsigned int   u16;
 
-// Global file descriptor used to talk to the I2C bus:
-int i2c_fd = -1;
+// Global array of file descriptors used to talk to the I2C bus 1 and 2
+int i2c_fds[2] = {-1, -1};
+// hold pd690xx addresses
+u8 pd690xx_addrs[4] = {PD690XX0_I2C_ADDR, PD690XX1_I2C_ADDR, PD690XX2_I2C_ADDR, PD690XX3_I2C_ADDR};
+// detect if the pd690xx devices are present
+int pd690xx_pres[4] = {0,0,0,0};
 // define the static part of the file path
 const char *i2c_fname_base = "/dev/i2c-";
-// global variable to allow changing with -b
-int i2c_dev = 1;
 char i2c_fname[11];
 
-// Returns a new file descriptor for communicating with the I2C bus:
 int i2c_init(void) {
-    strcat(i2c_fname, i2c_fname_base);
-    snprintf(&i2c_fname[9], 2, "%d", i2c_dev);
-    if ((i2c_fd = open(i2c_fname, O_RDWR)) < 0) {
-        char err[200];
-        sprintf(err, "open('%s') in i2c_init", i2c_fname);
-        perror(err);
-        return -1;
+    int i2c_fd;
+    for (int i2c_dev=0; i2c_dev<1; i2c_dev++) {
+      snprintf(i2c_fname, sizeof(i2c_fname), "%s%d", i2c_fname_base, i2c_dev+1);
+      if ((i2c_fd = open(i2c_fname, O_RDWR)) < 0) {
+        // couldn't open the device
+        i2c_fds[i2c_dev] = -1;
+      } else {
+        // save the file descriptor in the array of global file descriptors
+        i2c_fds[i2c_dev] = i2c_fd;
+        u16 res;
+        switch (i2c_dev) {
+            case 0:
+                #ifdef DEBUG
+                    printf("/dev/i2c-0\n");
+                #endif
+                for (int i=0; i<4; i++) {
+                    // read the CFGC_ICVER register and if we get a response
+                    // mark the pd690xx as present
+                    #ifdef DEBUG
+                        printf("Probing I2C address %02X\n", pd690xx_addrs[i]);
+                    #endif
+                    i2c_read(i2c_fd, pd690xx_addrs[i], CFGC_ICVER, &res);
+                    if ((res >> 10) > 0) {
+                        pd690xx_pres[i] = 1;
+                    }
+                }
+                break;
+            case 1:
+                #ifdef DEBUG
+                    printf("/dev/i2c-1\n");
+                #endif
+                for (int i=2; i<4; i++) {
+                    #ifdef DEBUG
+                        printf("Probing I2C address %02X\n", pd690xx_addrs[i]);
+                    #endif
+                    i2c_read(i2c_fd, pd690xx_addrs[i], CFGC_ICVER, &res);
+                    if ((res >> 10) > 0) {
+                        pd690xx_pres[i] = 1;
+                    }
+                }
+                break;
+        }
+      }
     }
-
-    // NOTE we do not call ioctl with I2C_SLAVE here because we always use the I2C_RDWR ioctl operation to do
-    // writes, reads, and combined write-reads. I2C_SLAVE would be used to set the I2C slave address to communicate
-    // with. With I2C_RDWR operation, you specify the slave address every time. There is no need to use normal write()
-    // or read() syscalls with an I2C device which does not support SMBUS protocol. I2C_RDWR is much better especially
-    // for reading device registers which requires a write first before reading the response.
-
-    return i2c_fd;
+    #ifdef DEBUG
+        printf("Detected %d pd690xx\n", pd690xx_pres_count());
+    #endif
 }
 
-void i2c_close(void) {
-    close(i2c_fd);
+void i2c_close() {
+    // loop through i2c-1 and i2c-2 and close them if they were open
+    for (int i=0; i<2; i++){
+        if (i2c_fds[i] != -1) {
+            close(i2c_fds[i]);
+        }
+    }
 }
 
 // Write to an I2C slave device's register:
-int i2c_write(u8 slave_addr, u16 reg, u16 data) {
+int i2c_write(int i2c_fd, u8 slave_addr, u16 reg, u16 data) {
     int retval;
     u8 outbuf[4];
 
@@ -78,7 +115,11 @@ int i2c_write(u8 slave_addr, u16 reg, u16 data) {
     msgset[0].nmsgs = 1;
 
     if (ioctl(i2c_fd, I2C_RDWR, &msgset) < 0) {
-        perror("ioctl(I2C_RDWR) in i2c_write");
+        // we're going to relegate this to debug
+        // since it is expected to fire during pd690xx detection
+        #ifdef DEBUG
+            perror("ioctl(I2C_RDWR) in i2c_write");
+        #endif
         return -1;
     }
 
@@ -86,7 +127,7 @@ int i2c_write(u8 slave_addr, u16 reg, u16 data) {
 }
 
 // Read the given I2C slave device's register and return the read value in `*result`:
-int i2c_read(u8 slave_addr, u16 reg, u16 *result) {
+int i2c_read(int i2c_fd, u8 slave_addr, u16 reg, u16 *result) {
     int retval;
     u8 outbuf[2], inbuf[2];
     struct i2c_msg msgs[2];
@@ -113,7 +154,11 @@ int i2c_read(u8 slave_addr, u16 reg, u16 *result) {
 
     *result = 0;
     if (ioctl(i2c_fd, I2C_RDWR, &msgset) < 0) {
-        perror("ioctl(I2C_RDWR) in i2c_read");
+        // we're going to relegate this to debug
+        // since it is expected to fire during pd690xx detection
+        #ifdef DEBUG
+            perror("ioctl(I2C_RDWR) in i2c_read");
+        #endif
         return -1;
     }
 
@@ -124,6 +169,60 @@ int i2c_read(u8 slave_addr, u16 reg, u16 *result) {
     #endif
     *result = (u16)inbuf[0] << 8 | (u16)inbuf[1];
     return 0;
+}
+
+unsigned char get_pd690xx_addr(int port) {
+    // check the port number AND verify that the pd690xx is present
+    // on the bus before returning the address
+    int select = abs(port/12);
+    // can't have more than 4 pd690xx in the switch
+    // port number is too high
+    if (select > 3) {
+        return 0;
+    }
+    switch(pd690xx_pres[select]) {
+        case 0:
+            // selected pd690xx is not present
+            return 0;
+            break;
+        case 1:
+            // pd690xx is present, return I2C address
+            return pd690xx_addrs[select];
+            break;
+    }
+    // if (0 < port < 12) && (pd690xx_pres[0] == 1) {
+    //     return PD690XX0_I2C_ADDR;
+    // } elif (12 < port < 24) && (pd690xx_pres[1] == 1) {
+    //     return PD690XX1_I2C_ADDR;
+    // } elif (24 < port < 36) && (pd690xx_pres[2] == 1) {
+    //     return PD690XX2_I2C_ADDR;
+    // } elif (36 < port < 48) && (pd690xx_pres[3] == 1) {
+    //     return PD690XX3_I2C_ADDR;
+    // }
+    // port number was bogus or pd690xx was not present on bus
+    return 0;
+}
+
+int pd690xx_fd(int port) {
+    switch(port/12) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        default:
+            return i2c_fds[0];
+            break;
+    }
+}
+
+int pd690xx_pres_count(void) {
+    int total = 0;
+    for (int i=0; i<4; i++) {
+        if (pd690xx_pres[i] == 1) {
+            total++;
+        }
+    }
+    return total;
 }
 
 unsigned int port_base_addr(int type, int port) {
@@ -144,26 +243,27 @@ unsigned int port_base_addr(int type, int port) {
 
 int port_able(int op, int port) {
     const char *operation[4] = {"disabl", "enabl", "forc", "reserv"};
-    if (port > 12) {
-        printf("Invalid port number: %d\n", port);
-        return -1;
-    }
     u16 res;
     u16 reg;
+    u8 pd_addr = get_pd690xx_addr(port);
+    if (pd_addr == 0) {
+        return -1;
+    }
     u16 port_addr = port_base_addr(PORT_CONFIG, port);
     #ifdef DEBUG
         printf("Port addr: %02X\n", port_addr);
     #endif
-    i2c_read(PD690XX_I2C_ADDR, port_addr, &reg);
+    int i2c_fd = pd690xx_fd(port);
+    i2c_read(i2c_fd, pd_addr, port_addr, &reg);
     switch(op) {
         case PORT_DISABLED:
-            res = i2c_write(PD690XX_I2C_ADDR, port_addr, reg & 0xFC);
+            res = i2c_write(i2c_fd, pd_addr, port_addr, reg & 0xFC);
             break;
         case PORT_ENABLED:
-            res = i2c_write(PD690XX_I2C_ADDR, port_addr, (reg & 0xFD) | 0x01);
+            res = i2c_write(i2c_fd, pd_addr, port_addr, (reg & 0xFD) | 0x01);
             break;
         case PORT_FORCED:
-            res = i2c_write(PD690XX_I2C_ADDR, port_addr, (reg & 0xFC) | 0x02);
+            res = i2c_write(i2c_fd, pd_addr, port_addr, (reg & 0xFC) | 0x02);
             break;
     }
     if (res != 0) {
@@ -172,7 +272,7 @@ int port_able(int op, int port) {
     }
     // sleep before we poll the port register
     usleep(100000);
-    i2c_read(PD690XX_I2C_ADDR, port_addr, &reg);
+    i2c_read(i2c_fd, pd_addr, port_addr, &reg);
     printf("Port %d: %sed\n", port, operation[(reg & 0x03)]);
     return 0;
 }
@@ -199,17 +299,24 @@ int port_reset(int port) {
 
 float port_power(int port) {
     u16 res;
-    i2c_read(PD690XX_I2C_ADDR, port_base_addr(PORT_POWER, port), &res);
+    u8 pd_addr = get_pd690xx_addr(port);
+    if (pd_addr == 0) {
+        return -1;
+    }
+    int i2c_fd = pd690xx_fd(port);
+    i2c_read(i2c_fd, pd_addr, port_base_addr(PORT_POWER, port), &res);
     return (float)res/10;
 }
 
 int port_state(int port) {
     u16 res;
     int port_enabled = -1;
-    if (port > 12) {
+    u8 pd_addr = get_pd690xx_addr(port);
+    if (pd_addr == 0) {
         return -1;
     }
-    i2c_read(PD690XX_I2C_ADDR, port_base_addr(PORT_CONFIG, port), &res);
+    int i2c_fd = pd690xx_fd(port);
+    i2c_read(i2c_fd, pd_addr, port_base_addr(PORT_CONFIG, port), &res);
     port_enabled = res & 0x03;
     #ifdef DEBUG
     switch(port_enabled) {
@@ -232,10 +339,12 @@ int port_state(int port) {
 int port_type(int port) {
     u16 res;
     int port_mode = -1;
-    if (port > 12) {
+    u8 pd_addr = get_pd690xx_addr(port);
+    if (pd_addr == 0) {
         return -1;
     }
-    i2c_read(PD690XX_I2C_ADDR, port_base_addr(PORT_CONFIG, port), &res);
+    int i2c_fd = pd690xx_fd(port);
+    i2c_read(i2c_fd, pd_addr, port_base_addr(PORT_CONFIG, port), &res);
     port_mode = (res & 0x30) >> 4;
     #ifdef DEBUG
     switch(port_mode) {
@@ -255,10 +364,12 @@ int port_type(int port) {
 int port_priority(int port) {
     u16 res;
     int port_prio = -1;
-    if (port > 12) {
+    u8 pd_addr = get_pd690xx_addr(port);
+    if (pd_addr == 0) {
         return -1;
     }
-    i2c_read(PD690XX_I2C_ADDR, port_base_addr(PORT_CONFIG, port), &res);
+    int i2c_fd = pd690xx_fd(port);
+    i2c_read(i2c_fd, pd_addr, port_base_addr(PORT_CONFIG, port), &res);
     port_prio = res & 0xC0;
     #ifdef DEBUG
     switch(port_prio) {
@@ -280,13 +391,14 @@ int port_priority(int port) {
 
 int get_temp(void) {
     u16 res;
-    float temperature;
-    i2c_read(PD690XX_I2C_ADDR, AVG_JCT_TEMP, &res);
+    int pd690xx_count = pd690xx_pres_count();
     // this seems _kind of_ sane, but I'm not sure
     // the datasheet has two different versions of the formula
     // and nothing about a sign bit, since it's -200 to 400 C
-    temperature = (((int)res-684)/-1.514)-40;
-    printf("%.1f C\n", temperature);
+    for (int i=0; i<pd690xx_count; i++) {
+        i2c_read(pd690xx_fd(i*12), pd690xx_addrs[i], AVG_JCT_TEMP, &res);
+        printf("%.1f C\n", (((int)res-684)/-1.514)-40);
+    }
     return 0;
 }
 
@@ -294,15 +406,17 @@ int get_power(int port) {
     u16 res;
     // only -p was specified, get system power
     if (port == 0) {
-        i2c_write(PD690XX_I2C_ADDR, UPD_POWER_MGMT_PARAMS, 0x01);
-        usleep(100000);
-        i2c_read(PD690XX_I2C_ADDR, SYS_TOTAL_POWER, &res);
-        printf("Total: %.1f W\n", (float)res/10);
+        float total = 0;
+        int pd690xx_count = pd690xx_pres_count();
+        for (int i=0; i<pd690xx_count; i++) {
+            i2c_write(pd690xx_fd(i*12), pd690xx_addrs[i], UPD_POWER_MGMT_PARAMS, 0x01);
+            usleep(100000);
+            i2c_read(pd690xx_fd(i*12), pd690xx_addrs[i], SYS_TOTAL_POWER, &res);
+            total += (float)res/10;
+        }
+        printf("Total: %.1f W\n", total);
     } else {
         // optarg was a port number, so get power for a specific port
-        if (port > 12) {
-            return -1;
-        }
         float power = port_power(port);
         printf("Port %d: %.1f W\n", port, power);
     }
@@ -311,15 +425,20 @@ int get_power(int port) {
 
 int get_voltage() {
     u16 res;
-    i2c_read(PD690XX_I2C_ADDR, VMAIN, &res);
-    printf("%.1f V\n", (float)(res*0.061)); 
+    float total = 0;
+    int pd690xx_count = pd690xx_pres_count();
+    for (int i=0; i<pd690xx_count; i++) {
+        i2c_read(pd690xx_fd(i*12), pd690xx_addrs[i], VMAIN, &res);
+        printf("%.1f V\n", (float)(res*0.061));
+    } 
     return 0;
 }
 
 void list_all() {
     u16 res;
     printf("Port\tStatus\t\tType\tPriority\tPower\n");
-    for (int i=1; i<13; i++) {
+    int total_ports = 12*pd690xx_pres_count();
+    for (int i=1; i<total_ports; i++) {
         // print port number
         printf("%d\t", i);
         // print port status
@@ -372,7 +491,6 @@ void usage(char **argv) {
     char* binary = basename(argv[0]);
     printf("Usage: %s [OPTIONS]\n", binary);
     printf("Options:\n");
-    printf("\t-b <BUS>\tSelects a different I2C bus (default 1)\n");
     printf("\t-d <PORT>\tDisable PoE on port PORT\n");
     printf("\t-e <PORT>\tEnable PoE on port PORT\n");
     printf("\t-f <PORT>\tForce PoE on port PORT\n");
@@ -385,7 +503,6 @@ void usage(char **argv) {
 }
 
 int main (int argc, char **argv) {
-    u16 bus;
     int port = -1;
     int ret_val = 0;
     int c;
@@ -394,17 +511,11 @@ int main (int argc, char **argv) {
         usage(argv);
         return 0;
     }
-    while (( c = getopt (argc, argv, "htsld:e:f:r:b:p::")) != -1) {
+    while (( c = getopt (argc, argv, "htsld:e:f:r:p::")) != -1) {
       switch(c) {
-        case 'b':
-          i2c_dev = atoi(optarg);
-          if (i2c_dev < 1 || i2c_dev > 3) {
-              return 1;
-          }
-          break;
         case 'd':
           i2c_init();
-          if (i2c_fd > 0) {
+          if (pd690xx_pres_count() > 0) {
               port_disable(atoi(optarg));
           } else {
               ret_val = 1;
@@ -412,7 +523,7 @@ int main (int argc, char **argv) {
           break;
         case 'e':
           i2c_init();
-          if (i2c_fd > 0) {
+          if (pd690xx_pres_count() > 0) {
               port_enable(atoi(optarg));
           } else {
               ret_val = 1;
@@ -420,7 +531,7 @@ int main (int argc, char **argv) {
           break;
         case 'f':
           i2c_init();
-          if (i2c_fd > 0) {
+          if (pd690xx_pres_count() > 0) {
               port_force(atoi(optarg));
           } else {
               ret_val = 1;
@@ -428,7 +539,7 @@ int main (int argc, char **argv) {
           break;
         case 'l':
           i2c_init();
-          if (i2c_fd > 0) {
+          if (pd690xx_pres_count() > 0) {
               list_all();
           } else {
               ret_val = 1;
@@ -444,7 +555,7 @@ int main (int argc, char **argv) {
               port = atoi(argv[optind]);
           }
           i2c_init();
-          if (i2c_fd > 0) {
+          if (pd690xx_pres_count() > 0) {
               get_power(port);
           } else {
               ret_val = 1;
@@ -452,7 +563,7 @@ int main (int argc, char **argv) {
           break;
         case 'r':
           i2c_init();
-          if (i2c_fd > 0) {
+          if (pd690xx_pres_count() > 0) {
               port_reset(atoi(optarg));
           } else {
               ret_val = 1;
@@ -460,7 +571,7 @@ int main (int argc, char **argv) {
           break;
         case 's':
           i2c_init();
-          if (i2c_fd > 0) {
+          if (pd690xx_pres_count() > 0) {
               get_voltage();
           } else {
               ret_val = 1;
@@ -468,7 +579,7 @@ int main (int argc, char **argv) {
           break;
         case 't':
           i2c_init();
-          if (i2c_fd > 0) {
+          if (pd690xx_pres_count() > 0) {
               get_temp();
           } else {
               ret_val = 1;
@@ -486,8 +597,6 @@ int main (int argc, char **argv) {
     }
 
     // close the file descriptor when exiting
-    if (i2c_fd > 0) {
-        i2c_close();
-    }
+    i2c_close();
     return ret_val;
 }

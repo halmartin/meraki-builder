@@ -18,15 +18,15 @@ Originally, "stage1" comes from a dump of the NOR firmware. As of late-2019, the
 
 ### RedBoot bootloader
 
-Download the binary from (here)[https://github.com/halmartin/MS42-GPL-sources-3-18-122/raw/master/redboot/redboot-nocrc-sz.bin] and save to `nor/bin/loader1`
+Download the binary from [here](https://github.com/halmartin/MS42-GPL-sources-3-18-122/raw/master/redboot/redboot-nocrc-sz.bin) and save to `nor/bin/loader1`
 
 ### Kernel
 
-Clone (switch-11-22-ms220)[https://github.com/halmartin/switch-11-22-ms220] and follow the instructions in the README to build the kernel
+Clone [switch-11-22-ms220](https://github.com/halmartin/switch-11-22-ms220) and follow the instructions in the README to build the kernel
 
 ### Rootfs
 
-Download (buildroot)[https://www.buildroot.org/download.html] and copy the contents of the `buildroot` directory in this repository over the buildroot source tree
+Download [buildroot](https://www.buildroot.org/download.html) and copy the contents of the `buildroot` directory in this repository over the buildroot source tree
 
 After building the toolchain + target filesystem with `make`, copy `output/images/rootfs.squashfs` to `nor/bin/squashfs`
 

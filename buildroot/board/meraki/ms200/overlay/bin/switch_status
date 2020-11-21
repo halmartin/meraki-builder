@@ -7,12 +7,15 @@
 CSPT=/click/switch_port_table
 
 if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
-  NUM_PORTS=$(cat ${CSPT}/dump_pports | tail -n+2 | wc -l)
+  port_statuses=$(cat ${CSPT}/dump_pports)
+  port_vlan_statuses=$(cat ${CSPT}/dump_pport_vlans)
+  port_poe_statuses=$(pd690xx -l)
+  NUM_PORTS=$(echo "$port_statuses" | tail -n+2 | wc -l)
   echo -n {\"ports\":{
   for i in $(seq 1 ${NUM_PORTS}); do
-    port_status=$(cat ${CSPT}/dump_pports | grep -E "^\s+$i\s")
-    port_vlan_status=$(cat ${CSPT}/dump_pport_vlans | grep -E "^\s+$i\s")
-    port_poe_status=$(pd690xx -l | grep -E "^$i")
+    port_status=$(echo "$port_statuses" | grep -E "^\s+$i\s")
+    port_vlan_status=$(echo "$port_vlan_statuses" | grep -E "^\s+$i\s")
+    port_poe_status=$(echo "$port_poe_statuses" | grep -E "^$i\s")
     # get the link state
     if [ $(echo $port_status | awk '{print $2}') -eq 0 ]; then
       link_state="down"
@@ -45,7 +48,7 @@ if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
     echo -n \"$i\":{\"link\": {\"state\": \"$link_state\", \"speed\": \"$link_speed\"}, \
 \"lacp\": \"$lacp_state\", \"enabled\": \"$port_state\", \
 \"vlan\": {\"pvid\": $port_pvid, \"allowed\": \"$port_allowed_vlans\"}, \
-\"poe\": {\"protocol\": \"802.3${poe_standard}\", \"state\": \"$poe_state\", \"power\": \"${poe_power}W\"}}
+\"poe\": {\"standard\": \"802.3${poe_standard}\", \"state\": \"$poe_state\", \"power\": \"${poe_power}\"}}
     if [ $i -ne ${NUM_PORTS} ]; then
       echo -n ,
     fi

@@ -19,6 +19,7 @@ if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
     # get the link state
     if [ $(echo $port_status | awk '{print $2}') -eq 0 ]; then
       link_state="down"
+      link_speed=0
     else
       link_state="up"
       # get the link speed
@@ -32,9 +33,9 @@ if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
     fi
     # is the port enabled (?)
     if [ $(echo $port_status | awk '{print $10}') -ne 0 ]; then
-      port_state="enabled"
+      port_state="true"
     else
-      port_state="disabled"
+      port_state="false"
     fi
     # okay, do VLANs now
     port_pvid=$(echo $port_vlan_status | awk '{print $6}')
@@ -42,13 +43,21 @@ if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
     port_untag_in=$(echo $port_vlan_status | awk '{print $3}')
     port_allowed_vlans=$(echo $port_vlan_status | awk '{print $11}')
     # parse PoE status
-    poe_state=$(echo $port_poe_status | awk '{print tolower($2)}')
+    if [ "$(echo $port_poe_status | awk '{print $2}')" == "Enabled" ]; then
+      poe_state=true
+    else
+      poe_state=false
+    fi
     poe_power=$(echo $port_poe_status | awk '{print $5}')
     poe_standard=$(echo $port_poe_status | awk '{print $3}')
-    echo -n \"$i\":{\"link\": {\"state\": \"$link_state\", \"speed\": \"$link_speed\"}, \
-\"lacp\": \"$lacp_state\", \"enabled\": \"$port_state\", \
-\"vlan\": {\"pvid\": $port_pvid, \"allowed\": \"$port_allowed_vlans\"}, \
-\"poe\": {\"standard\": \"802.3${poe_standard}\", \"state\": \"$poe_state\", \"power\": \"${poe_power}\"}}
+    echo -n \"$i\":{\"link\": {\"state\": \"$link_state\", \"speed\": $link_speed},
+    echo -n \"lacp\": \"$lacp_state\", \"enabled\": $port_state, \
+\"vlan\": {\"pvid\": $port_pvid, \"allowed\": \"$port_allowed_vlans\"}
+    if [ "$poe_standard" != "" ]; then
+      echo -n ,\"poe\": {\"standard\": \"802.3${poe_standard}\", \"enabled\": $poe_state, \"power\": ${poe_power}}}
+    else
+      echo -n }
+    fi
     if [ $i -ne ${NUM_PORTS} ]; then
       echo -n ,
     fi

@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+# Copyright (C) 2020 - Hal Martin (github.com/halmartin)
+#
+# This is a simple script to print the switch status (physical, link, vlan, poe) as JSON
+
+CSPT=/click/switch_port_table
+
+if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
+  NUM_PORTS=$(cat ${CSPT}/dump_pports | tail -n+2 | wc -l)
+  echo -n {\"ports\":{
+  for i in $(seq 1 ${NUM_PORTS}); do
+    port_status=$(cat ${CSPT}/dump_pports | grep -E "^\s+$i\s")
+    port_vlan_status=$(cat ${CSPT}/dump_pport_vlans | grep -E "^\s+$i\s")
+    port_poe_status=$(pd690xx -l | grep -E "^$i")
+    # get the link state
+    if [ $(echo $port_status | awk '{print $2}') -eq 0 ]; then
+      link_state="down"
+    else
+      link_state="up"
+      # get the link speed
+      link_speed=$(echo $port_status | awk '{print $3}')
+    fi
+    # get LACP (?) status
+    if [ $(echo $port_status | awk '{print $6}') -ne 0 ]; then
+      lacp_state="enabled"
+    else
+      lacp_state="disabled"
+    fi
+    # is the port enabled (?)
+    if [ $(echo $port_status | awk '{print $10}') -ne 0 ]; then
+      port_state="enabled"
+    else
+      port_state="disabled"
+    fi
+    # okay, do VLANs now
+    port_pvid=$(echo $port_vlan_status | awk '{print $6}')
+    port_tag_in=$(echo $port_vlan_status | awk '{print $2}')
+    port_untag_in=$(echo $port_vlan_status | awk '{print $3}')
+    port_allowed_vlans=$(echo $port_vlan_status | awk '{print $11}')
+    # parse PoE status
+    poe_state=$(echo $port_poe_status | awk '{print tolower($2)}')
+    poe_power=$(echo $port_poe_status | awk '{print $5}')
+    poe_standard=$(echo $port_poe_status | awk '{print $3}')
+    echo -n \"$i\":{\"link\": {\"state\": \"$link_state\", \"speed\": \"$link_speed\"}, \
+\"lacp\": \"$lacp_state\", \"enabled\": \"$port_state\", \
+\"vlan\": {\"pvid\": $port_pvid, \"allowed\": \"$port_allowed_vlans\"}, \
+\"poe\": {\"protocol\": \"802.3${poe_standard}\", \"state\": \"$poe_state\", \"power\": \"${poe_power}W\"}}
+    if [ $i -ne ${NUM_PORTS} ]; then
+      echo -n ,
+    fi
+  done
+  # finish our very ghetto JSON
+  echo }}
+fi

@@ -6,8 +6,8 @@ The `pd690xx` program does basic PoE management on Meraki MS220-P series switche
 
 ```
 Usage: pd690xx [OPTIONS]
+v0.31
 Options:
-        -b <BUS>        Selects a different I2C bus (default 1)
         -d <PORT>       Disable PoE on port PORT
         -e <PORT>       Enable PoE on port PORT
         -f <PORT>       Force PoE on port PORT
@@ -25,7 +25,7 @@ $ pd690xx -d 2
 Port 2 PoE disabled
 ```
 
-**Example 2**: List the status of each PoE port (may not correspond to the number of physical ports present)
+**Example 2**: List the status of each PoE port (the MS220-8P will display 12 ports, as that is the number of ports each `pd690xx` supports)
 ```
 $ pd690xx -l
 Port    Status          Type    Priority        Power
@@ -46,8 +46,24 @@ Port    Status          Type    Priority        Power
 **Example 3**: Get PoE voltage at switch
 ```
 $ pd690xx -s
-56.2 V
+54.9 V
+55.1 V
+55.1 V
+54.9 V
 ```
+
+Note: the MS220-8P will display one voltage, 24 port models will display two voltages, and 48 port models will display four voltages
+
+**Example 4**: Get `pd690xx` temperature
+```
+$ pd690xx -t
+45.2 C
+46.5 C
+46.5 C
+47.2 C
+```
+
+Note: the MS220-8P will display one temperature, 24 port models will display two temperatures, and 48 port models will display four temperatures
 
 ## Not implemented
 

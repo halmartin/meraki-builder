@@ -11,6 +11,8 @@ if [ -f /etc/boardinfo ]; then
   if [ $(echo $MODEL | grep -c -E 'P$') -eq 1 ]; then
     POE=1
   fi
+else
+  MODEL="unknown"
 fi
 
 if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
@@ -18,9 +20,15 @@ if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
   port_vlan_statuses=$(cat ${CSPT}/dump_pport_vlans)
   if [ $POE -eq 1 ]; then
     port_poe_statuses=$(pd690xx -l)
+    # on larger switches there are multiple pd690xx, only take the first temp
+    poe_temp=$(pd690xx -t | head -1)
   fi
   NUM_PORTS=$(echo "$port_statuses" | tail -n+2 | wc -l)
-  echo -n {\"ports\":[
+  echo -n {\"device\": \"$MODEL\", \"date\": \"$(date +%Y-%m-%dT%TZ)\", 
+  if [ $POE -eq 1 ]; then
+    echo -n \"temperature\": \"$poe_temp\",
+  fi
+  echo -n \"ports\":[
   for i in $(seq 1 ${NUM_PORTS}); do
     port_status=$(echo "$port_statuses" | grep -E "^\s+$i\s")
     port_vlan_status=$(echo "$port_vlan_statuses" | grep -E "^\s+$i\s")
@@ -29,32 +37,32 @@ if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
     fi
     # get the link state
     if [ $(echo $port_status | awk '{print $2}') -eq 0 ]; then
-      link_state="down"
+      link_up=false
       link_speed=0
     else
-      link_state="up"
+      link_up=true
       # get the link speed
       link_speed=$(echo $port_status | awk '{print $3}')
     fi
     # get LACP (?) status
     if [ $(echo $port_status | awk '{print $6}') -ne 0 ]; then
-      lacp_state="enabled"
+      lacp_state=true
     else
-      lacp_state="disabled"
+      lacp_state=false
     fi
     # is the port enabled (?)
     if [ $(echo $port_status | awk '{print $10}') -ne 0 ]; then
-      port_state="true"
+      port_enabled=true
     else
-      port_state="false"
+      port_enabled=false
     fi
     # okay, do VLANs now
     port_pvid=$(echo $port_vlan_status | awk '{print $6}')
     port_tag_in=$(echo $port_vlan_status | awk '{print $2}')
     port_untag_in=$(echo $port_vlan_status | awk '{print $3}')
     port_allowed_vlans=$(echo $port_vlan_status | awk '{print $11}')
-    echo -n {\"port\": $i, \"link\": {\"state\": \"$link_state\", \"speed\": $link_speed},
-    echo -n \"lacp\": \"$lacp_state\", \"enabled\": $port_state, \
+    echo -n {\"port\": $i, \"link\": {\"established\": $link_up, \"speed\": $link_speed},
+    echo -n \"lacp\": $lacp_state, \"enabled\": $port_enabled, \
 \"vlan\": {\"pvid\": $port_pvid, \"allowed\": \"$port_allowed_vlans\"}
     if [ $POE -eq 1 ]; then
       # parse PoE status

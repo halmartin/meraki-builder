@@ -5,17 +5,28 @@
 # This is a simple script to print the switch status (physical, link, vlan, poe) as JSON
 
 CSPT=/click/switch_port_table
+POE=0
+if [ -f /etc/boardinfo ]; then
+  . /etc/boardinfo
+  if [ $(echo $MODEL | grep -c -E 'P$') -eq 1 ]; then
+    POE=1
+  fi
+fi
 
 if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
   port_statuses=$(cat ${CSPT}/dump_pports)
   port_vlan_statuses=$(cat ${CSPT}/dump_pport_vlans)
-  port_poe_statuses=$(pd690xx -l)
+  if [ $POE -eq 1 ]; then
+    port_poe_statuses=$(pd690xx -l)
+  fi
   NUM_PORTS=$(echo "$port_statuses" | tail -n+2 | wc -l)
-  echo -n {\"ports\":{
+  echo -n {\"ports\":[
   for i in $(seq 1 ${NUM_PORTS}); do
     port_status=$(echo "$port_statuses" | grep -E "^\s+$i\s")
     port_vlan_status=$(echo "$port_vlan_statuses" | grep -E "^\s+$i\s")
-    port_poe_status=$(echo "$port_poe_statuses" | grep -E "^$i\s")
+    if [ $POE -eq 1 ]; then
+      port_poe_status=$(echo "$port_poe_statuses" | grep -E "^$i\s")
+    fi
     # get the link state
     if [ $(echo $port_status | awk '{print $2}') -eq 0 ]; then
       link_state="down"
@@ -42,19 +53,23 @@ if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
     port_tag_in=$(echo $port_vlan_status | awk '{print $2}')
     port_untag_in=$(echo $port_vlan_status | awk '{print $3}')
     port_allowed_vlans=$(echo $port_vlan_status | awk '{print $11}')
-    # parse PoE status
-    if [ "$(echo $port_poe_status | awk '{print $2}')" == "Enabled" ]; then
-      poe_state=true
-    else
-      poe_state=false
-    fi
-    poe_power=$(echo $port_poe_status | awk '{print $5}')
-    poe_standard=$(echo $port_poe_status | awk '{print $3}')
-    echo -n \"$i\":{\"link\": {\"state\": \"$link_state\", \"speed\": $link_speed},
+    echo -n {\"port\": $i, \"link\": {\"state\": \"$link_state\", \"speed\": $link_speed},
     echo -n \"lacp\": \"$lacp_state\", \"enabled\": $port_state, \
 \"vlan\": {\"pvid\": $port_pvid, \"allowed\": \"$port_allowed_vlans\"}
-    if [ "$poe_standard" != "" ]; then
-      echo -n ,\"poe\": {\"standard\": \"802.3${poe_standard}\", \"enabled\": $poe_state, \"power\": ${poe_power}}}
+    if [ $POE -eq 1 ]; then
+      # parse PoE status
+      if [ "$(echo $port_poe_status | awk '{print $2}')" == "Enabled" ]; then
+        poe_state=true
+      else
+        poe_state=false
+      fi
+      poe_power=$(echo $port_poe_status | awk '{print $5}')
+      poe_standard=$(echo $port_poe_status | awk '{print $3}')
+      if [ "$poe_standard" != "" ]; then
+        echo -n ,\"poe\": {\"standard\": \"802.3${poe_standard}\", \"enabled\": $poe_state, \"power\": ${poe_power}}}
+      else
+        echo -n }
+      fi
     else
       echo -n }
     fi
@@ -63,5 +78,5 @@ if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
     fi
   done
   # finish our very ghetto JSON
-  echo }}
+  echo ]}
 fi

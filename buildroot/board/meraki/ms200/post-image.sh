@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 BR2_IMAGES_DIR=$1
 
@@ -9,6 +9,34 @@ BR2_IMAGES_DIR=$1
 #echo STAGING_DIR: $STAGING_DIR
 #echo BINARIES_DIR: $BINARIES_DIR
 #echo HOST_DIR: $HOST_DIR
+
+download_redboot() {
+    if [ ! -f ${BINARIES_DIR}/redboot.bin ]; then
+        wget -qcO ${BINARIES_DIR}/redboot.bin "https://github.com/halmartin/MS42-GPL-sources-3-18-122/raw/master/redboot/redboot-nocrc-sz.bin"
+    fi
+}
+
+create_redboot_header() {
+    # create boot1-header
+    HEADER_PATH=${BINARIES_DIR}/redboot-header.bin
+    # MIPS magic
+    printf '\x53\x50\x49\x4d' > $HEADER_PATH
+    # load address: 0x80100000
+    echo 00000000 00 00 00 81 | xxd -r >> $HEADER_PATH
+    LENGTH_HEX=$(printf '%08x' ${BUILD_DIR}/linux-custom/vmlinuz.bin)
+
+    echo 00000000 $(echo $LENGTH_HEX | cut -b7-8) $(echo $LENGTH_HEX | cut -b5-6) $(echo $LENGTH_HEX | cut -b3-4) $(echo $LENGTH_HEX | cut -b0-2) | xxd -r >> $HEADER_PATH
+    # get the entry point of the kernel
+    if [ ! -f ${BUILD_DIR}/linux-custom/vmlinuz ]; then
+        echo "${BUILD_DIR}/linux-custom/vmlinuz is missing"
+        exit 1
+    fi
+    ENTRY=$(${HOST_DIR}/bin/mipsel-linux-readelf -h ${BUILD_DIR}/linux-custom/vmlinuz | grep "Entry point" | awk '{print $4}' | cut -b3-10)
+    echo "Got entry point 0x$ENTRY from vmlinuz ELF header"
+    echo 00000000 $(echo $ENTRY | cut -b7-8) $(echo $ENTRY | cut -b5-6) $(echo $ENTRY | cut -b3-4) $(echo $ENTRY | cut -b0-2) | xxd -r >> $HEADER_PATH
+    # fill the remaining 16 bytes of the header with 0s
+    dd if=/dev/zero of=$HEADER_PATH bs=16 seek=1 count=1 conv=notrunc
+}
 
 create_uboot() {
     U_BOOT_REGION=0x80000
@@ -86,7 +114,7 @@ create_squashfs() {
     echo "squashfs.region: $(stat --format \"%s\" ${SQUASHFS_OUTPUT})"
 }
 
-create_flashable_image() {
+create_uboot_flashable_image() {
     create_uboot
     create_kernel
     create_squashfs
@@ -104,4 +132,18 @@ create_flashable_image() {
     fi
 }
 
-create_flashable_image
+create_redboot_flashable_image() {
+    download_redboot
+    create_redboot_header
+    create_squashfs
+    create_jffs2
+}
+
+# create image with u-boot bootloader
+create_uboot_flashable_image
+
+# WIP:
+# create image with redboot bootloader
+# note that kernels compiled for RedBoot **must** have the boot commandline
+# compiled into the kernel
+#create_redboot_flashable_image

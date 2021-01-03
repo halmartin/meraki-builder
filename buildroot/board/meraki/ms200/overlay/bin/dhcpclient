@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# Copyright (C) 2020 - Hal Martin (github.com/halmartin)
+#
+# This is a simple script to handle setting the IP address if/when the lease expires
+
+set_ip_from_dhcp() {
+    MY_IP=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep ip= | awk -F'=' '{print $2}')
+    SUBNET=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep subnet= | awk -F'=' '{print $2}')
+    GATEWAY=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep router= | awk -F'=' '{print $2}')
+    BROADCAST=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep broadcast= | awk -F'=' '{print $2}')
+    DNS=$(cat /click/uplinkstate/dhcpc_state_for_brain | grep dns= | sed 's/dns=//g')
+    # this isn't perfect, because DNS servers might change between networks
+    # but we want to avoid unnecessarily overwriting this file since it's on NOR
+    # also we avoid overwriting any custom DNS servers set in /etc/resolv.conf
+    if [ ! -s /etc/resolv.conf ]; then
+        for server in $DNS; do
+            echo "nameserver $server" >> /etc/resolv.conf
+        done
+    fi
+    echo -e "$MY_IP $SUBNET $GATEWAY 1500 $BROADCAST 1" > /click/set_host_ip/run
+    echo -e "$GATEWAY" > /click/wan0_resolver/dst
+}
+
+while true; do
+    # this currently assumes we have only one DHCP offer on one VLAN
+    # dangerous assumption
+    renew_at=$(cat /click/uplinkstate/dhcp_state | tail -1 | awk '{print $9}')
+    # sleep for the remaining duration before renewal + fixed period to negotiate renewal
+    # this is totally RFC 2131 compliant...
+    sleep $((renew_at+10))
+    # handle setting/changing the IP address
+    set_ip_from_dhcp
+done

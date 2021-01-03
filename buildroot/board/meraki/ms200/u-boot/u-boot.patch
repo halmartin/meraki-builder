@@ -1,0 +1,1295 @@
+--- a/dev/null
++++ b/configs/mscc_ms220-8p_defconfig
+@@ -0,0 +1,1133 @@
++#
++# Automatically generated file; DO NOT EDIT.
++# U-Boot 2019.10 Configuration
++#
++CONFIG_HAVE_ARCH_IOREMAP=y
++# CONFIG_ARC is not set
++# CONFIG_ARM is not set
++# CONFIG_M68K is not set
++# CONFIG_MICROBLAZE is not set
++CONFIG_MIPS=y
++# CONFIG_NDS32 is not set
++# CONFIG_NIOS2 is not set
++# CONFIG_PPC is not set
++# CONFIG_RISCV is not set
++# CONFIG_SANDBOX is not set
++# CONFIG_SH is not set
++# CONFIG_X86 is not set
++# CONFIG_XTENSA is not set
++CONFIG_SYS_ARCH="mips"
++CONFIG_SYS_CPU="mips32"
++CONFIG_SYS_SOC="mscc"
++CONFIG_SYS_VENDOR="mscc"
++CONFIG_SYS_BOARD="luton"
++CONFIG_SYS_CONFIG_NAME="vcoreiii"
++CONFIG_SYS_TEXT_BASE=0x40000000
++CONFIG_SYS_MALLOC_F_LEN=0x2000
++CONFIG_ENV_SIZE=131072
++CONFIG_ENV_OFFSET=524288
++CONFIG_NR_DRAM_BANKS=4
++CONFIG_BOOTSTAGE_STASH_ADDR=0
++CONFIG_DEBUG_UART_BOARD_INIT=y
++CONFIG_DEBUG_UART_BASE=0x70100000
++CONFIG_DEBUG_UART_CLOCK=208333333
++CONFIG_ENV_SECT_SIZE=131072
++CONFIG_IDENT_STRING=""
++
++#
++# MIPS architecture
++#
++# CONFIG_TARGET_QEMU_MIPS is not set
++# CONFIG_TARGET_MALTA is not set
++# CONFIG_TARGET_VCT is not set
++# CONFIG_ARCH_ATH79 is not set
++CONFIG_ARCH_MSCC=y
++# CONFIG_ARCH_BMIPS is not set
++# CONFIG_ARCH_MTMIPS is not set
++# CONFIG_ARCH_JZ47XX is not set
++# CONFIG_MACH_PIC32 is not set
++# CONFIG_TARGET_BOSTON is not set
++# CONFIG_TARGET_XILFPGA is not set
++CONFIG_SYS_DCACHE_SIZE=0
++CONFIG_SYS_DCACHE_LINE_SIZE=0
++CONFIG_SYS_ICACHE_SIZE=0
++CONFIG_SYS_ICACHE_LINE_SIZE=0
++
++#
++# MSCC VCore-III platforms
++#
++CONFIG_SOC_VCOREIII=y
++# CONFIG_SOC_OCELOT is not set
++CONFIG_SOC_LUTON=y
++# CONFIG_SOC_JR2 is not set
++# CONFIG_SOC_SERVALT is not set
++# CONFIG_SOC_SERVAL is not set
++# CONFIG_DDRTYPE_H5TQ4G63MFR is not set
++# CONFIG_DDRTYPE_MT41K256M16 is not set
++# CONFIG_DDRTYPE_H5TQ1G63BFA is not set
++# CONFIG_DDRTYPE_MT41J128M16HA is not set
++# CONFIG_DDRTYPE_MT41K128M16JT is not set
++CONFIG_DDRTYPE_MT47H128M8HQ=y
++# CONFIG_SYS_BIG_ENDIAN is not set
++CONFIG_SYS_LITTLE_ENDIAN=y
++# CONFIG_CPU_MIPS32_R1 is not set
++CONFIG_CPU_MIPS32_R2=y
++
++#
++# General setup
++#
++CONFIG_ROM_EXCEPTION_VECTORS=y
++CONFIG_MIPS_CACHE_INDEX_BASE=0x80000000
++CONFIG_MIPS_RELOCATION_TABLE_SIZE=0x8000
++
++#
++# OS boot interface
++#
++CONFIG_MIPS_BOOT_CMDLINE_LEGACY=y
++CONFIG_MIPS_BOOT_ENV_LEGACY=y
++# CONFIG_MIPS_BOOT_FDT is not set
++CONFIG_SUPPORTS_BIG_ENDIAN=y
++CONFIG_SUPPORTS_LITTLE_ENDIAN=y
++CONFIG_SUPPORTS_CPU_MIPS32_R1=y
++CONFIG_SUPPORTS_CPU_MIPS32_R2=y
++CONFIG_CPU_MIPS32=y
++CONFIG_MIPS_TUNE_24KC=y
++CONFIG_32BIT=y
++CONFIG_SYS_CACHE_SIZE_AUTO=y
++CONFIG_MIPS_L1_CACHE_SHIFT=5
++CONFIG_DEBUG_UART=y
++# CONFIG_AHCI is not set
++
++#
++# General setup
++#
++CONFIG_LOCALVERSION=""
++CONFIG_LOCALVERSION_AUTO=y
++CONFIG_CC_OPTIMIZE_FOR_SIZE=y
++# CONFIG_DISTRO_DEFAULTS is not set
++# CONFIG_ENV_VARS_UBOOT_CONFIG is not set
++# CONFIG_SYS_BOOT_GET_CMDLINE is not set
++# CONFIG_SYS_BOOT_GET_KBD is not set
++CONFIG_SYS_MALLOC_F=y
++CONFIG_EXPERT=y
++CONFIG_SYS_MALLOC_CLEAR_ON_INIT=y
++# CONFIG_TOOLS_DEBUG is not set
++# CONFIG_PHYS_64BIT is not set
++CONFIG_BUILD_TARGET=""
++# CONFIG_SYS_CUSTOM_LDSCRIPT is not set
++
++#
++# Boot images
++#
++# CONFIG_ANDROID_BOOT_IMAGE is not set
++CONFIG_FIT=y
++CONFIG_FIT_EXTERNAL_OFFSET=0x0
++CONFIG_FIT_ENABLE_SHA256_SUPPORT=y
++# CONFIG_FIT_SIGNATURE is not set
++# CONFIG_FIT_VERBOSE is not set
++# CONFIG_FIT_BEST_MATCH is not set
++CONFIG_LEGACY_IMAGE_FORMAT=y
++# CONFIG_OF_BOARD_SETUP is not set
++# CONFIG_OF_SYSTEM_SETUP is not set
++# CONFIG_OF_STDOUT_VIA_ALIAS is not set
++CONFIG_SYS_EXTRA_OPTIONS=""
++CONFIG_ARCH_FIXUP_FDT_MEMORY=y
++
++#
++# API
++#
++# CONFIG_API is not set
++
++#
++# Boot timing
++#
++# CONFIG_BOOTSTAGE is not set
++CONFIG_BOOTSTAGE_RECORD_COUNT=30
++CONFIG_SPL_BOOTSTAGE_RECORD_COUNT=5
++CONFIG_TPL_BOOTSTAGE_RECORD_COUNT=5
++CONFIG_BOOTSTAGE_STASH_SIZE=0x1000
++# CONFIG_SHOW_BOOT_PROGRESS is not set
++
++#
++# Boot media
++#
++# CONFIG_NAND_BOOT is not set
++# CONFIG_ONENAND_BOOT is not set
++# CONFIG_QSPI_BOOT is not set
++# CONFIG_SATA_BOOT is not set
++# CONFIG_SD_BOOT is not set
++# CONFIG_SPI_BOOT is not set
++CONFIG_BOOTDELAY=3
++CONFIG_USE_BOOTARGS=y
++CONFIG_BOOTARGS="console=ttyS0,115200"
++# CONFIG_USE_BOOTCOMMAND is not set
++# CONFIG_USE_PREBOOT is not set
++
++#
++# Console
++#
++# CONFIG_CONSOLE_RECORD is not set
++# CONFIG_DISABLE_CONSOLE is not set
++CONFIG_LOGLEVEL=7
++CONFIG_SPL_LOGLEVEL=7
++CONFIG_TPL_LOGLEVEL=7
++# CONFIG_SILENT_CONSOLE is not set
++# CONFIG_PRE_CONSOLE_BUFFER is not set
++# CONFIG_CONSOLE_MUX is not set
++# CONFIG_SYS_CONSOLE_IS_IN_ENV is not set
++# CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE is not set
++# CONFIG_SYS_CONSOLE_ENV_OVERWRITE is not set
++# CONFIG_SYS_CONSOLE_INFO_QUIET is not set
++# CONFIG_SYS_STDIO_DEREGISTER is not set
++
++#
++# Logging
++#
++# CONFIG_LOG is not set
++CONFIG_LOG_DEFAULT_LEVEL=6
++# CONFIG_SUPPORT_RAW_INITRD is not set
++CONFIG_DEFAULT_FDT_FILE=""
++# CONFIG_MISC_INIT_R is not set
++# CONFIG_VERSION_VARIABLE is not set
++# CONFIG_BOARD_LATE_INIT is not set
++CONFIG_DISPLAY_CPUINFO=y
++CONFIG_DISPLAY_BOARDINFO=y
++# CONFIG_DISPLAY_BOARDINFO_LATE is not set
++# CONFIG_BOUNCE_BUFFER is not set
++# CONFIG_BOARD_TYPES is not set
++
++#
++# Start-up hooks
++#
++# CONFIG_ARCH_EARLY_INIT_R is not set
++# CONFIG_ARCH_MISC_INIT is not set
++# CONFIG_BOARD_EARLY_INIT_F is not set
++# CONFIG_BOARD_EARLY_INIT_R is not set
++# CONFIG_LAST_STAGE_INIT is not set
++
++#
++# Security support
++#
++
++#
++# Update support
++#
++# CONFIG_UPDATE_TFTP is not set
++# CONFIG_ANDROID_AB is not set
++
++#
++# Blob list
++#
++# CONFIG_BLOBLIST is not set
++
++#
++# SPL / TPL
++#
++CONFIG_SPL_SYS_STACK_F_CHECK_BYTE=0xaa
++# CONFIG_SPL_SYS_REPORT_STACK_F_USAGE is not set
++
++#
++# Command line interface
++#
++CONFIG_CMDLINE=y
++CONFIG_HUSH_PARSER=y
++CONFIG_CMDLINE_EDITING=y
++CONFIG_AUTO_COMPLETE=y
++CONFIG_SYS_LONGHELP=y
++CONFIG_SYS_PROMPT="luton # "
++CONFIG_SYS_XTRACE="y"
++
++#
++# Autoboot options
++#
++CONFIG_AUTOBOOT=y
++# CONFIG_AUTOBOOT_KEYED is not set
++# CONFIG_AUTOBOOT_USE_MENUKEY is not set
++CONFIG_BUILD_BIN2C=y
++
++#
++# Commands
++#
++
++#
++# Info commands
++#
++CONFIG_CMD_BDI=y
++CONFIG_CMD_CONFIG=y
++CONFIG_CMD_CONSOLE=y
++# CONFIG_CMD_CPU is not set
++# CONFIG_CMD_LICENSE is not set
++
++#
++# Boot commands
++#
++CONFIG_CMD_BOOTD=y
++CONFIG_CMD_BOOTM=y
++# CONFIG_CMD_BOOTZ is not set
++CONFIG_BOOTM_LINUX=y
++CONFIG_BOOTM_NETBSD=y
++# CONFIG_BOOTM_OPENRTOS is not set
++# CONFIG_BOOTM_OSE is not set
++CONFIG_BOOTM_PLAN9=y
++CONFIG_BOOTM_RTEMS=y
++CONFIG_BOOTM_VXWORKS=y
++# CONFIG_CMD_BOOTMENU is not set
++# CONFIG_CMD_DTIMG is not set
++# CONFIG_CMD_ELF is not set
++CONFIG_CMD_FDT=y
++CONFIG_CMD_GO=y
++CONFIG_CMD_RUN=y
++CONFIG_CMD_IMI=y
++# CONFIG_CMD_IMLS is not set
++CONFIG_CMD_XIMG=y
++# CONFIG_CMD_FITUPD is not set
++# CONFIG_CMD_THOR_DOWNLOAD is not set
++# CONFIG_CMD_ZBOOT is not set
++
++#
++# Environment commands
++#
++# CONFIG_CMD_ASKENV is not set
++# CONFIG_CMD_EXPORTENV is not set
++# CONFIG_CMD_IMPORTENV is not set
++CONFIG_CMD_EDITENV=y
++# CONFIG_CMD_GREPENV is not set
++CONFIG_CMD_SAVEENV=y
++# CONFIG_CMD_ERASEENV is not set
++CONFIG_CMD_ENV_EXISTS=y
++# CONFIG_CMD_ENV_CALLBACK is not set
++# CONFIG_CMD_ENV_FLAGS is not set
++# CONFIG_CMD_NVEDIT_INFO is not set
++
++#
++# Memory commands
++#
++# CONFIG_CMD_BINOP is not set
++# CONFIG_CMD_CRC32 is not set
++# CONFIG_CMD_EEPROM is not set
++# CONFIG_LOOPW is not set
++CONFIG_CMD_MD5SUM=y
++# CONFIG_MD5SUM_VERIFY is not set
++CONFIG_CMD_MEMINFO=y
++CONFIG_CMD_MEMORY=y
++# CONFIG_MX_CYCLIC is not set
++CONFIG_CMD_RANDOM=y
++CONFIG_CMD_MEMTEST=y
++# CONFIG_SYS_ALT_MEMTEST is not set
++# CONFIG_CMD_MX_CYCLIC is not set
++# CONFIG_CMD_SHA1SUM is not set
++# CONFIG_CMD_STRINGS is not set
++
++#
++# Compression commands
++#
++# CONFIG_CMD_LZMADEC is not set
++# CONFIG_CMD_UNZIP is not set
++# CONFIG_CMD_ZIP is not set
++
++#
++# Device access commands
++#
++# CONFIG_CMD_ARMFLASH is not set
++# CONFIG_CMD_ADC is not set
++# CONFIG_CMD_BIND is not set
++# CONFIG_CMD_CLK is not set
++# CONFIG_CMD_DEMO is not set
++# CONFIG_CMD_DFU is not set
++CONFIG_CMD_DM=y
++# CONFIG_CMD_FDC is not set
++# CONFIG_CMD_FLASH is not set
++# CONFIG_CMD_FPGAD is not set
++# CONFIG_CMD_FUSE is not set
++CONFIG_CMD_GPIO=y
++# CONFIG_CMD_GPT is not set
++# CONFIG_RANDOM_UUID is not set
++# CONFIG_CMD_IDE is not set
++CONFIG_CMD_IO=y
++# CONFIG_CMD_IOTRACE is not set
++# CONFIG_CMD_I2C is not set
++CONFIG_CMD_LOADB=y
++CONFIG_CMD_LOADS=y
++# CONFIG_CMD_MMC is not set
++# CONFIG_CMD_MTD is not set
++# CONFIG_CMD_NAND is not set
++# CONFIG_CMD_ONENAND is not set
++# CONFIG_CMD_OSD is not set
++# CONFIG_CMD_PART is not set
++# CONFIG_CMD_PCI is not set
++CONFIG_CMD_PINMUX=y
++# CONFIG_CMD_POWEROFF is not set
++# CONFIG_CMD_READ is not set
++# CONFIG_CMD_SATA is not set
++# CONFIG_CMD_SAVES is not set
++# CONFIG_CMD_SCSI is not set
++# CONFIG_CMD_SDRAM is not set
++CONFIG_CMD_SF=y
++# CONFIG_CMD_SF_TEST is not set
++CONFIG_CMD_SPI=y
++CONFIG_DEFAULT_SPI_BUS=0
++CONFIG_DEFAULT_SPI_MODE=0
++# CONFIG_CMD_TSI148 is not set
++# CONFIG_CMD_UNIVERSE is not set
++# CONFIG_CMD_USB is not set
++# CONFIG_CMD_USB_SDP is not set
++# CONFIG_CMD_USB_MASS_STORAGE is not set
++
++#
++# Shell scripting commands
++#
++CONFIG_CMD_ECHO=y
++CONFIG_CMD_ITEST=y
++CONFIG_CMD_SOURCE=y
++CONFIG_CMD_SETEXPR=y
++
++#
++# Android support commands
++#
++CONFIG_CMD_NET=y
++CONFIG_CMD_BOOTP=y
++CONFIG_CMD_DHCP=y
++CONFIG_BOOTP_BOOTPATH=y
++CONFIG_BOOTP_DNS=y
++# CONFIG_BOOTP_DNS2 is not set
++CONFIG_BOOTP_GATEWAY=y
++CONFIG_BOOTP_HOSTNAME=y
++# CONFIG_BOOTP_PREFER_SERVERIP is not set
++CONFIG_BOOTP_SUBNETMASK=y
++# CONFIG_BOOTP_NTPSERVER is not set
++# CONFIG_CMD_PCAP is not set
++CONFIG_BOOTP_VCI_STRING="U-Boot"
++CONFIG_CMD_TFTPBOOT=y
++# CONFIG_CMD_TFTPPUT is not set
++# CONFIG_CMD_TFTPSRV is not set
++# CONFIG_NET_TFTP_VARS is not set
++# CONFIG_CMD_RARP is not set
++# CONFIG_CMD_NFS is not set
++# CONFIG_CMD_MII is not set
++CONFIG_CMD_PING=y
++# CONFIG_CMD_CDP is not set
++# CONFIG_CMD_SNTP is not set
++# CONFIG_CMD_DNS is not set
++# CONFIG_CMD_LINK_LOCAL is not set
++# CONFIG_CMD_ETHSW is not set
++# CONFIG_CMD_PXE is not set
++# CONFIG_CMD_WOL is not set
++
++#
++# Misc commands
++#
++# CONFIG_CMD_BSP is not set
++# CONFIG_CMD_CACHE is not set
++# CONFIG_CMD_CONITRACE is not set
++CONFIG_CMD_LED=y
++# CONFIG_CMD_DATE is not set
++CONFIG_CMD_TIME=y
++# CONFIG_CMD_GETTIME is not set
++CONFIG_CMD_MISC=y
++# CONFIG_MP is not set
++# CONFIG_CMD_TIMER is not set
++# CONFIG_CMD_QFW is not set
++# CONFIG_CMD_TERMINAL is not set
++# CONFIG_CMD_UUID is not set
++
++#
++# TI specific command line interface
++#
++# CONFIG_CMD_DDR3 is not set
++
++#
++# Power commands
++#
++
++#
++# Security commands
++#
++# CONFIG_CMD_AES is not set
++# CONFIG_CMD_BLOB is not set
++# CONFIG_CMD_HASH is not set
++
++#
++# Firmware commands
++#
++
++#
++# Filesystem commands
++#
++# CONFIG_CMD_BTRFS is not set
++# CONFIG_CMD_EXT2 is not set
++# CONFIG_CMD_EXT4 is not set
++# CONFIG_CMD_FAT is not set
++# CONFIG_CMD_FS_GENERIC is not set
++# CONFIG_CMD_FS_UUID is not set
++# CONFIG_CMD_JFFS2 is not set
++CONFIG_CMD_MTDPARTS=y
++CONFIG_MTDIDS_DEFAULT="nor0=spi_flash"
++CONFIG_MTDPARTS_DEFAULT="mtdparts=spi_flash:512k(UBoot),256k(Env),256k(conf),6m@1m(linux)"
++# CONFIG_CMD_MTDPARTS_SPREAD is not set
++# CONFIG_CMD_REISER is not set
++# CONFIG_CMD_ZFS is not set
++
++#
++# Debug commands
++#
++# CONFIG_CMD_BEDBUG is not set
++# CONFIG_CMD_DIAG is not set
++# CONFIG_CMD_LOG is not set
++# CONFIG_CMD_TRACE is not set
++# CONFIG_CMD_UBI is not set
++
++#
++# Partition Types
++#
++CONFIG_PARTITIONS=y
++# CONFIG_MAC_PARTITION is not set
++# CONFIG_DOS_PARTITION is not set
++# CONFIG_ISO_PARTITION is not set
++# CONFIG_AMIGA_PARTITION is not set
++# CONFIG_EFI_PARTITION is not set
++# CONFIG_PARTITION_UUIDS is not set
++CONFIG_SUPPORT_OF_CONTROL=y
++CONFIG_DTC=y
++
++#
++# Device Tree Control
++#
++CONFIG_OF_CONTROL=y
++# CONFIG_OF_BOARD_FIXUP is not set
++# CONFIG_OF_LIVE is not set
++CONFIG_OF_SEPARATE=y
++# CONFIG_OF_EMBED is not set
++# CONFIG_OF_BOARD is not set
++# CONFIG_OF_PRIOR_STAGE is not set
++CONFIG_DEFAULT_DEVICE_TREE="luton_ms2208p"
++CONFIG_OF_LIST="luton_pcb090 luton_pcb091 luton_ms2208p"
++# CONFIG_MULTI_DTB_FIT_LZO is not set
++# CONFIG_MULTI_DTB_FIT_GZIP is not set
++CONFIG_MULTI_DTB_FIT_NO_COMPRESSION=y
++CONFIG_DTB_RESELECT=y
++CONFIG_MULTI_DTB_FIT=y
++CONFIG_MKIMAGE_DTC_PATH="dtc"
++
++#
++# Environment
++#
++# CONFIG_ENV_IS_NOWHERE is not set
++# CONFIG_ENV_IS_IN_EEPROM is not set
++# CONFIG_ENV_IS_IN_FAT is not set
++# CONFIG_ENV_IS_IN_EXT4 is not set
++# CONFIG_ENV_IS_IN_FLASH is not set
++# CONFIG_ENV_IS_IN_NAND is not set
++# CONFIG_ENV_IS_IN_NVRAM is not set
++# CONFIG_ENV_IS_IN_ONENAND is not set
++# CONFIG_ENV_IS_IN_REMOTE is not set
++CONFIG_ENV_IS_IN_SPI_FLASH=y
++# CONFIG_USE_ENV_SPI_BUS is not set
++# CONFIG_USE_ENV_SPI_CS is not set
++# CONFIG_USE_ENV_SPI_MAX_HZ is not set
++# CONFIG_USE_ENV_SPI_MODE is not set
++# CONFIG_ENV_IS_IN_UBI is not set
++# CONFIG_USE_DEFAULT_ENV_FILE is not set
++# CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG is not set
++CONFIG_NET=y
++CONFIG_NET_RANDOM_ETHADDR=y
++# CONFIG_NETCONSOLE is not set
++# CONFIG_IP_DEFRAG is not set
++CONFIG_TFTP_BLOCKSIZE=512
++
++#
++# Device Drivers
++#
++
++#
++# Generic Driver Options
++#
++CONFIG_DM=y
++CONFIG_DM_WARN=y
++# CONFIG_DM_DEBUG is not set
++CONFIG_DM_DEVICE_REMOVE=y
++CONFIG_DM_STDIO=y
++CONFIG_DM_SEQ_ALIAS=y
++# CONFIG_REGMAP is not set
++# CONFIG_DEVRES is not set
++CONFIG_SIMPLE_BUS=y
++CONFIG_OF_TRANSLATE=y
++# CONFIG_TRANSLATION_OFFSET is not set
++CONFIG_DM_DEV_READ_INLINE=y
++# CONFIG_ADC is not set
++# CONFIG_ADC_EXYNOS is not set
++# CONFIG_ADC_SANDBOX is not set
++# CONFIG_SARADC_MESON is not set
++# CONFIG_SARADC_ROCKCHIP is not set
++# CONFIG_SATA is not set
++# CONFIG_SCSI_AHCI is not set
++
++#
++# SATA/SCSI device support
++#
++# CONFIG_DWC_AHSATA is not set
++# CONFIG_FSL_SATA is not set
++# CONFIG_MVSATA_IDE is not set
++# CONFIG_SATA_SIL is not set
++# CONFIG_SATA_SIL3114 is not set
++# CONFIG_AXI is not set
++# CONFIG_BLK is not set
++# CONFIG_HAVE_BLOCK_DEVICE is not set
++# CONFIG_IDE is not set
++# CONFIG_BOOTCOUNT_LIMIT is not set
++
++#
++# Cache Controller drivers
++#
++# CONFIG_CACHE is not set
++
++#
++# Clock
++#
++CONFIG_CLK=y
++# CONFIG_CLK_CCF is not set
++# CONFIG_CLK_HSDK is not set
++# CONFIG_CLK_AT91 is not set
++# CONFIG_CLK_SIFIVE is not set
++# CONFIG_ICS8N3QV01 is not set
++# CONFIG_CLK_MPC83XX is not set
++# CONFIG_CPU is not set
++
++#
++# Hardware crypto devices
++#
++# CONFIG_FSL_CAAM is not set
++# CONFIG_SYS_FSL_SEC_BE is not set
++# CONFIG_SYS_FSL_SEC_LE is not set
++
++#
++# Demo for driver model
++#
++# CONFIG_DM_DEMO is not set
++# CONFIG_BOARD is not set
++
++#
++# DFU support
++#
++
++#
++# DMA Support
++#
++# CONFIG_DMA is not set
++# CONFIG_TI_EDMA3 is not set
++
++#
++# Fastboot support
++#
++# CONFIG_UDP_FUNCTION_FASTBOOT is not set
++# CONFIG_FIRMWARE is not set
++
++#
++# FPGA support
++#
++# CONFIG_FPGA_ALTERA is not set
++# CONFIG_FPGA_SOCFPGA is not set
++# CONFIG_FPGA_XILINX is not set
++
++#
++# GPIO Support
++#
++CONFIG_DM_GPIO=y
++# CONFIG_GPIO_HOG is not set
++# CONFIG_ALTERA_PIO is not set
++# CONFIG_DWAPB_GPIO is not set
++# CONFIG_AT91_GPIO is not set
++# CONFIG_ATMEL_PIO4 is not set
++# CONFIG_DA8XX_GPIO is not set
++# CONFIG_INTEL_BROADWELL_GPIO is not set
++# CONFIG_INTEL_ICH6_GPIO is not set
++# CONFIG_IMX_RGPIO2P is not set
++# CONFIG_HSDK_CREG_GPIO is not set
++# CONFIG_LPC32XX_GPIO is not set
++CONFIG_MSCC_SGPIO=y
++# CONFIG_MSM_GPIO is not set
++# CONFIG_MXC_GPIO is not set
++# CONFIG_MXS_GPIO is not set
++# CONFIG_CMD_PCA953X is not set
++# CONFIG_ROCKCHIP_GPIO is not set
++# CONFIG_XILINX_GPIO is not set
++# CONFIG_CMD_TCA642X is not set
++# CONFIG_TEGRA_GPIO is not set
++# CONFIG_TEGRA186_GPIO is not set
++# CONFIG_VYBRID_GPIO is not set
++# CONFIG_DM_74X164 is not set
++# CONFIG_DM_PCA953X is not set
++# CONFIG_SPL_DM_PCA953X is not set
++# CONFIG_MPC8XXX_GPIO is not set
++
++#
++# Hardware Spinlock Support
++#
++# CONFIG_DM_HWSPINLOCK is not set
++
++#
++# I2C support
++#
++# CONFIG_DM_I2C is not set
++# CONFIG_SYS_I2C_DW is not set
++# CONFIG_SYS_I2C_IMX_LPI2C is not set
++# CONFIG_SYS_I2C_MXC is not set
++CONFIG_INPUT=y
++# CONFIG_DM_KEYBOARD is not set
++# CONFIG_CROS_EC_KEYB is not set
++# CONFIG_TEGRA_KEYBOARD is not set
++# CONFIG_TWL4030_INPUT is not set
++
++#
++# LED Support
++#
++CONFIG_LED=y
++# CONFIG_LED_BLINK is not set
++CONFIG_LED_GPIO=y
++# CONFIG_LED_STATUS is not set
++
++#
++# Mailbox Controller Support
++#
++# CONFIG_DM_MAILBOX is not set
++
++#
++# Memory Controller drivers
++#
++
++#
++# Multifunction device drivers
++#
++# CONFIG_MISC is not set
++# CONFIG_CROS_EC is not set
++# CONFIG_DS4510 is not set
++# CONFIG_FSL_SEC_MON is not set
++# CONFIG_NUVOTON_NCT6102D is not set
++# CONFIG_PWRSEQ is not set
++# CONFIG_PCA9551_LED is not set
++# CONFIG_TWL4030_LED is not set
++# CONFIG_WINBOND_W83627 is not set
++# CONFIG_FS_LOADER is not set
++
++#
++# MMC Host controller Support
++#
++# CONFIG_MMC is not set
++# CONFIG_MMC_BROKEN_CD is not set
++# CONFIG_DM_MMC is not set
++# CONFIG_FSL_ESDHC is not set
++# CONFIG_FSL_ESDHC_IMX is not set
++
++#
++# MTD Support
++#
++# CONFIG_MTD is not set
++# CONFIG_MTD_NOR_FLASH is not set
++# CONFIG_MTD_DEVICE is not set
++# CONFIG_FLASH_CFI_DRIVER is not set
++# CONFIG_NAND is not set
++
++#
++# SPI Flash Support
++#
++CONFIG_DM_SPI_FLASH=y
++CONFIG_SPI_FLASH=y
++CONFIG_SF_DEFAULT_BUS=0
++CONFIG_SF_DEFAULT_CS=0
++CONFIG_SF_DEFAULT_MODE=3
++CONFIG_SF_DEFAULT_SPEED=1000000
++CONFIG_SPI_FLASH_BAR=y
++# CONFIG_SF_DUAL_FLASH is not set
++# CONFIG_SPI_FLASH_ATMEL is not set
++# CONFIG_SPI_FLASH_EON is not set
++CONFIG_SPI_FLASH_GIGADEVICE=y
++# CONFIG_SPI_FLASH_ISSI is not set
++CONFIG_SPI_FLASH_MACRONIX=y
++CONFIG_SPI_FLASH_SPANSION=y
++CONFIG_SPI_FLASH_STMICRO=y
++# CONFIG_SPI_FLASH_SST is not set
++CONFIG_SPI_FLASH_WINBOND=y
++# CONFIG_SPI_FLASH_XMC is not set
++CONFIG_SPI_FLASH_USE_4K_SECTORS=y
++# CONFIG_SPI_FLASH_DATAFLASH is not set
++CONFIG_SPI_FLASH_MTD=y
++
++#
++# UBI support
++#
++# CONFIG_UBI_SILENCE_MSG is not set
++# CONFIG_MTD_UBI is not set
++# CONFIG_BITBANGMII is not set
++# CONFIG_MV88E6352_SWITCH is not set
++CONFIG_PHYLIB=y
++# CONFIG_PHY_ADDR_ENABLE is not set
++# CONFIG_B53_SWITCH is not set
++# CONFIG_MV88E61XX_SWITCH is not set
++# CONFIG_PHYLIB_10G is not set
++# CONFIG_PHY_AQUANTIA is not set
++# CONFIG_PHY_ATHEROS is not set
++# CONFIG_PHY_BROADCOM is not set
++# CONFIG_PHY_CORTINA is not set
++# CONFIG_PHY_DAVICOM is not set
++# CONFIG_PHY_ET1011C is not set
++# CONFIG_PHY_LXT is not set
++# CONFIG_PHY_MARVELL is not set
++# CONFIG_PHY_MESON_GXL is not set
++# CONFIG_PHY_MICREL is not set
++# CONFIG_PHY_MSCC is not set
++# CONFIG_PHY_NATSEMI is not set
++# CONFIG_PHY_REALTEK is not set
++# CONFIG_PHY_SMSC is not set
++# CONFIG_PHY_TERANETICS is not set
++# CONFIG_PHY_TI is not set
++# CONFIG_PHY_VITESSE is not set
++# CONFIG_PHY_XILINX is not set
++# CONFIG_PHY_FIXED is not set
++# CONFIG_FSL_PFE is not set
++CONFIG_DM_ETH=y
++# CONFIG_DM_MDIO is not set
++CONFIG_NETDEVICES=y
++# CONFIG_PHY_GIGE is not set
++# CONFIG_ALTERA_TSE is not set
++# CONFIG_BCM_SF2_ETH is not set
++# CONFIG_DWC_ETH_QOS is not set
++# CONFIG_E1000 is not set
++# CONFIG_ETH_DESIGNWARE is not set
++# CONFIG_ETHOC is not set
++# CONFIG_FTMAC100 is not set
++# CONFIG_FTGMAC100 is not set
++# CONFIG_MACB is not set
++# CONFIG_RGMII is not set
++# CONFIG_MII is not set
++# CONFIG_RTL8139 is not set
++# CONFIG_RTL8169 is not set
++# CONFIG_SMC911X is not set
++# CONFIG_SUN7I_GMAC is not set
++# CONFIG_SUN4I_EMAC is not set
++# CONFIG_SUN8I_EMAC is not set
++# CONFIG_SH_ETHER is not set
++# CONFIG_DRIVER_TI_CPSW is not set
++# CONFIG_DRIVER_TI_EMAC is not set
++# CONFIG_DRIVER_TI_KEYSTONE_NET is not set
++# CONFIG_XILINX_EMACLITE is not set
++# CONFIG_MSCC_OCELOT_SWITCH is not set
++CONFIG_MSCC_LUTON_SWITCH=y
++# CONFIG_MSCC_JR2_SWITCH is not set
++# CONFIG_MSCC_SERVALT_SWITCH is not set
++# CONFIG_MSCC_SERVAL_SWITCH is not set
++# CONFIG_TSEC_ENET is not set
++# CONFIG_MEDIATEK_ETH is not set
++# CONFIG_HIGMACV300_ETH is not set
++# CONFIG_PCI is not set
++
++#
++# PCI Endpoint
++#
++# CONFIG_PCI_ENDPOINT is not set
++
++#
++# PHY Subsystem
++#
++# CONFIG_PHY is not set
++# CONFIG_MVEBU_COMPHY_SUPPORT is not set
++
++#
++# Pin controllers
++#
++CONFIG_PINCTRL=y
++CONFIG_PINCTRL_FULL=y
++CONFIG_PINCTRL_GENERIC=y
++CONFIG_PINMUX=y
++CONFIG_PINCONF=y
++# CONFIG_PINCTRL_AT91 is not set
++# CONFIG_PINCTRL_AT91PIO4 is not set
++# CONFIG_PINCTRL_ROCKCHIP_RV1108 is not set
++# CONFIG_PINCTRL_SINGLE is not set
++# CONFIG_PINCTRL_STM32 is not set
++# CONFIG_PINCTRL_STMFX is not set
++CONFIG_PINCTRL_MSCC=y
++CONFIG_PINCTRL_MSCC_LUTON=y
++
++#
++# Power
++#
++
++#
++# Power Domain Support
++#
++# CONFIG_POWER_DOMAIN is not set
++# CONFIG_DM_PMIC is not set
++# CONFIG_PMIC_AS3722 is not set
++# CONFIG_POWER_MC34VR500 is not set
++# CONFIG_DM_REGULATOR is not set
++# CONFIG_DM_PWM is not set
++# CONFIG_PWM_IMX is not set
++# CONFIG_PWM_SANDBOX is not set
++# CONFIG_U_QE is not set
++# CONFIG_RAM is not set
++
++#
++# Remote Processor drivers
++#
++
++#
++# Reset Controller Support
++#
++# CONFIG_DM_RESET is not set
++
++#
++# Real Time Clock
++#
++# CONFIG_DM_RTC is not set
++# CONFIG_RTC_ENABLE_32KHZ_OUTPUT is not set
++# CONFIG_RTC_RX8025 is not set
++# CONFIG_RTC_PL031 is not set
++# CONFIG_RTC_S35392A is not set
++# CONFIG_RTC_MC146818 is not set
++# CONFIG_RTC_M41T62 is not set
++# CONFIG_SCSI is not set
++
++#
++# Serial drivers
++#
++CONFIG_BAUDRATE=115200
++CONFIG_REQUIRE_SERIAL_CONSOLE=y
++# CONFIG_SPECIFY_CONSOLE_INDEX is not set
++CONFIG_SERIAL_PRESENT=y
++CONFIG_DM_SERIAL=y
++# CONFIG_SERIAL_RX_BUFFER is not set
++# CONFIG_SERIAL_SEARCH_ALL is not set
++# CONFIG_TPL_DM_SERIAL is not set
++# CONFIG_DEBUG_UART_ALTERA_JTAGUART is not set
++# CONFIG_DEBUG_UART_ALTERA_UART is not set
++# CONFIG_DEBUG_UART_ATMEL is not set
++CONFIG_DEBUG_UART_NS16550=y
++# CONFIG_DEBUG_UART_S5P is not set
++# CONFIG_DEBUG_UART_UARTLITE is not set
++# CONFIG_DEBUG_UART_ARM_DCC is not set
++# CONFIG_DEBUG_MVEBU_A3700_UART is not set
++# CONFIG_DEBUG_UART_ZYNQ is not set
++# CONFIG_DEBUG_UART_PL010 is not set
++# CONFIG_DEBUG_UART_PL011 is not set
++# CONFIG_DEBUG_UART_SIFIVE is not set
++# CONFIG_DEBUG_UART_OMAP is not set
++CONFIG_DEBUG_UART_SHIFT=2
++# CONFIG_DEBUG_UART_ANNOUNCE is not set
++# CONFIG_DEBUG_UART_SKIP_INIT is not set
++# CONFIG_DEBUG_UART_NS16550_CHECK_ENABLED is not set
++# CONFIG_ALTERA_JTAG_UART is not set
++# CONFIG_ALTERA_UART is not set
++# CONFIG_ARC_SERIAL is not set
++# CONFIG_ATMEL_USART is not set
++# CONFIG_BCM6345_SERIAL is not set
++# CONFIG_FSL_LINFLEXUART is not set
++# CONFIG_FSL_LPUART is not set
++# CONFIG_MVEBU_A3700_UART is not set
++# CONFIG_MCFUART is not set
++# CONFIG_NULLDEV_SERIAL is not set
++CONFIG_SYS_NS16550=y
++# CONFIG_PL01X_SERIAL is not set
++# CONFIG_MSM_SERIAL is not set
++# CONFIG_OMAP_SERIAL is not set
++# CONFIG_PXA_SERIAL is not set
++# CONFIG_SIFIVE_SERIAL is not set
++# CONFIG_MTK_SERIAL is not set
++# CONFIG_SMEM is not set
++
++#
++# Sound support
++#
++# CONFIG_SOUND is not set
++
++#
++# SOC (System On Chip) specific Drivers
++#
++# CONFIG_SOC_TI is not set
++CONFIG_SPI=y
++CONFIG_DM_SPI=y
++CONFIG_SPI_MEM=y
++# CONFIG_ALTERA_SPI is not set
++# CONFIG_ATCSPI200_SPI is not set
++# CONFIG_ATMEL_SPI is not set
++# CONFIG_BCMSTB_SPI is not set
++# CONFIG_CADENCE_QSPI is not set
++# CONFIG_CF_SPI is not set
++# CONFIG_DESIGNWARE_SPI is not set
++# CONFIG_EXYNOS_SPI is not set
++# CONFIG_FSL_DSPI is not set
++# CONFIG_ICH_SPI is not set
++# CONFIG_MPC8XXX_SPI is not set
++# CONFIG_MTK_SNFI_SPI is not set
++# CONFIG_MVEBU_A3700_SPI is not set
++# CONFIG_ROCKCHIP_SPI is not set
++# CONFIG_SPI_SIFIVE is not set
++# CONFIG_SPI_SUNXI is not set
++# CONFIG_TEGRA114_SPI is not set
++# CONFIG_TEGRA20_SFLASH is not set
++# CONFIG_TEGRA20_SLINK is not set
++# CONFIG_TEGRA210_QSPI is not set
++# CONFIG_TI_QSPI is not set
++# CONFIG_XILINX_SPI is not set
++# CONFIG_SOFT_SPI is not set
++CONFIG_MSCC_BB_SPI=y
++# CONFIG_FSL_ESPI is not set
++# CONFIG_FSL_QSPI is not set
++# CONFIG_SH_QSPI is not set
++# CONFIG_KIRKWOOD_SPI is not set
++# CONFIG_MXC_SPI is not set
++# CONFIG_MXS_SPI is not set
++# CONFIG_OMAP3_SPI is not set
++
++#
++# SPMI support
++#
++# CONFIG_SPMI is not set
++
++#
++# System reset device drivers
++#
++# CONFIG_SYSRESET is not set
++# CONFIG_SYSRESET_SYSCON is not set
++# CONFIG_SYSRESET_WATCHDOG is not set
++# CONFIG_SYSRESET_MCP83XX is not set
++# CONFIG_OPTEE is not set
++# CONFIG_DM_THERMAL is not set
++
++#
++# Timer Support
++#
++# CONFIG_TIMER is not set
++
++#
++# TPM support
++#
++# CONFIG_USB is not set
++
++#
++# Graphics support
++#
++# CONFIG_DM_VIDEO is not set
++# CONFIG_SYS_WHITE_ON_BLACK is not set
++# CONFIG_NO_FB_CLEAR is not set
++
++#
++# TrueType Fonts
++#
++# CONFIG_VIDEO_VESA is not set
++# CONFIG_VIDEO_LCD_ANX9804 is not set
++# CONFIG_VIDEO_LCD_SSD2828 is not set
++# CONFIG_VIDEO_MVEBU is not set
++# CONFIG_I2C_EDID is not set
++# CONFIG_DISPLAY is not set
++# CONFIG_VIDEO_TEGRA20 is not set
++# CONFIG_VIDEO_BRIDGE is not set
++# CONFIG_VIDEO is not set
++# CONFIG_LCD is not set
++# CONFIG_VIDEO_SIMPLE is not set
++# CONFIG_VIDEO_DT_SIMPLEFB is not set
++# CONFIG_OSD is not set
++
++#
++# VirtIO Drivers
++#
++# CONFIG_VIRTIO_MMIO is not set
++
++#
++# 1-Wire support
++#
++# CONFIG_W1 is not set
++
++#
++# 1-wire EEPROM support
++#
++# CONFIG_W1_EEPROM is not set
++
++#
++# Watchdog Timer Support
++#
++# CONFIG_WATCHDOG is not set
++# CONFIG_WATCHDOG_RESET_DISABLE is not set
++# CONFIG_IMX_WATCHDOG is not set
++# CONFIG_ULP_WATCHDOG is not set
++# CONFIG_WDT is not set
++# CONFIG_PHYS_TO_BUS is not set
++
++#
++# File systems
++#
++# CONFIG_FS_BTRFS is not set
++# CONFIG_FS_CBFS is not set
++# CONFIG_SPL_FS_CBFS is not set
++# CONFIG_FS_EXT4 is not set
++# CONFIG_FS_FAT is not set
++# CONFIG_FS_JFFS2 is not set
++# CONFIG_UBIFS_SILENCE_MSG is not set
++# CONFIG_FS_CRAMFS is not set
++# CONFIG_YAFFS2 is not set
++
++#
++# Library routines
++#
++# CONFIG_BCH is not set
++# CONFIG_CC_OPTIMIZE_LIBS_FOR_SPEED is not set
++# CONFIG_DYNAMIC_CRC_TABLE is not set
++CONFIG_HAVE_PRIVATE_LIBGCC=y
++CONFIG_PRINTF=y
++CONFIG_SPRINTF=y
++CONFIG_STRTO=y
++CONFIG_USE_PRIVATE_LIBGCC=y
++CONFIG_SYS_HZ=1000
++# CONFIG_PANIC_HANG is not set
++CONFIG_REGEX=y
++CONFIG_LIB_RAND=y
++# CONFIG_LIB_HW_RAND is not set
++# CONFIG_SPL_TINY_MEMSET is not set
++# CONFIG_TPL_TINY_MEMSET is not set
++# CONFIG_BITREVERSE is not set
++# CONFIG_TRACE is not set
++# CONFIG_CMD_DHRYSTONE is not set
++
++#
++# Security support
++#
++# CONFIG_AES is not set
++# CONFIG_RSA is not set
++# CONFIG_TPM is not set
++
++#
++# Android Verified Boot
++#
++
++#
++# Hashing Support
++#
++CONFIG_SHA1=y
++CONFIG_SHA256=y
++# CONFIG_SHA_HW_ACCEL is not set
++CONFIG_MD5=y
++
++#
++# Compression Support
++#
++# CONFIG_LZ4 is not set
++CONFIG_LZMA=y
++# CONFIG_LZO is not set
++CONFIG_GZIP=y
++CONFIG_ZLIB=y
++# CONFIG_ZSTD is not set
++# CONFIG_SPL_LZ4 is not set
++# CONFIG_SPL_LZO is not set
++# CONFIG_SPL_GZIP is not set
++# CONFIG_SPL_ZSTD is not set
++# CONFIG_ERRNO_STR is not set
++# CONFIG_HEXDUMP is not set
++CONFIG_OF_LIBFDT=y
++# CONFIG_OF_LIBFDT_OVERLAY is not set
++# CONFIG_SPL_OF_LIBFDT is not set
++# CONFIG_TPL_OF_LIBFDT is not set
++# CONFIG_FDT_FIXUP_PARTITIONS is not set
++
++#
++# System tables
++#
++# CONFIG_TEST_FDTDEC is not set
++# CONFIG_UNIT_TEST is not set
+--- a/dev/null
++++ b/ms220.env
+@@ -0,0 +1,7 @@
++console=ttyS0,115200
++mtdparts mtdparts=m25p80:0x80000(uboot),0x20000(uboot-env),0x200000(kernel),0x800000(squashfs),0x500000(jffs2)
++loadaddr=0x81000000
++spi_image_off=0x0
++spiboot 'run setup; sf probe; sf read ${loadaddr} ${spi_image_off} 0x200000; bootm ${loadaddr}'
++bootargs_extra root=/dev/mtdblock4 ubi.mtd=gen_nand.0 mem=134152192
++setup 'setenv bootargs console=${console} ${mtdparts} ${bootargs_extra}'
+--- a/dev/null
++++ b/arch/mips/dts/luton_ms2208p.dts
+@@ -0,0 +1,135 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2018 Microsemi Corporation
++ */
++
++/dts-v1/;
++#include "mscc,luton.dtsi"
++#include <dt-bindings/mscc/luton_data.h>
++
++/ {
++	model = "Cisco Meraki MS220-8P";
++	compatible = "mscc,ms2208p", "mscc,luton";
++
++	aliases {
++		serial0 = &uart0;
++		spi0 = &spi0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&sgpio {
++	status = "okay";
++	gpio-ranges = <&sgpio 0 0 96>;
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&spi0 {
++	status = "okay";
++	spi-flash@0 {
++		compatible = "jedec,spi-nor";
++		spi-max-frequency = <18000000>; /* input clock */
++		reg = <0>; /* CS0 */
++		spi-cs-high;
++	};
++};
++
++&mdio0 {
++	status = "okay";
++
++	phy0: ethernet-phy@0 {
++		reg = <0>;
++	};
++	phy1: ethernet-phy@1 {
++		reg = <1>;
++	};
++	phy2: ethernet-phy@2 {
++		reg = <2>;
++	};
++	phy3: ethernet-phy@3 {
++		reg = <3>;
++	};
++	phy4: ethernet-phy@4 {
++		reg = <4>;
++	};
++	phy5: ethernet-phy@5 {
++		reg = <5>;
++	};
++	phy6: ethernet-phy@6 {
++		reg = <6>;
++	};
++	phy7: ethernet-phy@7 {
++		reg = <7>;
++	};
++	phy8: ethernet-phy@8 {
++		reg = <8>;
++	};
++	phy9: ethernet-phy@9 {
++		reg = <9>;
++	};
++	phy10: ethernet-phy@10 {
++		reg = <10>;
++	};
++	phy11: ethernet-phy@11 {
++		reg = <11>;
++	};
++};
++
++&switch {
++	ethernet-ports {
++		port0: port@0 {
++			reg = <0>;
++			phy-handle = <&phy0>;
++		};
++		port1: port@1 {
++			reg = <1>;
++			phy-handle = <&phy1>;
++		};
++		port2: port@2 {
++			reg = <2>;
++			phy-handle = <&phy2>;
++		};
++		port3: port@3 {
++			reg = <3>;
++			phy-handle = <&phy3>;
++		};
++		port4: port@4 {
++			reg = <4>;
++			phy-handle = <&phy4>;
++		};
++		port5: port@5 {
++			reg = <5>;
++			phy-handle = <&phy5>;
++		};
++		port6: port@6 {
++			reg = <6>;
++			phy-handle = <&phy6>;
++		};
++		port7: port@7 {
++			reg = <7>;
++			phy-handle = <&phy7>;
++		};
++		port8: port@8 {
++			reg = <8>;
++			phy-handle = <&phy8>;
++		};
++		port9: port@9 {
++			reg = <9>;
++			phy-handle = <&phy9>;
++		};
++		port10: port@10 {
++			reg = <10>;
++			phy-handle = <&phy10>;
++		};
++		port11: port@11 {
++			reg = <11>;
++			phy-handle = <&phy11>;
++		};
++	};
++};
+--- a/arch/mips/dts/Makefile
++++ b/arch/mips/dts/Makefile
+@@ -23,7 +23,7 @@ dtb-$(CONFIG_BOARD_TPLINK_WDR4300) += tplink_wdr4300.dtb
+ dtb-$(CONFIG_TARGET_JZ4780_CI20) += ci20.dtb
+ dtb-$(CONFIG_SOC_BMIPS_BCM6358) += sfr,nb4-ser.dtb
+ dtb-$(CONFIG_SOC_BMIPS_BCM6838) += brcm,bcm968380gerg.dtb
+-dtb-$(CONFIG_SOC_LUTON) += luton_pcb090.dtb luton_pcb091.dtb
++dtb-$(CONFIG_SOC_LUTON) += luton_pcb090.dtb luton_pcb091.dtb luton_ms2208p.dtb
+ dtb-$(CONFIG_SOC_OCELOT) += ocelot_pcb120.dtb ocelot_pcb123.dtb
+ dtb-$(CONFIG_SOC_JR2) += jr2_pcb110.dtb jr2_pcb111.dtb serval2_pcb112.dtb
+ dtb-$(CONFIG_SOC_SERVALT) += servalt_pcb116.dtb

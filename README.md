@@ -26,3 +26,8 @@ Download [buildroot](https://www.buildroot.org/download.html) and copy the conte
 After building the toolchain + target filesystem with `make`, copy `output/images/rootfs.squashfs` to `nor/bin/squashfs`
 
 ## MX80 router
+
+* Download the latest stable release of [buildroot](https://www.buildroot.org/download.html)
+* Copy `buildroot/board/meraki/mx80/buildroot-config` to `.config` in your extracted buildroot directory
+* Copy `buildroot/board/merkai/mx80` to `board/meraki/mx80` in your buildroot tree
+* Run `make` to build buildroot, the bootable/flashable image can be found in `output/images/ubi_image.bin`

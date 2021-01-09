@@ -27,6 +27,12 @@ After building the toolchain + target filesystem with `make`, copy `output/image
 
 ## MX80 router
 
+### Docker
+
+`cd docker/mx80 && make docker-build`
+
+### Manually
+
 * Download the latest stable release of [buildroot](https://www.buildroot.org/download.html)
 * Copy `buildroot/board/meraki/mx80/buildroot-config` to `.config` in your extracted buildroot directory
 * Copy `buildroot/board/merkai/mx80` to `board/meraki/mx80` in your buildroot tree

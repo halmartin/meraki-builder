@@ -4,3 +4,6 @@ nor/vmlinux*
 nor/vmlinuz*
 nor/*.bin
 *.ko
+
+# ignore docker build directories
+docker/*/src

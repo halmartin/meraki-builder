@@ -1,0 +1,11 @@
+--- a/arch/mips/dts/Makefile	2019-10-07 23:14:02.000000000 +0200
++++ b/arch/mips/dts/Makefile	2021-03-28 17:28:13.585262195 +0200
+@@ -23,7 +23,7 @@
+ dtb-$(CONFIG_TARGET_JZ4780_CI20) += ci20.dtb
+ dtb-$(CONFIG_SOC_BMIPS_BCM6358) += sfr,nb4-ser.dtb
+ dtb-$(CONFIG_SOC_BMIPS_BCM6838) += brcm,bcm968380gerg.dtb
+-dtb-$(CONFIG_SOC_LUTON) += luton_pcb090.dtb luton_pcb091.dtb
++dtb-$(CONFIG_SOC_LUTON) += luton_pcb090.dtb luton_pcb091.dtb luton_ms2208p.dtb
+ dtb-$(CONFIG_SOC_OCELOT) += ocelot_pcb120.dtb ocelot_pcb123.dtb
+ dtb-$(CONFIG_SOC_JR2) += jr2_pcb110.dtb jr2_pcb111.dtb serval2_pcb112.dtb
+ dtb-$(CONFIG_SOC_SERVALT) += servalt_pcb116.dtb

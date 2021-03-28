@@ -39,25 +39,26 @@ create_redboot_header() {
 }
 
 create_uboot() {
-    U_BOOT_REGION=0x80000
-    U_BOOT_ENV_REGION=0x40000
+    U_BOOT_REGION=0x100000
+    U_BOOT_ENV_OFFSET=0xd0000
     U_BOOT_OUTPUT=${BINARIES_DIR}/u-boot.region
-    if [ -f ${BINARIES_DIR}/u-boot.bin ] && [ -f ${BINARIES_DIR}/uboot-env.bin ]; then
-        U_BOOT_SIZE=$(stat --format "%s" ${BINARIES_DIR}/u-boot.bin)
-        dd if=/dev/zero of=/tmp/u-boot.pad bs=$(($U_BOOT_REGION-$U_BOOT_SIZE)) count=1 > /dev/null 2>&1
+    if [ -f ${BINARIES_DIR}/u-boot-dtb.bin ] && [ -f ${BINARIES_DIR}/uboot-env.bin ]; then
+        U_BOOT_SIZE=$(stat --format "%s" ${BINARIES_DIR}/u-boot-dtb.bin)
         U_BOOT_ENV_SIZE=$(stat --format "%s" ${BINARIES_DIR}/uboot-env.bin)
-        dd if=/dev/zero of=/tmp/u-boot-env.pad bs=$(($U_BOOT_ENV_REGION-$U_BOOT_ENV_SIZE)) count=1 > /dev/null 2>&1
-        cat ${BINARIES_DIR}/u-boot.bin /tmp/u-boot.pad ${BINARIES_DIR}/uboot-env.bin /tmp/u-boot-env.pad > $U_BOOT_OUTPUT
-        rm /tmp/u-boot.pad /tmp/u-boot-env.pad
+        dd if=/dev/zero of=$U_BOOT_OUTPUT bs=$(($U_BOOT_REGION)) count=1
+        # copy u-boot-dtb.bin into the output region
+        dd if=${BINARIES_DIR}/u-boot-dtb.bin of=$U_BOOT_OUTPUT bs=$(($U_BOOT_SIZE)) count=1 conv=notrunc
+        # copy u-boot.env into the output region
+        dd if=${BINARIES_DIR}/uboot-env.bin of=$U_BOOT_OUTPUT bs=$(($U_BOOT_ENV_SIZE)) seek=$(($U_BOOT_ENV_OFFSET/$U_BOOT_ENV_SIZE)) count=1 conv=notrunc 
         # confirm that u-boot is the correct size
         U_BOOT_REGION_SIZE=$(stat --format "%s" $U_BOOT_OUTPUT)
-        if [ $(($U_BOOT_REGION+$U_BOOT_ENV_REGION)) -ne $U_BOOT_REGION_SIZE ]; then
-            echo "Generated u-boot region is ${U_BOOT_REGION_SIZE} but should be $(($U_BOOT_REGION+$U_BOOT_ENV_REGION))"
+        if [ $(($U_BOOT_REGION)) -ne $U_BOOT_REGION_SIZE ]; then
+            echo "Generated u-boot region is ${U_BOOT_REGION_SIZE} but should be $(($U_BOOT_REGION))"
             return
         fi
         echo "u-boot.region: $(stat --format \"%s\" $U_BOOT_OUTPUT)"
     else
-        echo "${BINARIES_DIR}/u-boot.bin or ${BINARIES_DIR}/uboot-env.bin not found"
+        echo "${BINARIES_DIR}/u-boot-dtb.bin or ${BINARIES_DIR}/uboot-env.bin not found"
         return
     fi
 }
@@ -83,13 +84,18 @@ create_jffs2() {
 }
 
 create_kernel() {
+    #KERNEL_REGION=0x240000
+    KERNEL_REGION=0x200000
+    KERNEL_OUTPUT=${BINARIES_DIR}/kernel.region
+
     if [ ! -f ${BUILD_DIR}/linux-custom/vmlinuz.bin ]; then
         echo "${BUILD_DIR}/linux-custom/vmlinuz.bin does not exist"
+        echo "Replacing kernel with zero image, you must netboot!"
+	dd if=/dev/zero of=$KERNEL_OUTPUT bs=$(($KERNEL_REGION)) count=1
         return
     fi
+
     KERNEL_SIZE=$(stat --format "%s" ${BUILD_DIR}/linux-custom/vmlinuz.bin)
-    KERNEL_REGION=0x240000
-    KERNEL_OUTPUT=${BINARIES_DIR}/kernel.region
     dd if=/dev/zero of=/tmp/kernel.pad bs=$(($KERNEL_REGION-$KERNEL_SIZE)) count=1 > /dev/null 2>&1
     cat ${BUILD_DIR}/linux-custom/vmlinuz.bin /tmp/kernel.pad > $KERNEL_OUTPUT
     rm /tmp/kernel.pad

@@ -1,9 +1,23 @@
 #!/bin/sh
 #
-# Copyright (C) 2020 - Hal Martin (github.com/halmartin)
+# Copyright (C) 2020,2021 - Hal Martin (github.com/halmartin)
 #
 # Load kernel modules for managing the Vitesse ASIC
 #
+
+fix_elemental() {
+    # both MS220-24 and MS220-48 have "meraki_elemental" so
+    # use /proc/cpuinfo to determine the correct model
+    # otherwise we attempt to load the wrong modules
+    cpuinfo=$(cat /proc/cpuinfo)
+    if echo $cpuinfo | egrep -q "VSC7427$"; then
+        # MS220-24
+        echo "MS220-24"
+    elif echo $cpuinfo | egrep -q "VSC7434 Dual$"; then
+        # MS220-48
+        echo "MS220-48"
+    fi
+}
 
 determine_board() {
     # first, try to get the board info from /etc/boardinfo
@@ -22,7 +36,13 @@ determine_board() {
         fi
     fi
 
-    if [ $(echo $model | grep -c -E "MS220-8P|MS220-24|MS220-48|MS320-24|MS320-48|MS22|MS42|meraki_elemental") -ne 1 ]; then
+    if [ "$model" == "meraki_elemental" ]; then
+        model=$(fix_elemental)
+        # persist the correct model in overlayfs; should only occur once during first boot
+        echo MODEL=${model} > /etc/boardinfo
+    fi
+
+    if [ $(echo $model | grep -c -E "MS220-8P|MS220-24|MS220-48|MS320-24|MS320-48|MS22|MS42") -ne 1 ]; then
         # boardinfo didn't have an expected model string, fall back to cpuinfo detection
         # fall back to detection based on cpuinfo, WILL PROBABLY BE WRONG
         echo "!!! IMPORTANT !!!"
@@ -58,7 +78,7 @@ determine_board() {
         mod_dir=luton26
         switch_board=MERAKI_BOARD_MS220_24
         echo 24 > /tmp/NUM_PORTS
-    elif [ $(echo $model | grep -c MS220-48) -eq 1 ] || [ $(echo $model | grep -c meraki_elemental) -eq 1 ]; then
+    elif [ $(echo $model | grep -c MS220-48) -eq 1 ]; then
         mod_dir=jaguar_dual
         switch_board=MERAKI_BOARD_MS220_48
         echo 52 > /tmp/NUM_PORTS

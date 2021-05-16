@@ -1,0 +1,19 @@
+--- a/arch/mips/boot/dts/mscc/luton.dtsi	2021-05-16 10:20:42.447168257 +0200
++++ b/arch/mips/boot/dts/mscc/luton.dtsi	2021-05-16 10:25:53.013813084 +0200
+@@ -112,5 +112,16 @@
+ 			};
+ 
+ 		};
++
++		spi0: spi@10000064 {
++			compatible = "mscc,luton-spi", "snps,dw-apb-ssi";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x4>;
++			interrupts = <9>;
++			clocks = <&ahb_clk>;
++
++			status = "disabled";
++		};
+ 	};
+ };

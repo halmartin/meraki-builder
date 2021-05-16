@@ -1,0 +1,22 @@
+--- a/arch/mips/boot/dts/mscc/luton_pcb091.dts	2021-05-16 10:29:36.744982649 +0200
++++ b/arch/mips/boot/dts/mscc/luton_pcb091.dts	2021-05-16 10:30:23.832495181 +0200
+@@ -18,6 +18,11 @@
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x08000000>;
++	};
+ };
+ 
+ &uart0 {
+@@ -28,3 +33,7 @@
+ 	status = "okay";
+ 	i2c-sda-hold-time-ns = <300>;
+ };
++
++&spi0 {
++	status = "okay";
++};

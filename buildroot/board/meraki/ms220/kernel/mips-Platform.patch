@@ -1,0 +1,11 @@
+--- a/arch/mips/generic/Platform	2021-02-14 23:32:24.000000000 +0100
++++ b/arch/mips/generic/Platform	2021-03-29 19:15:51.141788593 +0200
+@@ -12,7 +12,7 @@
+ cflags-$(CONFIG_MACH_INGENIC_SOC)	+= -I$(srctree)/arch/mips/include/asm/mach-ingenic
+ cflags-$(CONFIG_MIPS_GENERIC)	+= -I$(srctree)/arch/mips/include/asm/mach-generic
+ 
+-load-$(CONFIG_MIPS_GENERIC)	+= 0xffffffff80100000
++load-$(CONFIG_MIPS_GENERIC)	+= 0xffffffff81000000
+ zload-$(CONFIG_MIPS_GENERIC)	+= 0xffffffff81000000
+ all-$(CONFIG_MIPS_GENERIC)	:= vmlinux.gz.itb
+ 

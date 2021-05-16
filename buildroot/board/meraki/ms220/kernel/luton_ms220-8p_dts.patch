@@ -1,0 +1,38 @@
+--- a/dev/null	2021-04-05 11:20:05.396666668 +0200
++++ b/arch/mips/boot/dts/mscc/luton_ms2208p.dts	2021-05-15 22:58:21.655595789 +0200
+@@ -0,0 +1,35 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2020 Microsemi Corporation
++ */
++
++/dts-v1/;
++
++#include "luton.dtsi"
++
++/ {
++	model = "Cisco Meraki MS220";
++	compatible = "mscc,luton-pcb091", "mscc,luton";
++
++	aliases {
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@0 {
++                device_type = "memory";
++                reg = <0x0 0x07ff0000>;
++        };
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&i2c0 {
++	status = "okay";
++	i2c-sda-hold-time-ns = <300>;
++};

@@ -1,0 +1,10 @@
+--- a/arch/mips/boot/dts/mscc/Makefile	2021-05-15 16:52:05.917225101 +0200
++++ b/arch/mips/boot/dts/mscc/Makefile	2021-05-15 16:52:15.238666335 +0200
+@@ -3,6 +3,7 @@
+ 	jaguar2_pcb110.dtb \
+ 	jaguar2_pcb111.dtb \
+ 	jaguar2_pcb118.dtb \
++	luton_ms2208p.dtb \
+ 	luton_pcb091.dtb \
+ 	ocelot_pcb120.dtb \
+ 	ocelot_pcb123.dtb \

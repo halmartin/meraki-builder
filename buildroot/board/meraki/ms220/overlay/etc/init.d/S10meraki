@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2020 - Hal Martin (github.com/halmartin)
+# Copyright (C) 2020-2021 - Hal Martin (github.com/halmartin)
 #
 # This was written by reverse engineering the functionality
 # of switch_brain, included in Meraki's stock firmware
@@ -61,9 +61,20 @@ start() {
     echo -e " events" > /click/syslog_event_log/syslog_name
     echo -e "46 48" > /click/cli_h/traffic_analysis/realtime_dscps
     echo -e "90" > /click/client_ip_table/realtime_limit
-    echo -e "1" > /click/uplinkstate/preferred_dhcp_vid
-    echo -e "1 1 1 1 1 1 1 1 1 1 1" > /click/uplinkstate/set_dhcp_vlans
-    echo -e "true" > /click/wan0_pinger/active
+
+    # set DHCP VLANs for the number of ports present
+    if [ -f /etc/default/switch_dhcp ]; do
+      DHCP_VLAN=$(cat /etc/default/switch_dhcp | grep DHCP_VLAN | awk -F'=' '{print $2}')
+    else
+      DHCP_VLAN=1
+    fi
+    echo -e "$DHCP_VLAN" > /click/uplinkstate/preferred_dhcp_vid
+    dhcp_vlan_var=$DHCP_VLAN
+    for i in $(seq 2 $NUM_PORTS); do dhcp_vlan_var="$dhcp_vlan_var $DHCP_VLAN"; done
+    echo -e $dhcp_vlan_var > /click/uplinkstate/set_dhcp_vlans
+
+    # set to true to enable wan pinger
+    echo -e "false" > /click/wan0_pinger/active
     echo -e "1.1.1.1" > /click/wan0_pinger/set_dst
     echo -e "1" > /click/wan0_dns_lookup/clear_hosts
     echo -e "www.watchmysys.com" > /click/wan0_dns_lookup/add_host
@@ -72,15 +83,17 @@ start() {
     echo -e "2000" > /click/lldp_source/fast_start_interval_ms
     echo -e "16" > /click/lldp_source/fast_start_count
     echo -e "255" > /click/lldp_source/port_poe_budget
-    echo -e "true \"\" 180 \"\" 60000" > /click/set_cdp_config/run
+    # set to true to enable CDP
+    echo -e "false \"\" 180 \"\" 60000" > /click/set_cdp_config/run
     echo -e "disc_packets 16" > /click/switch_pport_change_script/set
     echo -e "disc_interval 2000" > /click/switch_pport_change_script/set
-    echo -e "true" > /click/set_cdp_steal/run
+    # set to true to enable CDP steal
+    echo -e "false" > /click/set_cdp_steal/run
     echo -e "PRIORITY 61440, HELLO_TIME 2, FORWARD_DELAY 15, MAX_AGE 20, HOLDCOUNT 6" > /click/stp/set_params
     echo -e "true" > /click/switch_port_table/enable_lacp_on_single_ports
     MAC=$(cat /tmp/MERAKI_MAC)
     for i in $(seq 1 $NUM_PORTS); do
-    echo -e "PORT $MAC/$i, ENABLED true, AUTOEDGE true, EDGE false, AUTOPTP true, PTP false, PRI 128, COST 0" > /click/stp/set_many_port_cfgs
+      echo -e "PORT $MAC/$i, ENABLED true, AUTOEDGE true, EDGE false, AUTOPTP true, PTP false, PRI 128, COST 0" > /click/stp/set_many_port_cfgs
     done
     echo -e "DSCP_TRUST \"none\", DSCP_CLASS \"\", DSCP_DP \"\", QOS_RULES \"\"" > /click/sw0_ctrl/set_qos_conf
     for i in $(seq 1 $NUM_PORTS); do
@@ -89,7 +102,7 @@ start() {
     echo -e "route_ip 1.1.2.2" > /click/set_alt_conf/set
     echo -e "1024" > /click/sw0_ctrl/set_default_queue_rate_limit
     echo -e "HYBRID_8021x_TIMEOUT 8000, HYBRID_MAC_RADIUS_TIMEOUT 8000 " > /click/switch_auth_port_table/set_hybrid_auth_timeouts
-    for i in $(seq 0 8); do
+    for i in $(seq 1 $NUM_PORTS); do
       echo -e "NUM $i, ENABLED false" > /click/switch_auth_port_table/set_access_policies
     done
     for i in $(seq 1 $NUM_PORTS); do
@@ -97,7 +110,10 @@ start() {
       echo -e "PORT $i, STATUS 0" > /click/switch_auth_port_table/allow_unauth_egress
       echo -e "PORT $i, ERROR_STATUS 0, EAP_MULTICAST 0" > /click/switch_auth_port_table/set_auth_port
     done
-    echo -e "-1 -1 -1 -1 -1 -1 -1 -1 -1 -1" > /click/switch_auth_port_table/set_access_policy_ports
+
+    access_policy_var=-1
+    for i in $(seq 2 $NUM_PORTS); do access_policy_var="$access_policy_var -1"; done
+    echo -e "$access_policy_var" > /click/switch_auth_port_table/set_access_policy_ports
     echo -e "3000" > /click/switch_auth_port_table/1x_auth_listen_msec
     echo -e "1000" > /click/switch_auth_port_table/auth_table_size
     echo -e "1000" > /click/switch_auth_port_table/pending_table_size
@@ -108,7 +124,16 @@ start() {
       echo -e "$i, true" > /click/cdp_source/active_ports
       echo -e "$i, 0" > /click/cdp_source/voice_vlans
       echo -e "$i, true" > /click/lldp_source/active_ports
-      echo -e "PORT $i, ALLOWED_VLANS \"\", ALLOW_TAGGED_IN true, ALLOW_UNTAGGED_IN true, INGRESS_FILTER true, RADIUS_CAN_ASSIGN_VLAN true, PVID 1, UNTAGGED_VID 1" > /click/switch_port_table/set_vlan_allports_conf
+      if [ -f /etc/default/switch_vlans ]; then
+        if [ $(grep -E -c "^PORT $i" /etc/default/switch_vlans) -eq 1 ]; then
+          # load port configuration from /etc/default/switch_vlans
+          # ignore comments
+          # if there are duplicate definitions only use the LAST occurrence
+          grep -E "^PORT $i" /etc/default/switch_vlans | tail -1 | sed 's/"/\\"/g' > /click/switch_port_table/set_vlan_allports_conf
+        fi
+      else
+        echo -e "PORT $i, ALLOWED_VLANS \"\", ALLOW_TAGGED_IN true, ALLOW_UNTAGGED_IN true, INGRESS_FILTER true, RADIUS_CAN_ASSIGN_VLAN true, PVID 1, UNTAGGED_VID 1" > /click/switch_port_table/set_vlan_allports_conf
+      fi
       echo -e "PORT $i, VID 0" > /click/switch_auth_port_table/set_port_voice_vid
     done
     echo -e "ips " > /click/l2_intfs/set
@@ -137,7 +162,13 @@ start() {
     echo -e "allow all" > /click/nat/common_switch_nat/from_smc_filter/config
     echo -e "allow all" > /click/nat/common_switch_nat/from_mgmt_filter/config
     for i in $(seq 1 $NUM_PORTS); do
-      echo -e "PORT $i, FC_OBEY false, EEE_ADV_ENABLED true, MODE aneg" > /click/switch_port_table/set_port_phy_cfgs
+      if [ -f /etc/default/switch_ports ]; then
+        if [ $(grep -E -c "^PORT $i" /etc/default/switch_ports) -eq 1 ]; then
+          grep -E "^PORT $i" /etc/default/switch_ports | tail -1 > /click/switch_port_table/set_port_phy_cfgs
+        fi
+      else
+        echo -e "PORT $i, FC_OBEY false, EEE_ADV_ENABLED true, MODE aneg" > /click/switch_port_table/set_port_phy_cfgs
+      fi
     done
     echo -e "125000" > /click/igmp_snoop/default_querier_interval_msec
     echo -e "125" > /click/igmp_querier/query_interval
@@ -198,12 +229,15 @@ start() {
     echo -e "0" > /click/syslog_mgmt_vid_check/switch
     echo -e "$MY_IP" > /click/syslog_event_log/src_ip
     echo -e "$GATEWAY" > /click/wan0_resolver/dst
-    echo -e "true" > /click/wan0_pinger/active
+    # change to true to enable WAN pinger
+    echo -e "false" > /click/wan0_pinger/active
     echo -e "true" > /click/wan0_pinger/reset
     echo -e "true" > /click/wan0_dns_lookup/reset
-    echo -e "true" > /click/wan0_dns_lookup/active
+    # change to true to enable DNS lookup
+    echo -e "false" > /click/wan0_dns_lookup/active
     echo -e "true" > /click/wan0_dns_nxlookup/reset
-    echo -e "true" > /click/wan0_dns_nxlookup/active
+    # change to true to enabel nxlookup
+    echo -e "false" > /click/wan0_dns_nxlookup/active
     # consider removing mtun
     echo -e "gateway_good 0" > /click/mtun_client_state/update_node_state
 }

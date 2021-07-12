@@ -40,7 +40,7 @@ create_redboot_header() {
 
 create_uboot() {
     U_BOOT_REGION=0x100000
-    U_BOOT_ENV_OFFSET=0xd0000
+    U_BOOT_ENV_OFFSET=0xc0000
     U_BOOT_OUTPUT=${BINARIES_DIR}/u-boot.region
     if [ -f ${BINARIES_DIR}/u-boot-dtb.bin ] && [ -f ${BINARIES_DIR}/uboot-env.bin ]; then
         U_BOOT_SIZE=$(stat --format "%s" ${BINARIES_DIR}/u-boot-dtb.bin)
@@ -50,6 +50,8 @@ create_uboot() {
         dd if=${BINARIES_DIR}/u-boot-dtb.bin of=$U_BOOT_OUTPUT bs=$(($U_BOOT_SIZE)) count=1 conv=notrunc
         # copy u-boot.env into the output region
         dd if=${BINARIES_DIR}/uboot-env.bin of=$U_BOOT_OUTPUT bs=$(($U_BOOT_ENV_SIZE)) seek=$(($U_BOOT_ENV_OFFSET/$U_BOOT_ENV_SIZE)) count=1 conv=notrunc 
+        # copy u-boot.env into the backup region
+        dd if=${BINARIES_DIR}/uboot-env.bin of=$U_BOOT_OUTPUT bs=$(($U_BOOT_ENV_SIZE)) seek=$(($(($U_BOOT_ENV_OFFSET/$U_BOOT_ENV_SIZE))+1)) count=1 conv=notrunc 
         # confirm that u-boot is the correct size
         U_BOOT_REGION_SIZE=$(stat --format "%s" $U_BOOT_OUTPUT)
         if [ $(($U_BOOT_REGION)) -ne $U_BOOT_REGION_SIZE ]; then

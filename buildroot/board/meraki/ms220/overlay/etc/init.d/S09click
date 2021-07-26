@@ -1,18 +1,16 @@
 #!/bin/sh
 #
-# Copyright (C) 2020 - Hal Martin (github.com/halmartin)
+# Copyright (C) 2020-2021 - Hal Martin (github.com/halmartin)
 #
 # Mount click filesystem for managing the Vitesse ASIC
 #
 
 start() {
-    if [ -f /etc/MERAKI_MAC ]; then
-        # copy to /tmp/
-        cp /etc/MERAKI_MAC /tmp/
-    else
-        # generate a random MAC address
-        echo 88:15:44:$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2) > /tmp/MERAKI_MAC
+    if [ ! -f /etc/MERAKI_MAC ]; then
+        # generate a random MAC address and persist to /etc
+        echo 88:15:44:$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2) > /etc/MERAKI_MAC
     fi
+    cp /etc/MERAKI_MAC /tmp/
     # extract the bottom three octets to use as IP
     # Meraki's logic, not mine
     cat /tmp/MERAKI_MAC | sed -n 's/.*:.*:.*:\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\).*/printf 6.%d.%d.%d\\\\n 0x\1 0x\2 0x\3/p' | xargs -0 sh -c > /tmp/MERAKI_IP

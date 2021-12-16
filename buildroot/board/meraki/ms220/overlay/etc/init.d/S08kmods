@@ -1,22 +1,59 @@
 #!/bin/sh
 #
-# Copyright (C) 2020,2021 - Hal Martin (github.com/halmartin)
+# Copyright (C) 2020-2021 - Hal Martin (github.com/halmartin)
 #
 # Load kernel modules for managing the Vitesse ASIC
 #
 
-fix_elemental() {
-    # both MS220-24 and MS220-48 have "meraki_elemental" so
-    # use /proc/cpuinfo to determine the correct model
-    # otherwise we attempt to load the wrong modules
-    cpuinfo=$(cat /proc/cpuinfo)
-    if echo $cpuinfo | egrep -q "VSC7427$"; then
-        # MS220-24
-        echo "MS220-24"
-    elif echo $cpuinfo | egrep -q "VSC7434 Dual$"; then
-        # MS220-48
-        echo "MS220-48"
+product_number_to_model() {
+    case $1 in
+        600-28010|600-28020)
+            echo MS220-8
+        ;;
+        600-20030|600-20040)
+            echo MS220-24
+        ;;
+        600-21030|600-21040|600-21050)
+            echo MS220-48
+        ;;
+        600-20050|600-20060)
+            echo MS320-24
+        ;;
+        600-21060|600-21070)
+            echo MS320-48
+        ;;
+        600-20010|600-20020)
+            echo MS22
+        ;;
+        600-21010|600-21020)
+            echo MS42
+        ;;
+    esac
+}
+
+get_board_config_mtd() {
+    if [ $(grep -c "board-config" /proc/mtd) -ne 0 ]; then
+        grep "board-config" /proc/mtd | awk -F':' '{print $1}' | grep -Eo "[0-9]"
+    else
+        >&2 echo "board-config not found!"
     fi
+}
+
+get_board_cpu() {
+    case "$(cat /proc/cpuinfo | grep 'system type' | grep -Eo 'VSC74[23][457]( Dual)?')" in
+        "VSC7425")
+            echo "MS220-8"
+        ;;
+        "VSC7427")
+            echo "MS220-24"
+        ;;
+        "VSC7434")
+            echo "MS320-24"
+        ;;
+        "VSC7434 Dual")
+            echo "MS320-48"
+        ;;
+    esac
 }
 
 determine_board() {
@@ -25,80 +62,65 @@ determine_board() {
         model=$(grep MODEL /etc/boardinfo | awk -F'=' '{print $2}')
     # next, try to get the board info from the board-config partition on NAND
     elif [ $(grep -c "board-config" /proc/mtd) -ne 0 ]; then
-        MTD_PART=$(grep "board-config" /proc/mtd | awk -F':' '{print $1}')
-        echo board-config is /dev/$MTD_PART
-        if [ $(strings /dev/${MTD_PART} | grep -c meraki_) -eq 1 ]; then
-            model=$(strings /dev/${MTD_PART} | grep -Eo "^m\S+")
-            if [ ! -f /etc/boardinfo ]; then
-                # persist model in overlayfs
-                echo MODEL=${model} > /etc/boardinfo 
-            fi
+        MTD_PART=$(get_board_config_mtd)
+        echo board-config is /dev/mtd${MTD_PART}
+        product_number=$(dd if=/dev/mtdblock${MTD_PART} bs=8 skip=1 count=8 2>/dev/null | strings | grep -Eo "600-2[018]0[1-9]0")
+        model=$(product_number_to_model $product_number)
+        if [ ! -f /etc/boardinfo ]; then
+            # persist model in overlayfs
+            echo MODEL=${model} > /etc/boardinfo
         fi
     fi
 
-    if [ "$model" == "meraki_elemental" ]; then
-        model=$(fix_elemental)
-        # persist the correct model in overlayfs; should only occur once during first boot
-        echo MODEL=${model} > /etc/boardinfo
-    fi
-
-    if [ $(echo $model | grep -c -E "MS220-8P|MS220-24|MS220-48|MS320-24|MS320-48|MS22|MS42") -ne 1 ]; then
+    if [ $(echo $model | grep -c -E "MS[234]2(0-[248]([48])?(P|LP|FP)?)?") -ne 1 ]; then
         # boardinfo didn't have an expected model string, fall back to cpuinfo detection
         # fall back to detection based on cpuinfo, WILL PROBABLY BE WRONG
+        model=$(get_board_cpu)
         echo "!!! IMPORTANT !!!"
         echo -n "Falling back to cpuinfo board detection, "
-        echo -n "your board model is: ${model}, "
+        echo -n "your board model is: ${model}, product: ${product_number} "
         echo "please open an issue on github.com/halmartin/meraki-builder"
         echo "!!! IMPORTANT !!!"
-        cpuinfo=$(cat /proc/cpuinfo)
-        if echo $cpuinfo | egrep -q "VSC7425$"; then
-            # MS220-8P use luton26
-            model="MS220-8P"
-        elif echo $cpuinfo | egrep -q "VSC7427$"; then
-            # MS22 and MS220-24 use luton26
-            model="MS22 MS220-24"
-            mod_dir=luton26
-        elif echo $cpuinfo | egrep -q "VSC7434$"; then
-            # not sure what the MS320-24 cpuinfo is, maybe someone can check
-            model="MS320-24"
-            mod_dir=jaguar
-        elif echo $cpuinfo | egrep -q "VSC7434 Dual$"; then
-            # MS220-48 and MS320-48 also use jaguar_dual
-            model="MS42 MS220-48 MS320-48"
-            mod_dir=jaguar_dual
-        fi
     fi
 
     # detect the mod_dir and switch_board from boardinfo
-    if [ $(echo $model | grep -c MS220-8P) -eq 1 ]; then
-        mod_dir=luton26
-        switch_board=MERAKI_BOARD_MS220_8
-        echo 10 > /tmp/NUM_PORTS
-    elif [ $(echo $model | grep -c MS220-24) -eq 1 ]; then
-        mod_dir=luton26
-        switch_board=MERAKI_BOARD_MS220_24
-        echo 24 > /tmp/NUM_PORTS
-    elif [ $(echo $model | grep -c MS220-48) -eq 1 ]; then
-        mod_dir=jaguar_dual
-        switch_board=MERAKI_BOARD_MS220_48
-        echo 52 > /tmp/NUM_PORTS
-    elif [ $(echo $model | grep -c MS320-24) -eq 1 ]; then
-        mod_dir=jaguar
-        switch_board=MERAKI_BOARD_MS320_24
-        echo 24 > /tmp/NUM_PORTS
-    elif [ $(echo $model | grep -c MS320-48) -eq 1 ]; then
-        mod_dir=jaguar_dual
-        switch_board=MERAKI_BOARD_MS320_48
-        echo 52 > /tmp/NUM_PORTS
-    elif [ $(echo $model | grep -c MS22) -eq 1 ]; then
-        mod_dir=luton26
-        switch_board=MERAKI_BOARD_MS22
-        echo 24 > /tmp/NUM_PORTS
-    elif [ $(echo $model | grep -c MS42) -eq 1 ]; then
-        mod_dir=jaguar_dual
-        switch_board=MERAKI_BOARD_MS42
-        echo 52 > /tmp/NUM_PORTS
-    fi
+    case $model in
+        MS220-8)
+            mod_dir=luton26
+            switch_board=MERAKI_BOARD_MS220_8
+            echo 10 > /tmp/NUM_PORTS
+        ;;
+        MS220-24)
+            mod_dir=luton26
+            switch_board=MERAKI_BOARD_MS220_24
+            echo 24 > /tmp/NUM_PORTS
+        ;;
+        MS220-48)
+            mod_dir=jaguar_dual
+            switch_board=MERAKI_BOARD_MS220_48
+            echo 52 > /tmp/NUM_PORTS
+        ;;
+        MS320-24)
+            mod_dir=jaguar
+            switch_board=MERAKI_BOARD_MS320_24
+            echo 24 > /tmp/NUM_PORTS
+        ;;
+        MS320-48)
+            mod_dir=jaguar_dual
+            switch_board=MERAKI_BOARD_MS320_48
+            echo 52 > /tmp/NUM_PORTS
+        ;;
+        MS22)
+            mod_dir=luton26
+            switch_board=MERAKI_BOARD_MS22
+            echo 24 > /tmp/NUM_PORTS
+        ;;
+        MS42)
+            mod_dir=jaguar_dual
+            switch_board=MERAKI_BOARD_MS42
+            echo 52 > /tmp/NUM_PORTS
+        ;;
+    esac
 
     export model
     export mod_dir

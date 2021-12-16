@@ -59,7 +59,7 @@ get_board_cpu() {
 determine_board() {
     # first, try to get the board info from /etc/boardinfo
     if [ -f /etc/boardinfo ]; then
-        model=$(grep MODEL /etc/boardinfo | awk -F'=' '{print $2}')
+        model=$(grep MODEL /etc/boardinfo | grep -Eo "MS[234]2(0-[248]([48])?)?")
     # next, try to get the board info from the board-config partition on NAND
     elif [ $(grep -c "board-config" /proc/mtd) -ne 0 ]; then
         MTD_PART=$(get_board_config_mtd)

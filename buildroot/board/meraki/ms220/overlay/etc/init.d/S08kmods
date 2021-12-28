@@ -28,6 +28,10 @@ product_number_to_model() {
         600-21010|600-21020)
             echo MS42
         ;;
+        *)
+            # MS220-48/MS320-48 Y U no product number?!
+            echo $(get_board_cpu)
+        ;;
     esac
 }
 
@@ -51,6 +55,8 @@ get_board_cpu() {
             echo "MS320-24"
         ;;
         "VSC7434 Dual")
+            # could be either the MS220-48 or MS320-48
+            # but since we have no way to know, assume MS320
             echo "MS320-48"
         ;;
     esac
@@ -64,7 +70,7 @@ determine_board() {
     elif [ $(grep -c "board-config" /proc/mtd) -ne 0 ]; then
         MTD_PART=$(get_board_config_mtd)
         echo board-config is /dev/mtd${MTD_PART}
-        product_number=$(dd if=/dev/mtdblock${MTD_PART} bs=8 skip=1 count=8 2>/dev/null | strings | grep -Eo "600-2[018]0[1-9]0")
+        product_number=$(dd if=/dev/mtdblock${MTD_PART} bs=8 skip=1 count=8 2>/dev/null | strings | grep -Eo "(600-2[018]0[1-9]0)|(0[9])")
         model=$(product_number_to_model $product_number)
         if [ ! -f /etc/boardinfo ]; then
             # persist model in overlayfs
@@ -73,14 +79,12 @@ determine_board() {
     fi
 
     if [ $(echo $model | grep -c -E "MS[234]2(0-[248]([48])?(P|LP|FP)?)?") -ne 1 ]; then
-        # boardinfo didn't have an expected model string, fall back to cpuinfo detection
-        # fall back to detection based on cpuinfo, WILL PROBABLY BE WRONG
-        model=$(get_board_cpu)
         echo "!!! IMPORTANT !!!"
-        echo -n "Falling back to cpuinfo board detection, "
-        echo -n "your board model is: ${model}, product: ${product_number} "
+        echo -n "Couldn't determine board model, THINGS WILL BE BROKEN. "
+        echo -n "model=${model}, product=${product_number} "
         echo "please open an issue on github.com/halmartin/meraki-builder"
         echo "!!! IMPORTANT !!!"
+        sleep 30
     fi
 
     # detect the mod_dir and switch_board from boardinfo

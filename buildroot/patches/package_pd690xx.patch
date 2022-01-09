@@ -1,0 +1,10 @@
+--- package/Config.in	2022-01-09 18:35:05.654362508 +0100
++++ package/Config.in	2022-01-09 18:35:22.631068803 +0100
+@@ -2400,6 +2400,7 @@
+ 	source "package/xmlstarlet/Config.in"
+ 	source "package/xxhash/Config.in"
+ 	source "package/ytree/Config.in"
++	source "package/pd690xx/Config.in"
+ endmenu
+ 
+ menu "System tools"

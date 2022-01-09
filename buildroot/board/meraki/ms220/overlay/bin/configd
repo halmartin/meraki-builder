@@ -6,7 +6,7 @@
 # source of truth
 CONFIG=/etc/switch.json
 # cache file to diff changes
-CACHE=/etc/.switch.cache.json
+CACHE=/tmp/.switch.cache.json
 [ -f $CACHE ] || touch $CACHE
 
 # regex which defines json serialization pattern and capture groups

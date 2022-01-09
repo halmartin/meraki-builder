@@ -63,7 +63,7 @@ start() {
     echo -e "90" > /click/client_ip_table/realtime_limit
 
     # set DHCP VLANs for the number of ports present
-    if [ -f /etc/default/switch_dhcp ]; do
+    if [ -f /etc/default/switch_dhcp ]; then
       DHCP_VLAN=$(cat /etc/default/switch_dhcp | grep DHCP_VLAN | awk -F'=' '{print $2}')
     else
       DHCP_VLAN=1

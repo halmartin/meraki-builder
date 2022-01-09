@@ -1,0 +1,119 @@
+#!/usr/bin/env sh
+#
+# daemon to watch /etc/switch.json for changes
+#
+
+# source of truth
+CONFIG=/etc/switch.json
+# cache file to diff changes
+CACHE=/etc/.switch.cache.json
+[ -f $CACHE ] || touch $CACHE
+
+# regex which defines json serialization pattern and capture groups
+#   1) key
+#   2) value
+REGEX='^\+\[\[(.*)\],(.*)\]'
+
+# serialize json into lines of [<key>,<value>] for easy diffing
+serialize() {
+    jq -c 'path(.. | select(type | IN(["object","array"][]) | not)) as $path | [$path,getpath($path)]' $1
+}
+
+# update switch settings
+update() {
+    for diff in $DIFF; do
+          key=$(echo $diff | sed -E "s|$REGEX|\1|" | tr -d \")
+          value=$(echo $diff | sed -E "s|$REGEX|\2|" | tr -d \")
+
+          case $key in
+              device | date)
+                  # NO-OP: user should not be able to modify these fields
+                  ;;
+              ports,*)
+                  port=$(expr 1 + $(echo $key | cut -d, -f2))
+                  field=$(echo $key | cut -d, -f3)
+                  subfield=$(echo $key | cut -d, -f4)
+
+                  case $field in
+                      port | link | status)
+                          # NO-OP: user should not be able to modify these fields
+                          ;;
+                      enabled)
+                              case $value in
+                                 true)
+                                    echo enable port $port
+                                 ;;
+                                 false)
+                                    echo disable port $port
+                                 ;;
+                                 *)
+                                    echo error: unknown port enable value: $value
+                                 ;;
+                                  esac
+                          ;;
+                      vlan)
+                          case $subfield in
+                              pvid)
+                                  echo change port $port pvid to $value
+                              ;;
+                              mode)
+                                  echo change port $port allowed vlans to $value
+                              ;;
+                              *)
+                                  echo unknown vlan setting: $field for port $port
+                              ;;
+                          esac
+                          ;;
+                      poe)
+                          case $subfield in
+                              enabled)
+                                  case $value in
+                                     true)
+                                        echo enabling poe on port $port
+                                        pd690xx -e $port
+                                     ;;
+                                     false)
+                                        echo disabling poe on port $port
+                                        pd690xx -d $port
+                                     ;;
+                                     *)
+                                        echo error: unknown poe enable value: $value
+                                     ;;
+                                  esac
+                              ;;
+                              mode)
+                                  echo change port $port poe mode to $value
+                              ;;
+                              *)
+                                  echo unknown poe setting: $field for port $port
+                              ;;
+                          esac
+                          ;;
+                      lacp)
+                          echo change port $port lacp to $value
+                          ;;
+                      stp)
+                          echo change port $port stp to $value
+                          ;;
+                      *)
+                          echo unknown field: $field for port $port with value = $value
+                          ;;
+                  esac
+                  ;;
+          esac
+    done
+
+    # update serialized cache file
+    serialize $CONFIG > $CACHE
+}
+
+
+# main loop
+while true; do
+    DIFF=$(serialize $CONFIG | diff -U0 $CACHE - | tail -n +4 | grep '^\+')
+    if [ -n "$DIFF" ]; then
+        update
+    fi
+
+    sleep 10
+done

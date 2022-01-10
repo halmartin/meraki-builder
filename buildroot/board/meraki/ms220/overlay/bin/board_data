@@ -1,0 +1,125 @@
+#!/bin/sh
+# Copyright (C) 2022 - Hal Martin (github.com/halmartin)
+
+get_board_config_mtd() {
+    if [ $(grep -c "board-config" /proc/mtd) -ne 0 ]; then
+        grep "board-config" /proc/mtd | awk -F':' '{print $1}' | grep -Eo "[0-9]"
+    else
+        >&2 echo "board-config not found!"
+    fi
+}
+
+product_number_to_model() {
+    case $1 in
+        600-28010)
+            echo MS220-8
+        ;;
+        600-28020)
+            echo MS220-8P
+        ;;
+        600-20030)
+            echo MS220-24
+        ;;
+        600-20040)
+            echo MS220-24P
+        ;;
+        600-21030)
+            echo MS220-48
+        ;;
+        600-21040|600-21050)
+            echo MS220-48P
+        ;;
+        600-20050)
+            echo MS320-24
+        ;;
+        600-20060)
+            echo MS320-24P
+        ;;
+        600-21060)
+            echo MS320-48
+        ;;
+        600-21070|600-21080)
+            echo MS320-48P
+        ;;
+        600-20010)
+            echo MS22
+        ;;
+        600-20020)
+            echo MS22P
+        ;;
+        600-21010)
+            echo MS42
+        ;;
+        600-21020)
+            echo MS42P
+        ;;
+        *)
+            # MS220-48/MS320-48 Y U no product number?!
+            echo $(get_board_cpu)
+        ;;
+    esac
+}
+
+get_board_cpu() {
+    case "$(cat /proc/cpuinfo | grep 'system type' | grep -Eo 'VSC74[23][457]( Dual)?')" in
+        "VSC7425")
+            echo "MS220-8"
+        ;;
+        "VSC7427")
+            echo "MS220-24"
+        ;;
+        "VSC7434")
+            echo "MS320-24"
+        ;;
+        "VSC7434 Dual")
+            # could be either the MS220-48 or MS320-48
+            # but since we have no way to know, assume MS320
+            echo "MS320-48"
+        ;;
+    esac
+}
+
+get_product_number() {
+    MTD_PART=$(get_board_config_mtd)
+    echo $(dd if=/dev/mtdblock${MTD_PART} bs=8 skip=1 count=8 2>/dev/null | grep -Eo "(600-2[018]0[1-9]0)|(0[9])")
+}
+
+get_serial_number() {
+    MTD_PART=$(get_board_config_mtd)
+    echo $(dd if=/dev/mtdblock${MTD_PART} bs=4 skip=31 count=3 2>/dev/null)
+}
+
+get_mac_addr() {
+    MTD_PART=$(get_board_config_mtd)
+    if [ "${MTD_PART}" != "" ]; then
+        # this will get the device's original MAC address from the "board-config" mtd
+        echo $(dd if=/dev/mtdblock${MTD_PART} bs=6 skip=17 count=1 2>/dev/null | xxd -g 1 | awk 'BEGIN{OFS=":"} {print $2,$3,$4,$5,$6,$7}')
+    fi
+}
+
+usage() {
+  echo "Usage $0: [mac|model|serial|product_number]"
+  exit 0
+}
+
+if [ $# -eq 1 ]; then
+  case $1 in
+    mac)
+      get_mac_addr
+    ;;
+    model)
+      product_number_to_model $(get_product_number)
+    ;;
+    product_number)
+      get_product_number
+    ;;
+    serial)
+      get_serial_number
+    ;;
+    *)
+      usage
+    ;;
+  esac
+else
+  usage
+fi

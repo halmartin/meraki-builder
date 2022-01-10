@@ -1,0 +1,11 @@
+--- a/include/configs/vcoreiii.h	2021-03-28 22:41:50.316157021 +0200
++++ b/include/configs/vcoreiii.h	2021-03-30 10:42:26.805635344 +0200
+@@ -63,7 +63,7 @@
+ #define VCOREIII_DEFAULT_MTD_ENV    /* Go away */
+ #endif
+ 
+-#define CONFIG_SYS_BOOTM_LEN      (16 << 20)      /* Increase max gunzip size */
++#define CONFIG_SYS_BOOTM_LEN      (32 << 20)      /* Increase max gunzip size */
+ 
+ #define CONFIG_EXTRA_ENV_SETTINGS					\
+ 	VCOREIII_DEFAULT_MTD_ENV					\

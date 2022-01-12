@@ -19,15 +19,6 @@ if [ -f /etc/boardinfo ]; then
   fi
 fi
 
-# convert 0/non-0 to false/true
-to_bool() {
-  if [ $(echo $port_status | awk "{print \$$1}") -ne 0 ]; then
-    echo true
-  else
-    echo false
-  fi
-}
-
 json_init
 json_add_string device $MODEL
 json_add_string date $(date +%Y-%m-%dT%TZ)
@@ -47,11 +38,11 @@ if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
     port_vlan_status=$(echo "$port_vlan_statuses" | grep -E "^\s+$port\s")
 
     json_add_object $port
-    json_add_string enabled $(to_bool 10)
-    json_add_string lacp $(to_bool 6)
+    json_add_boolean enabled $(echo $port_status | awk "{print $1}")
+    json_add_boolean lacp $(echo $port_status | awk "{print $6}")
 
     json_add_object link
-    json_add_string established $(to_bool 2)
+    json_add_boolean established $(echo $port_status | awk "{print $2}")
     json_add_string speed $(echo $port_status | awk '{print $3}')
     json_close_object # link
 
@@ -64,15 +55,9 @@ if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
 
     if [ $POE -eq 1 ]; then
       port_poe_status=$(echo "$port_poe_statuses" | grep -E "^$port\s")
-      # parse PoE status
-      if [ "$(echo $port_poe_status | awk '{print $2}')" == "Enabled" ]; then
-        poe_state=true
-      else
-        poe_state=false
-      fi
 
       json_add_object poe
-      json_add_string enabled $poe_state
+      json_add_boolean enabled $([ "$(echo $port_poe_status | awk '{print $2}')" == "Enabled" ] && echo 1 || echo 0)
       json_add_string standard 802.3$(echo $port_poe_status | awk '{print $3}')
       json_add_string power $(echo $port_poe_status | awk '{print $5}')
       json_close_object # poe

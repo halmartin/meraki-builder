@@ -30,7 +30,7 @@ update() {
                   # NO-OP: user should not be able to modify these fields
                   ;;
               ports,*)
-                  port=$(expr 1 + $(echo $key | cut -d, -f2))
+                  port=$(echo $key | cut -d, -f2)
                   field=$(echo $key | cut -d, -f3)
                   subfield=$(echo $key | cut -d, -f4)
 

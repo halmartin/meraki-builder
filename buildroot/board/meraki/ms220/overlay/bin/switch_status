@@ -43,14 +43,14 @@ if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
 
     json_add_object link
     json_add_boolean established $(echo $port_status | awk "{print $2}")
-    json_add_string speed $(echo $port_status | awk '{print $3}')
+    json_add_int speed $(echo $port_status | awk '{print $3}')
     json_close_object # link
 
     json_add_object vlan
-    json_add_string pvid $(echo $port_vlan_status | awk '{print $6}')
+    json_add_int pvid $(echo $port_vlan_status | awk '{print $6}')
     json_add_string allowed $(echo $port_vlan_status | awk '{print $11}')
-    json_add_string tag_in $(echo $port_vlan_status | awk '{print $2}')
-    json_add_string untag_in $(echo $port_vlan_status | awk '{print $3}')
+    json_add_int tag_in $(echo $port_vlan_status | awk '{print $2}')
+    json_add_int untag_in $(echo $port_vlan_status | awk '{print $3}')
     json_close_object # vlan
 
     if [ $POE -eq 1 ]; then

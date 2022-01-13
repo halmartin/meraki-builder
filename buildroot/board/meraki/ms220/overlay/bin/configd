@@ -14,9 +14,32 @@ CACHE=/tmp/.switch.cache.json
 #   2) value
 REGEX='^\+\[\[(.*)\],(.*)\]'
 
+CSPT=/click/switch_port_table
+
 # serialize json into lines of [<key>,<value>] for easy diffing
 serialize() {
     jq -c 'path(.. | select(type | IN(["object","array"][]) | not)) as $path | [$path,getpath($path)]' $1
+}
+
+# set vlan <key> of <port> to <value>
+set_vlan() {
+    port=$1
+    key=$2
+    value=$3
+
+    vlans=$(cat $CSPT/dump_pport_vlans | grep "^ *$port ")
+
+    echo -e "PORT $port,
+            ALLOWED_VLANS          $(echo $vlans | awk '{print $11}'),
+            ALLOW_TAGGED_IN        $(echo $vlans | awk '{print $2}'),
+            ALLOW_UNTAGGED_IN      $(echo $vlans | awk '{print $3}'),
+            INGRESS_FILTER         $(echo $vlans | awk '{print $4}'),
+            RADIUS_CAN_ASSIGN_VLAN true,
+            PVID                   $(echo $vlans | awk '{print $6}'),
+            UNTAGGED_VID           $(echo $vlans | awk '{print $7}')" \
+      | tr '\n' ' ' \
+      | sed "s|$key [^,]*,|$key $value,|" \
+      > $CSPT/set_vlan_allports_conf
 }
 
 # update switch settings
@@ -54,10 +77,12 @@ update() {
                       vlan)
                           case $subfield in
                               pvid)
-                                  echo change port $port pvid to $value
+                                  echo changing port $port pvid to $value
+                                  set_vlan $port PVID $value
                               ;;
-                              mode)
-                                  echo change port $port allowed vlans to $value
+                              allowed)
+                                  echo changing port $port allowed vlans to $value
+                                  set_vlan $port ALLOWED_VLANS $value
                               ;;
                               *)
                                   echo unknown vlan setting: $field for port $port
@@ -83,6 +108,7 @@ update() {
                               ;;
                               mode)
                                   echo change port $port poe mode to $value
+                                  # TODO: not implemented
                               ;;
                               *)
                                   echo unknown poe setting: $field for port $port

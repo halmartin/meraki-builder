@@ -29,110 +29,118 @@ set_vlan() {
 
     vlans=$(cat $CSPT/dump_pport_vlans | grep "^ *$port ")
 
-    echo -e "PORT $port,
+    update=$(echo -e "PORT $port,
             ALLOWED_VLANS          $(echo $vlans | awk '{print $11}'),
             ALLOW_TAGGED_IN        $(echo $vlans | awk '{print $2}'),
             ALLOW_UNTAGGED_IN      $(echo $vlans | awk '{print $3}'),
             INGRESS_FILTER         $(echo $vlans | awk '{print $4}'),
             RADIUS_CAN_ASSIGN_VLAN true,
             PVID                   $(echo $vlans | awk '{print $6}'),
-            UNTAGGED_VID           $(echo $vlans | awk '{print $7}')" \
-      | tr '\n' ' ' \
-      | sed "s|$key [^,]*,|$key $value,|" \
-      > $CSPT/set_vlan_allports_conf
+            UNTAGGED_VID           $(echo $vlans | awk '{print $7}')" |
+        tr '\n' ' ')
+
+    # only update value if changed
+    if [ "$(echo $update | sed -E "s|.* $key ([^,]*),.*|\1|")" != "$value" ]; then
+        echo changing port $port vlan $key to $value
+        echo $update | sed "s|$key [^,]*,|$key $value,|" >$CSPT/set_vlan_allports_conf
+    fi
 }
 
 # update switch settings
 update() {
     for diff in $DIFF; do
-          key=$(echo $diff | sed -E "s|$REGEX|\1|" | tr -d \")
-          value=$(echo $diff | sed -E "s|$REGEX|\2|" | tr -d \")
+        key=$(echo $diff | sed -E "s|$REGEX|\1|" | tr -d \")
+        value=$(echo $diff | sed -E "s|$REGEX|\2|" | tr -d \")
 
-          case $key in
-              device | date)
-                  # NO-OP: user should not be able to modify these fields
-                  ;;
-              ports,*)
-                  port=$(echo $key | cut -d, -f2)
-                  field=$(echo $key | cut -d, -f3)
-                  subfield=$(echo $key | cut -d, -f4)
+        case $key in
+        device | date)
+            # NO-OP: user should not be able to modify these fields
+            ;;
+        ports,*)
+            port=$(echo $key | cut -d, -f2)
+            field=$(echo $key | cut -d, -f3)
+            subfield=$(echo $key | cut -d, -f4)
 
-                  case $field in
-                      port | link | status)
-                          # NO-OP: user should not be able to modify these fields
-                          ;;
-                      enabled)
-                              case $value in
-                                 true)
-                                    echo enable port $port
-                                 ;;
-                                 false)
-                                    echo disable port $port
-                                 ;;
-                                 *)
-                                    echo error: unknown port enable value: $value
-                                 ;;
-                                  esac
-                          ;;
-                      vlan)
-                          case $subfield in
-                              pvid)
-                                  echo changing port $port pvid to $value
-                                  set_vlan $port PVID $value
-                              ;;
-                              allowed)
-                                  echo changing port $port allowed vlans to $value
-                                  set_vlan $port ALLOWED_VLANS $value
-                              ;;
-                              *)
-                                  echo unknown vlan setting: $field for port $port
-                              ;;
-                          esac
-                          ;;
-                      poe)
-                          case $subfield in
-                              enabled)
-                                  case $value in
-                                     true)
-                                        echo enabling poe on port $port
-                                        pd690xx -e $port
-                                     ;;
-                                     false)
-                                        echo disabling poe on port $port
-                                        pd690xx -d $port
-                                     ;;
-                                     *)
-                                        echo error: unknown poe enable value: $value
-                                     ;;
-                                  esac
-                              ;;
-                              mode)
-                                  echo change port $port poe mode to $value
-                                  # TODO: not implemented
-                              ;;
-                              *)
-                                  echo unknown poe setting: $field for port $port
-                              ;;
-                          esac
-                          ;;
-                      lacp)
-                          echo change port $port lacp to $value
-                          ;;
-                      stp)
-                          echo change port $port stp to $value
-                          ;;
-                      *)
-                          echo unknown field: $field for port $port with value = $value
-                          ;;
-                  esac
-                  ;;
-          esac
+            case $field in
+            port | link | status)
+                # NO-OP: user should not be able to modify these fields
+                ;;
+            enabled)
+                # TODO
+                echo "change port $port enabled to $value (not implemented)"
+                ;;
+            lacp)
+                # TODO: maybe $CSPT/enable_lacp_on_single_ports
+                echo "change port $port stp to $value (not implemented)"
+                ;;
+            stp)
+                # TODO: probably something with $CSPT/set_ports_stp_state
+                # echo -e "PORT $MAC/$i, ENABLED true, AUTOEDGE true, EDGE false, AUTOPTP true, PTP false, PRI 128, COST 0" > /click/stp/set_many_port_cfgs
+                echo "change port $port stp to $value (not implemented)"
+                ;;
+            vlan)
+                case $subfield in
+                pvid)
+                    set_vlan $port PVID $value
+                    ;;
+                allowed)
+                    set_vlan $port ALLOWED_VLANS $value
+                    ;;
+                tag_in)
+                    set_vlan $port ALLOW_TAGGED_IN $value
+                    ;;
+                untag_in)
+                    set_vlan $port ALLOW_UNTAGGED_IN $value
+                    ;;
+                *)
+                    echo "error: unknown vlan setting: $subfield for port $port"
+                    ;;
+                esac
+                ;;
+            poe)
+                case $subfield in
+                power)
+                    # NO-OP: user should not be able to modify these fields
+                    ;;
+                enabled)
+                    case $value in
+                    true)
+                        if [ $(pd690xx -l | grep "^ *$port\s" | grep "Disabled") ]; then
+                            echo enabling poe on port $port
+                            pd690xx -e $port
+                        fi
+                        ;;
+                    false)
+                        if [ $(pd690xx -l | grep "^ *$port\s" | grep "Enabled") ]; then
+                            echo disabling poe on port $port
+                            pd690xx -d $port
+                        fi
+                        ;;
+                    *)
+                        echo "error: unknown poe enable value: $value"
+                        ;;
+                    esac
+                    ;;
+                mode | standard)
+                    # TODO: not implemented
+                    echo "change port $port poe mode to $value (not implemented)"
+                    ;;
+                *)
+                    echo "error: unknown poe setting $subfield for port $port"
+                    ;;
+                esac
+                ;;
+            *)
+                echo "error: unknown field $field for port $port with value = $value"
+                ;;
+            esac
+            ;;
+        esac
     done
 
     # update serialized cache file
-    serialize $CONFIG > $CACHE
+    serialize $CONFIG >$CACHE
 }
-
 
 # main loop
 while true; do

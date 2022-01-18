@@ -4,87 +4,67 @@
 #
 # This is a simple script to print the switch status (physical, link, vlan, poe) as JSON
 
+# source jshn shell library https://openwrt.org/docs/guide-developer/jshn
+. /usr/share/libubox/jshn.sh
+
 CSPT=/click/switch_port_table
 POE=0
+MODEL="unknown"
+
 if [ -f /etc/boardinfo ]; then
   . /etc/boardinfo
   if [ $(echo $MODEL | grep -c -E 'P$') -eq 1 ]; then
     POE=1
+    port_poe_statuses=$(pd690xx -l)
   fi
-else
-  MODEL="unknown"
 fi
+
+json_init
+json_add_string device $MODEL
+json_add_string date $(date +%Y-%m-%dT%TZ)
 
 if [ -f ${CSPT}/dump_pport_vlans ] && [ -f ${CSPT}/dump_pports ]; then
   port_statuses=$(cat ${CSPT}/dump_pports)
-  port_vlan_statuses=$(cat ${CSPT}/dump_pport_vlans)
+  port_vlan_statuses=$(cat $CSPT/dump_pport_vlans)
+
   if [ $POE -eq 1 ]; then
-    port_poe_statuses=$(pd690xx -l)
     # on larger switches there are multiple pd690xx, only take the first temp
-    poe_temp=$(pd690xx -t | head -1)
+    json_add_string temperature $(pd690xx -t | head -1)
   fi
-  NUM_PORTS=$(echo "$port_statuses" | tail -n+2 | wc -l)
-  echo -n {\"device\": \"$MODEL\", \"date\": \"$(date +%Y-%m-%dT%TZ)\", 
-  if [ $POE -eq 1 ]; then
-    echo -n \"temperature\": \"$poe_temp\",
-  fi
-  echo -n \"ports\":[
-  for i in $(seq 1 ${NUM_PORTS}); do
-    port_status=$(echo "$port_statuses" | grep -E "^\s+$i\s")
-    port_vlan_status=$(echo "$port_vlan_statuses" | grep -E "^\s+$i\s")
+
+  json_add_object ports
+  for port in $(seq 1 $(echo "$port_statuses" | tail -n+2 | wc -l)); do
+    port_status=$(echo "$port_statuses" | grep -E "^\s+$port\s")
+    port_vlan_status=$(echo "$port_vlan_statuses" | grep -E "^\s+$port\s")
+
+    json_add_object $port
+    json_add_boolean enabled $(echo $port_status | awk "{print $1}")
+    json_add_boolean lacp $(echo $port_status | awk "{print $6}")
+
+    json_add_object link
+    json_add_boolean established $(echo $port_status | awk "{print $2}")
+    json_add_int speed $(echo $port_status | awk '{print $3}')
+    json_close_object # link
+
+    json_add_object vlan
+    json_add_int pvid $(echo $port_vlan_status | awk '{print $6}')
+    json_add_string allowed $(echo $port_vlan_status | awk '{print $11}')
+    json_add_int tag_in $(echo $port_vlan_status | awk '{print $2}')
+    json_add_int untag_in $(echo $port_vlan_status | awk '{print $3}')
+    json_close_object # vlan
+
     if [ $POE -eq 1 ]; then
-      port_poe_status=$(echo "$port_poe_statuses" | grep -E "^$i\s")
+      port_poe_status=$(echo "$port_poe_statuses" | grep -E "^$port\s")
+
+      json_add_object poe
+      json_add_boolean enabled $([ "$(echo $port_poe_status | awk '{print $2}')" == "Enabled" ] && echo 1 || echo 0)
+      json_add_string standard 802.3$(echo $port_poe_status | awk '{print $3}')
+      json_add_string power $(echo $port_poe_status | awk '{print $5}')
+      json_close_object # poe
     fi
-    # get the link state
-    if [ $(echo $port_status | awk '{print $2}') -eq 0 ]; then
-      link_up=false
-      link_speed=0
-    else
-      link_up=true
-      # get the link speed
-      link_speed=$(echo $port_status | awk '{print $3}')
-    fi
-    # get LACP (?) status
-    if [ $(echo $port_status | awk '{print $6}') -ne 0 ]; then
-      lacp_state=true
-    else
-      lacp_state=false
-    fi
-    # is the port enabled (?)
-    if [ $(echo $port_status | awk '{print $10}') -ne 0 ]; then
-      port_enabled=true
-    else
-      port_enabled=false
-    fi
-    # okay, do VLANs now
-    port_pvid=$(echo $port_vlan_status | awk '{print $6}')
-    port_tag_in=$(echo $port_vlan_status | awk '{print $2}')
-    port_untag_in=$(echo $port_vlan_status | awk '{print $3}')
-    port_allowed_vlans=$(echo $port_vlan_status | awk '{print $11}')
-    echo -n {\"port\": $i, \"link\": {\"established\": $link_up, \"speed\": $link_speed},
-    echo -n \"lacp\": $lacp_state, \"enabled\": $port_enabled, \
-\"vlan\": {\"pvid\": $port_pvid, \"allowed\": \"$port_allowed_vlans\"}
-    if [ $POE -eq 1 ]; then
-      # parse PoE status
-      if [ "$(echo $port_poe_status | awk '{print $2}')" == "Enabled" ]; then
-        poe_state=true
-      else
-        poe_state=false
-      fi
-      poe_power=$(echo $port_poe_status | awk '{print $5}')
-      poe_standard=$(echo $port_poe_status | awk '{print $3}')
-      if [ "$poe_standard" != "" ]; then
-        echo -n ,\"poe\": {\"standard\": \"802.3${poe_standard}\", \"enabled\": $poe_state, \"power\": ${poe_power}}}
-      else
-        echo -n }
-      fi
-    else
-      echo -n }
-    fi
-    if [ $i -ne ${NUM_PORTS} ]; then
-      echo -n ,
-    fi
+
+    json_close_object # port
   done
-  # finish our very ghetto JSON
-  echo ]}
 fi
+
+json_dump

@@ -62,7 +62,7 @@ update() {
             subfield=$(echo $key | cut -d, -f4)
 
             case $field in
-            port | link | status)
+            port | status)
                 # NO-OP: user should not be able to modify these fields
                 ;;
             enabled)
@@ -89,6 +89,32 @@ update() {
                 # TODO: probably something with $CSPT/set_ports_stp_state
                 # echo -e "PORT $MAC/$i, ENABLED true, AUTOEDGE true, EDGE false, AUTOPTP true, PTP false, PRI 128, COST 0" > /click/stp/set_many_port_cfgs
                 echo "change port $port stp to $value (not implemented)"
+                ;;
+            link)
+                case $subfield in
+                speed)
+                    case $value in
+                    0)
+                        echo "removed forced speed for port $port"
+                        # TODO: should use port enabled value
+                        echo "PORT $port, MODE aneg" >$CSPT/set_port_phy_cfgs
+                        ;;
+                    100 | 1000 | 10000)
+                        echo "forcing port $port speed at $value"
+                        echo "PORT $port, MODE forced, FORCE_SPEED ${value}fdx" >$CSPT/set_port_phy_cfgs
+                        ;;
+                    *)
+                        echo "error: invalid forced port speed for port $port: $value"
+                        ;;
+                    esac
+                    ;;
+                established)
+                    # NO-OP: user should not be able to modify these fields
+                    ;;
+                *)
+                    echo "error: unknown link setting for port $port: $subfield"
+                    ;;
+                esac
                 ;;
             vlan)
                 case $subfield in

@@ -66,11 +66,23 @@ update() {
                 # NO-OP: user should not be able to modify these fields
                 ;;
             enabled)
-                # TODO
-                echo "change port $port enabled to $value (not implemented)"
+                case $value in
+                true)
+                    echo "enabling port $port"
+                    echo "PORT $port, MODE aneg" >$CSPT/set_port_phy_cfgs
+                    ;;
+                false)
+                    echo "disabling port $port"
+                    echo "PORT $port, MODE off" >$CSPT/set_port_phy_cfgs
+                    ;;
+                *)
+                    echo "error: invalid port enabled value for port $port: $value"
+                    ;;
+                esac
                 ;;
             lacp)
-                # TODO: maybe $CSPT/enable_lacp_on_single_ports
+                # TODO
+                # echo "AGGR 0, MEMBERS '9,10'" >$CSPT/add_link_aggr
                 echo "change port $port stp to $value (not implemented)"
                 ;;
             stp)

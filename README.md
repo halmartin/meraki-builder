@@ -9,6 +9,29 @@ There is also an overlay for building a firmware image for the Meraki MX80, see 
 
 # Build instructions
 
+## Docker
+
+Build the image and drop into an interactive shell with
+
+    make <board>
+
+where board is one of `mx80` or `ms220`.
+
+Now, inside the container, create the buildroot image with
+
+    make
+
+Back on your host, the image can found found at `output/images/ubi_image.bin`.
+
+
+## Manually
+
+* Download the latest stable release of [buildroot](https://www.buildroot.org/download.html)
+* Copy `buildroot/board/meraki/<board>/buildroot-config` to `.config` in your extracted buildroot directory
+* Copy `buildroot/board/merkai/<board>` to `board/meraki/<board>` in your buildroot tree
+* Run `make` to build buildroot, the bootable/flashable image can be found in `output/images/ubi_image.bin`
+
+
 ## MS220-series switches
 
 ### RedBoot bootloader
@@ -24,16 +47,3 @@ Clone [switch-11-22-ms220](https://github.com/halmartin/switch-11-22-ms220) and 
 Download [buildroot](https://www.buildroot.org/download.html) and copy the contents of the `buildroot` directory in this repository over the buildroot source tree
 
 After building the toolchain + target filesystem with `make`, copy `output/images/rootfs.squashfs` to `nor/bin/squashfs`
-
-## MX80 router
-
-### Docker
-
-`cd docker/mx80 && make docker-build`
-
-### Manually
-
-* Download the latest stable release of [buildroot](https://www.buildroot.org/download.html)
-* Copy `buildroot/board/meraki/mx80/buildroot-config` to `.config` in your extracted buildroot directory
-* Copy `buildroot/board/merkai/mx80` to `board/meraki/mx80` in your buildroot tree
-* Run `make` to build buildroot, the bootable/flashable image can be found in `output/images/ubi_image.bin`

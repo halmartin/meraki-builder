@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+# Generate dropbear SSH host keys if they don't exist
+#
+
+start() {
+    mkdir -p /etc/dropbear
+    if [ $? -ne 0 ]; then
+        echo "Unable to create /etc/dropbear"
+        return
+    fi
+    # this takes forever so default to just generate the ECDSA key
+    if [ ! -f /etc/dropbear/dropbear_ecdsa_host_key ]; then
+        echo "Generating dropbear ECDSA host key"
+        dropbearkey -t ecdsa -f /etc/dropbear/dropbear_ecdsa_host_key -s 521
+    fi
+    #if [ ! -f /etc/dropbear/dropbear_rsa_host_key ]; then
+    #    echo "Generating dropbear RSA host key"
+    #    dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key -s 4096
+    #fi
+}
+
+stop() {
+    /bin/true
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+      start
+    ;;
+  stop)
+      stop
+    ;;
+  restart|reload)
+      restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?

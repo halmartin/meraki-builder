@@ -1,0 +1,4 @@
+config BR2_PACKAGE_FINDHDR
+bool "findhdr"
+help
+The findhdr utility is used to locate the offset of the embedded ramdisk in various Meraki switch firmwares.

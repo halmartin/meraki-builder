@@ -1,0 +1,71 @@
+#!/bin/sh
+#
+# Copyright (C) 2022 - Hal Martin (github.com/halmartin)
+#
+# Load broadcom kernel modules
+#
+
+load_pwm() {
+    if [ -f /lib/modules/amc6821.ko ]; then
+        insmod /lib/modules/amc6821.ko pwminv=1
+    fi
+}
+
+load_eth() {
+    if [ -f /lib/modules/et/et-hurricane3.ko ]; then
+        insmod /lib/modules/et/et-hurricane3.ko
+    fi
+}
+
+load_bcm() {
+    if [ -f /lib/modules/bcm/linux-kernel-bde.ko ]; then
+        insmod /lib/modules/bcm/linux-kernel-bde.ko dmasize=32M
+        mknod /dev/linux-kernel-bde c 127 0
+    fi
+    if [ -f /lib/modules/bcm/linux-user-bde.ko ]; then
+        insmod /lib/modules/bcm/linux-user-bde.ko
+        mknod /dev/linux-user-bde c 126 0
+    fi
+}
+
+start() {
+    # fan control
+    load_pwm
+    # ethernet
+    load_eth
+    # broadcom module for switch fabric
+    load_bcm
+}
+
+stop() {
+    modules="linux-user-bde linux-kernel-bde"
+    for mod in $modules; do
+        modprobe -r -f $mod
+        if [ $? -ne 0 ]; then
+            echo "Error removing '${mod}.ko'" > /dev/kmsg
+            return
+        fi
+    done
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+      start
+    ;;
+  stop)
+      stop
+    ;;
+  restart|reload)
+      restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?

@@ -1,0 +1,3475 @@
+# 1 "click-config/switch.template"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "/mnt/jenkins/workspace/router/prod-signing/switch-12-2/openwrt/staging_dir_arm_nofpu_3.18/arm-linux-musleabi/include/stdc-predef.h" 1 3
+# 1 "<command-line>" 2
+# 1 "click-config/switch.template"
+
+
+
+# 1 "click-config/common.click" 1
+
+
+require(elts_meraki);
+# 216 "click-config/common.click"
+AnnotationInfo(
+
+
+ DST_MAC 0 6,
+ DST_IP_1 0 4,
+ DST_IP_2 4 4,
+ DST_IP_3 8 4,
+ DST_IP_4 12 4,
+
+
+ PAINT_VAP 16 1,
+ PAINT_BW 17.0 2,
+ PAINT_ALL_RPTRS_BCAST 17.2 1,
+
+
+ PAINT_NAT_BCAST 17.3 1,
+ PAINT_SET_VLAN_SRC 17.4 1,
+ PAINT_IS_LOCAL_CLI 17.5 1,
+ PAINT_IS_HTTP_REQUEST 17.6 1,
+ PAINT_L3ROAMING_REMOTE_LAN 17.7 1,
+
+ PAINT_SRC_DEV 18 1,
+ PAINT_DEV 19 1,
+
+ PAINT_ACCT 20 1,
+ PAINT_ACCT_NODE 20.0 1,
+ PAINT_ACCT_IGNORE 20.1 1,
+
+ PAINT_BCAST 21.0 1,
+ PAINT_REMOTE_LAN 21.1 1,
+ PAINT_VPN_ENCAPPED 21.2 1,
+ PAINT_VPN_DECAPPED 21.3 1,
+ PAINT_NO_CLIENTS 21.4 1,
+ PAINT_DEMULTICAST 21.5 1,
+ PAINT_L3_VPN_DECAPPED 21.6 1,
+ PAINT_L3ROAMING_DECAPPED 21.6 1,
+ PAINT_SNORTED 21.7 1,
+
+ VLAN_TCI 22 2,
+ PAINT_NODE 24 4,
+ PAINT_LOCAL_UPLINK 24 1,
+
+ VPN_PEER_NUM 32 4,
+ PMTU 36 2,
+ TOINT 36 1,
+ PAINT_DEVORDER 38 1,
+ PAINT_ACL 39 1,
+
+ PAINT_TO_CLI_DHCP_REPLY 40.0 1,
+ PAINT_SPI_IS_DATA 40.1 1,
+ PAINT_SPI_IS_ENCRYPTED 40.2 1,
+ PAINT_SA_LEARNING 40.3 1,
+ PAINT_IS_DHCP_HEARTBEAT 40.5 1,
+ PAINT_MATCHED_DEFAULT 40.6 1,
+ PAINT_LATENCY_TRACKED 40.7 1,
+
+ PAINT_VPN_REMOTE_UPLINK 41 1,
+ LARGEST_FRAGMENT 42 2,
+ BW_FLOW 44 4,
+
+ PAINT_VRF_ID 48.0 2,
+ PAINT_VRF_RT_ID 48.2 6,
+ PAINT_VRF_RT_ID_NONVPN_BIT 48.2 1,
+ PAINT_RT_OUTPUT 49.0 4,
+
+
+ TA_DNS_HOST 50 2,
+
+ PAINT_SRC_SGT 52 2,
+
+
+ PAINT_BWMANAGER_PACKET_DROP 54.0 1,
+ PAINT_FIREWALL_PACKET_HIT 54.1 1,
+
+
+ PAINT_MUX_PORTNO_ANNO 54.2 2,
+ PAINT_MUX_INUSE_ANNO 54.4 1,
+
+
+ SRC_CLI_PTR 56 4,
+ DST_CLI_PTR 60 4,
+ SRC_CLI_FLOW_PTR 64 4,
+ DST_CLI_FLOW_PTR 68 4,
+# 312 "click-config/common.click"
+ REAL_WIFI_EXTRA 24 12,
+ REAL_WIFI_EXTRA_1 24 4,
+ REAL_WIFI_EXTRA_2 28 4,
+ REAL_WIFI_EXTRA_3 32 4,
+
+
+ SWITCH_RX_LPORT 24 2,
+ SWITCH_RX_LPORT_MSSID 24 1,
+ SWITCH_RX_LPORT_PNUM 25 1,
+ SWITCH_RX_PPORT 26 2,
+ SWITCH_RX_PPORT_MSSID 26 1,
+ SWITCH_RX_PPORT_PNUM 27 1,
+ SWITCH_TX_LPORT 38 2,
+ SWITCH_TX_LPORT_MSSID 38 1,
+ SWITCH_TX_LPORT_PNUM 39 1,
+ SWITCH_TX_PPORT 40 2,
+ SWITCH_TX_PPORT_MSSID 40 1,
+ SWITCH_TX_PPORT_PNUM 41 1,
+
+ SWITCH_FLAGS 44 1,
+ SWITCH_LEARN 44.0 1,
+ SWITCH_DONT_SW_ROUTE 44.1 1,
+ SWITCH_DHCP_RELAYED 44.2 1,
+ SWITCH_TEST_CPU_COPY 44.3 1,
+ SWITCH_TEST_BLOCK_FORWARDING 44.4 1,
+ SWITCH_IS_MIRROR 44.5 1,
+ SWITCH_L3_HW_MISS 44.6 1,
+ SWITCH_STACK_FWD_MASTER 44.7 1,
+ MSSTP_ENCAPPED 45.0 1,
+ SWITCH_INTRA_STACK_TX 45.1 1,
+ SWITCH_ETHERLESS_L3 45.2 1,
+
+ PAINT_SWITCH_TX_COS 35 1,
+ PAINT_SFLOW_FACTOR 32 2,
+
+ PAINT_SFLOW_INFO_ISTX 34.0 1,
+ PAINT_SFLOW_INFO_ISSAMP 34.1 1,
+ PAINT_SFLOW_INFO_ISEXCL_SAMP 34.2 1,
+ PAINT_SFLOW_INFO_FAKETX 34.3 1,
+ PAINT_SFLOW_INFO_BYTE 34 1,
+ PAINT_SFLOW_TX_PPORT 42 2,
+ PAINT_SFLOW_TX_PPORT_MSSID 42 1,
+ PAINT_SFLOW_TX_PPORT_PNUM 43 1,
+ EAP_VLAN 46 2,
+ INGRESS_COSQ 48 1,
+ STACK_MEMBER_MAC 49 6,
+
+
+ CHECK_OVERLAP DST_IP SRC_CLI_PTR DST_CLI_PTR PMTU PAINT_VAP PAINT_IS_HTTP_REQUEST PAINT_SRC_DEV PAINT_ACCT VLAN_TCI SWITCH_RX_LPORT SWITCH_RX_PPORT SWITCH_TX_LPORT SWITCH_TX_PPORT IPREASSEMBLER PAINT_SFLOW_FACTOR PAINT_SFLOW_INFO_BYTE PAINT_SFLOW_TX_PPORT SRC_CLI_FLOW_PTR DST_CLI_FLOW_PTR SWITCH_LEARN SWITCH_DONT_SW_ROUTE SWITCH_DHCP_RELAYED SWITCH_IS_MIRROR PAINT_SWITCH_TX_COS EAP_VLAN INGRESS_COSQ TA_DNS_HOST,
+
+ CHECK_OVERLAP DST_IP6 SRC_CLI_PTR DST_CLI_PTR PMTU PAINT_VAP PAINT_IS_HTTP_REQUEST PAINT_SRC_DEV PAINT_ACCT VLAN_TCI SWITCH_RX_LPORT SWITCH_RX_PPORT SWITCH_TX_LPORT SWITCH_TX_PPORT IPREASSEMBLER PAINT_SFLOW_FACTOR PAINT_SFLOW_INFO_BYTE PAINT_SFLOW_TX_PPORT SRC_CLI_FLOW_PTR DST_CLI_FLOW_PTR SWITCH_LEARN SWITCH_DONT_SW_ROUTE SWITCH_DHCP_RELAYED SWITCH_IS_MIRROR PAINT_SWITCH_TX_COS EAP_VLAN INGRESS_COSQ TA_DNS_HOST,
+
+
+ CHECK_OVERLAP DST_IP SRC_CLI_PTR DST_CLI_PTR PMTU PAINT_DEVORDER PAINT_ACL PAINT_VAP PAINT_BW PAINT_REMOTE_LAN PAINT_ACCT PAINT_SRC_DEV PAINT_DEV PAINT_NODE IPREASSEMBLER VLAN_TCI PAINT_BCAST BW_FLOW PAINT_VPN_ENCAPPED PAINT_NO_CLIENTS PAINT_DEMULTICAST PAINT_L3_VPN_DECAPPED PAINT_SNORTED PAINT_TO_CLI_DHCP_REPLY PAINT_IS_DHCP_HEARTBEAT PAINT_VPN_REMOTE_UPLINK TA_DNS_HOST PAINT_SRC_SGT,
+
+ CHECK_OVERLAP DST_IP6 SRC_CLI_PTR DST_CLI_PTR PMTU PAINT_DEVORDER PAINT_ACL PAINT_VAP PAINT_BW PAINT_REMOTE_LAN PAINT_ACCT PAINT_SRC_DEV PAINT_DEV PAINT_NODE PAINT_SA_LEARNING IPREASSEMBLER VLAN_TCI PAINT_BCAST BW_FLOW PAINT_VPN_ENCAPPED PAINT_NO_CLIENTS PAINT_DEMULTICAST PAINT_L3_VPN_DECAPPED PAINT_SNORTED PAINT_TO_CLI_DHCP_REPLY PAINT_IS_DHCP_HEARTBEAT PAINT_VPN_REMOTE_UPLINK TA_DNS_HOST PAINT_SRC_SGT,
+
+
+ CHECK_OVERLAP DST_IP SRC_CLI_PTR DST_CLI_PTR PMTU PAINT_DEVORDER PAINT_ACL PAINT_VAP PAINT_BW PAINT_REMOTE_LAN PAINT_ACCT PAINT_SRC_DEV PAINT_DEV PAINT_LOCAL_UPLINK IPREASSEMBLER VLAN_TCI PAINT_BCAST BW_FLOW PAINT_VPN_ENCAPPED PAINT_NO_CLIENTS PAINT_DEMULTICAST PAINT_L3_VPN_DECAPPED PAINT_SNORTED PAINT_TO_CLI_DHCP_REPLY PAINT_IS_DHCP_HEARTBEAT PAINT_VPN_REMOTE_UPLINK PAINT_VRF_ID PAINT_VRF_RT_ID PAINT_RT_OUTPUT TA_DNS_HOST PAINT_BWMANAGER_PACKET_DROP PAINT_FIREWALL_PACKET_HIT PAINT_MUX_PORTNO_ANNO PAINT_MUX_INUSE_ANNO,
+
+ CHECK_OVERLAP DST_IP6 SRC_CLI_PTR DST_CLI_PTR PMTU PAINT_DEVORDER PAINT_ACL PAINT_VAP PAINT_BW PAINT_REMOTE_LAN PAINT_ACCT PAINT_SRC_DEV PAINT_DEV PAINT_LOCAL_UPLINK PAINT_SA_LEARNING IPREASSEMBLER VLAN_TCI PAINT_BCAST BW_FLOW PAINT_VPN_ENCAPPED PAINT_NO_CLIENTS PAINT_DEMULTICAST PAINT_L3_VPN_DECAPPED PAINT_SNORTED PAINT_TO_CLI_DHCP_REPLY PAINT_IS_DHCP_HEARTBEAT PAINT_VPN_REMOTE_UPLINK PAINT_VRF_ID PAINT_VRF_RT_ID PAINT_RT_OUTPUT TA_DNS_HOST PAINT_BWMANAGER_PACKET_DROP PAINT_FIREWALL_PACKET_HIT PAINT_MUX_PORTNO_ANNO PAINT_MUX_INUSE_ANNO,
+
+
+
+
+
+
+ TA_IS_SSL 6 1,
+ TA_SSL_HOST 8 2,
+ TA_HTTP_URI 10 2,
+ TA_HTTP_HOST 12 2,
+ TA_HTTP_CONTENT_TYPE 14 2,
+ TA_P2P 16 1,
+ TA_HTTP_USER_AGENT 18 2,
+ TA_SKYPE 20 1,
+ TA_SIP 21 1,
+ TA_SSH 22 1,
+ TA_SKINNY 23 1,
+ TA_VOCERA 24 1,
+ TA_STUN 25 1,
+ TA_PRIO 26 1,
+ TA_COUNTRY 28 2,
+
+ CHECK_OVERLAP TA_IS_SSL TA_SSL_HOST TA_P2P TA_HTTP_HOST TA_HTTP_CONTENT_TYPE TA_HTTP_USER_AGENT TA_HTTP_URI TA_SKYPE TA_SIP TA_SSH TA_SKINNY TA_VOCERA TA_STUN TA_PRIO TA_DNS_HOST TA_COUNTRY);
+# 5 "click-config/switch.template" 2
+# 1 "click-config/debug.click" 1
+
+
+
+elementclass FormatEtherPrint {
+ $name |
+ input -> cl :: Classifier(12/0800, 12/0806, -);
+ cl [0] -> IPPrint($name, ANNO PAINT_VAP, TIMESTAMP false) -> output;
+ cl [1] -> ARPPrint($name, TIMESTAMP false) -> output;
+ cl [2] -> Print($name, TIMESTAMP false) -> output;
+}
+
+
+elementclass EthPrint {
+ $name |
+ input-> cl :: Classifier(12/0800, 12/0806, -);
+ cl [0] -> MarkIPHeader(14) -> ipr :: IPPrint($name, ANNO PAINT_VAP, TIMESTAMP false, ID true) -> output;
+ cl [1] -> MarkMACHeader(0, 14) -> apr :: ARPPrint($name, TIMESTAMP false) -> output;
+ cl [2] -> pr :: Print($name, TIMESTAMP false) -> output;
+}
+
+
+elementclass ExtractEthPrint {
+ $name |
+ input -> extract :: ExtractEtherPacket -> VLANDecap(VLAN_TCI) -> EthPrint($name) -> Discard;
+ extract [1] -> output;
+}
+
+
+elementclass ExtractIPPrint {
+ $name |
+ input -> extract :: ExtractEtherPacket(ip) -> MarkIPHeader(0) -> IPPrint($name, ANNO PAINT_VAP, TIMESTAMP false, ID true) -> Discard;
+ extract [1] -> output;
+}
+
+elementclass MyNull { input -> output }
+elementclass ClickyNull { input -> output }
+
+elementclass DebugPrintNoCl {
+ $tag |
+ input -> bypass :: Bypass -> output;
+ bypass [1] -> p :: Print($tag, MAXLENGTH 100) -> [1] bypass;
+}
+
+elementclass DebugPrint {
+ $tag |
+ input -> bypass :: Bypass -> output;
+
+ bypass [1]
+ -> cl :: Classifier(-, -)
+ => ( [0] -> trace_sw :: Switch(0)
+ => ( [0] -> rs :: RatedSplitter(10) => [0,1];
+ [1] -> trace :: Trace(NO_CLONE true) => [1,0]; )
+ => p :: Print($tag, MAXLENGTH 100), MyNull
+ -> [0];
+ [1] -> [0]; )
+ -> [1] bypass;
+}
+
+elementclass DebugIP {
+ $tag |
+ input -> bypass :: Bypass -> output;
+
+ bypass [1]
+ -> cl :: IPClassifier(-, -)
+ => ( [0] -> trace_sw :: Switch(0)
+ => ( [0] -> rs :: RatedSplitter(10) => [0,1];
+ [1] -> trace :: Trace(NO_CLONE true) => [1,0]; )
+ => p :: IPPrint($tag), MyNull
+ -> [0];
+ [1] -> [0]; )
+ -> [1] bypass;
+}
+
+elementclass DebugARP {
+ $tag |
+ input -> bypass :: Bypass -> output;
+
+ bypass [1]
+ -> cl :: Classifier(-, -)
+ => ( [0] -> trace_sw :: Switch(0)
+ => ( [0] -> rs :: RatedSplitter(10) => [0,1];
+ [1] -> trace :: Trace(NO_CLONE true) => [1,0]; )
+ => p :: ARPPrint($tag) , MyNull
+ -> [0];
+ [1] -> [0]; )
+ -> c :: Counter
+ -> [1] bypass;
+}
+
+elementclass DebugWifi {
+ $tag |
+ input -> bypass :: Bypass -> output;
+ bypass [1]
+ -> c :: Counter
+ -> s :: Shaper(10)
+ => ( [0] -> p :: PrintWifi($tag) -> [0];
+ [1] -> [1] )
+ => RoundRobinSched
+ -> [1] bypass;
+}
+
+elementclass DebugPcap {
+ $tag |
+ input -> bypass :: Bypass -> output;
+ bypass [1]
+ -> tee :: Tee()
+ => ( [0] -> [0];
+ [1] -> ToHost($tag, SNIFFERS true); )
+ -> [1] bypass;
+
+ FromHost($tag,
+ PROMISC_UP_CALL toggle.run true,
+ PROMISC_DOWN_CALL toggle.run false)
+ -> Discard;
+
+ toggle :: Script(TYPE PASSIVE,
+ write bypass.active $1);
+}
+# 133 "click-config/debug.click"
+elementclass TestClient {
+
+ set_mac :: Script(TYPE PASSIVE,
+ init mac 00:11:22:33:44:55,
+ set mac $1,
+ write hef.ether $1,
+ write bad_vlan_sef.ether $1,
+ write gw_arp_prober.eth $1,
+ write dhcp_client.eth $1,
+ );
+
+
+ set_vid :: Script(TYPE PASSIVE,
+ write vlan_paint.color $(htons $1),
+ write vlan_cp.color $(htons $1));
+
+
+ set_ip :: Script(TYPE PASSIVE,
+ write uplinkstate.reset,
+ write gw_arp_prober.active false,
+ write dhcp_client.active false,
+ writeq uplinkstate.set_static_ips "VID 0, IP $1/$2, GW $3, MTU 1500, DNS1 8.8.8.8",
+ );
+
+ set_dhcp :: Script(TYPE PASSIVE,
+ write uplinkstate.reset,
+ write uplinkstate.set_dhcp_vlans 0,
+ write uplinkstate.preferred_dhcp_vid 0,
+ write gw_arp_prober.active true,
+ write dhcp_client.active true,
+ );
+
+
+ start_udp_flow :: Script(TYPE PASSIVE,
+ write timed_source.active false,
+ write timed_source.reset,
+ write timed_source_udp.sport $1,
+ write timed_source_udp.dport $2,
+ write timed_source_udp.dst $3,
+ write timed_source.interval $4,
+ write timed_source.limit $5,
+ write timed_source.active true,
+ );
+
+ stop_udp_flow :: Script(TYPE PASSIVE,
+ write timed_source.active false,
+ );
+
+ enable :: Script(TYPE PASSIVE,
+ write test_client_in_enabled.active true,
+ write test_client_out_enabled.active true,
+ );
+
+ disable :: Script(TYPE PASSIVE,
+ write gw_arp_prober.active false,
+ write dhcp_client.active false,
+ write pinger.active false,
+ write timed_source.active false,
+ write test_client_in_enabled.active false,
+ write test_client_out_enabled.active false,
+ );
+
+
+ start_test_client_timer :: Script(TYPE PASSIVE,
+ export keepalive 10,
+ export config_options false,
+ set keepalive $1,
+ label begin_loop,
+ wait 1,
+
+ goto end $(eq "$config_options" "true"),
+ set keepalive $(sub $keepalive 1),
+ goto begin_loop $(gt $keepalive 0),
+ write test_client/disable.run,
+ );
+
+ announce_uplink_ip :: Script(TYPE PASSIVE,
+ set ver $1,
+ set ip $2,
+ set netmask $3,
+ set router $4,
+ set broadcast $5,
+ set mtu $6,
+ set dns $7,
+ set added $8,
+ goto end $(not $added),
+
+ write ip_cli_src.addr $ip,
+ writeq arpq.config "$ip/$netmask, $(set_mac.get mac), GATEWAY $router",
+ write ar.config $ip $(set_mac.get mac),
+ write pinger.src $ip,
+ write ip_to_me_filter1.conf0 dst $ip,
+ write ip_to_me_filter2.conf0 dst $ip,
+ write timed_source_udp.src $ip,
+ );
+
+ uplinkstate :: UplinkState(UPLINK_IP_CHANGE_CALL announce_uplink_ip.run $ver $ip $subnet $router $broadcast $mtu $dns $added);
+
+ input [1]
+ -> IPClassifier(src 6.0.0.32, -)
+ => ( [0] -> [0];
+ [1] -> ip_cli_wrong_src_ctr :: Counter
+ -> Discard; )
+ -> ip_cli_src :: StoreIPAddress(192.168.0.100, src)
+ -> to_arpq :: MyNull
+ -> d_ip_from_test_client :: DebugIP(ip_from_test_client)
+ -> arpq :: ARPQuerier(192.168.0.100/24, 00:11:22:33:44:55, GATEWAY 192.168.0.1)
+ => ( [0] -> frag :: IPFragmenter(MTU 1500) -> [0];
+ [1] -> [0]; )
+ -> from_test_client :: MyNull
+ -> d_from_test_client :: DebugPrint(from_test_client)
+ -> ClearAnno
+ -> srcdev_paint :: Paint(ANNO PAINT_SRC_DEV, COLOR 0)
+ -> vlan_paint :: Paint(ANNO VLAN_TCI, COLOR 0)
+ -> test_client_out_enabled :: Bypass(ACTIVE false)
+ => ( [0] -> Discard;
+ [1] -> [0]; )
+ -> output;
+
+ input [0]
+ -> test_client_in_enabled :: Bypass(ACTIVE false)
+ => ( [0] -> Discard;
+ [1] -> [0]; )
+ -> ClearAnno(PRESERVE_ANNOLIST VLAN_TCI)
+ -> MarkMACHeader(0, 14)
+ -> hef :: HostEtherFilter(00:11:22:33:44:55)
+ -> CheckLength(LENGTH 1514)
+ => ( [0] -> [0];
+ [1] -> too_big_ctr :: Counter
+ -> Discard; )
+ -> vlan_cp :: CheckPaint(ANNO VLAN_TCI, COLOR 0)
+ => ( [0] -> [0];
+ [1] -> bad_vlan_sef :: SimpleEtherFilter(00:11:22:33:44:55, MULTICAST false)
+ -> bad_vlan_ctr :: Counter
+ -> Discard; )
+ -> Paint(ANNO VLAN_TCI, COLOR 0)
+ -> d_to_test_client :: DebugPrint(to_test_client)
+ -> Classifier(12/0806 20/0001, 12/0806 20/0002, 12/0800)
+ => ( [0] -> ar :: ARPResponder(192.168.0.100 00:11:22:33:44:55)
+ -> from_test_client;
+ [1] -> gw_arp_prober :: UplinkGWARPProber(VLAN_ANNO VLAN_TCI, UPLINK_STATE uplinkstate, ETH 00:11:22:33:44:55, ACTIVE false)
+ -> [1] arpq;
+ [2] -> [0]; )
+ -> check_ip :: CheckIPHeader(14, DETAILS true)
+ -> IPReassembler(MAX_MTU_ANNO PMTU)
+ -> d_ip_to_test_client :: DebugIP(ip_to_test_client)
+ -> dhcp_ip_cl :: IPClassifier(udp src port bootps and dst port bootpc, -)
+ => ( [0] -> dhcp_client :: UplinkDHCPClient(VLAN_ANNO VLAN_TCI, UPLINK_STATE uplinkstate, ETH 00:11:22:33:44:55, ACTIVE false)
+ -> d_dhcp_from_test_client :: DebugIP(dhcp_from_test_client)
+ -> from_test_client;
+ [1] -> [0]; )
+ -> Strip(14)
+ -> pinger :: Pinger(SRC 192.168.0.100)
+ -> ip_cl :: IPClassifier(dst port 7777, icmp type echo, -)
+ => ( [0] -> ip_to_me_filter1 :: IPClassifier(dst 192.168.0.100)
+ -> IPResponder(TCP_SYN_ACK true)
+ -> get_ip :: GetIPAddress(IP dst)
+ -> eth_to_arpq :: MyNull
+ -> to_arpq;
+ [1] -> ip_to_me_filter2 :: IPClassifier(dst 192.168.0.100)
+ -> CheckICMPHeader(DETAILS true)
+ -> ICMPPingResponder
+ -> eth_to_arpq;
+ [2] -> [0]; )
+ -> StoreIPAddress(6.0.0.32, dst)
+ -> [1] output;
+
+ pinger [1]
+ -> to_arpq;
+
+ gw_arp_prober [1]
+ -> from_test_client;
+
+ timed_source :: TimedSource(ACTIVE false, LIMIT -1, DATA 0123456789)
+ -> Align(4, 0)
+ -> timed_source_udp :: UDPIPEncap(SRC 192.168.0.100, SPORT 2000, DST 192.168.0.101, DPORT 3000)
+ -> to_arpq;
+};
+# 320 "click-config/debug.click"
+elementclass FullTestClient {
+
+ test_client :: TestClient;
+
+ set_mac :: Script(TYPE PASSIVE,
+ write test_client/set_mac.run $1);
+
+
+ set_vid :: Script(TYPE PASSIVE,
+ write test_client/set_vid.run $1,
+ goto zero_vid $(eq $1 0),
+ writeq vlan_cl.config "12/81000$(sprintf %03x $1)%ffff0fff, -",
+ goto out,
+ label zero_vid,
+ writeq vlan_cl.config "!12/8100, -",
+ label out);
+
+
+ set_ip :: Script(TYPE PASSIVE,
+ write test_client/set_ip.run $1 $2 $3);
+
+ input [0]
+ -> [0] eth_sw :: EtherSwitch [0]
+ -> [0] output;
+
+ input [1]
+ -> [1] eth_sw [1]
+ -> [1] output;
+
+ test_client [0]
+ -> vlan_encap :: VLANEncap(VLAN_TCI)
+ -> Paint(ANNO VLAN_TCI, COLOR 0)
+ -> [2] eth_sw;
+
+ eth_sw [2]
+ -> vlan_cl :: Classifier(!12/8100, -)
+ => ( [0] -> [0];
+ [1] -> bad_vlan_sef :: SimpleEtherFilter(00:11:22:33:44:55, MULTICAST false)
+ -> bad_vlan_ctr :: Counter
+ -> Discard; )
+ -> VLANDecap(VLAN_TCI)
+ -> [0] test_client;
+
+ input [2] -> [1] test_client [1] -> [2] output;
+};
+
+elementclass NetworkImpairer {
+ input -> network_impairer_bypass :: Bypass
+ => ( [0] -> [0];
+ [1] -> random_sample :: RandomSample(DROP 0, ACTIVE false)
+ -> queue :: Queue(300)
+ -> delay_unqueue :: DelayUnqueue(0)
+ -> [0]; )
+ -> output;
+
+ set_impairment :: Script(TYPE PASSIVE,
+ writeq network_impairer_bypass.active $(or $(ne $1 0) $(ne $2 0)),
+ writeq random_sample.active $(ne $1 0),
+ writeq random_sample.drop_prob $1,
+ writeq delay_unqueue.delay $2);
+}
+# 393 "click-config/debug.click"
+elementclass EncryptionTesting {
+
+ input [0] -> from_dev :: MyNull;
+ pass_from_dev :: MyNull -> [0] output;
+ to_dev :: MyNull -> [1] output;
+
+ inf_src :: InfiniteSource(
+ DATA \<ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff>,
+ LIMIT 100,
+ ACTIVE false)
+ -> eth_encap :: EtherEncap(0x9999, 00:18:0A:01:0F:1B, ff:ff:ff:ff:ff:ff)
+ -> Print('/// inf_src_enc:', MAXLENGTH 1000, TIMESTAMP true)
+ -> SetTXRate(1m)
+ -> SetTXPower(60)
+ -> SetWifiKey(KEYIX 3)
+ -> WifiEncap(0x0, 00:00:00:00:00:00)
+ -> to_dev;
+
+ from_dev
+ -> cl :: Classifier(12/9999, -)
+ => ([0] -> Print(enc, MAXLENGTH 1000, TIMESTAMP true)
+ -> drop_responses :: Discard;
+ [1] -> pass_from_dev;)
+}
+# 6 "click-config/switch.template" 2
+# 1 "click-config/mtunnel_client.click" 1
+# 1 "click-config/mtun_cl.click" 1
+
+
+
+
+elementclass MTunPacketRW {
+ $host_ip_pattern |
+
+ input [0] -> from_linux :: MyNull;
+ input [1] -> from_srv1 :: MyNull;
+ input [2] -> from_srv2 :: MyNull;
+ input [3] -> from_srv3 :: MyNull;
+
+ to_linux :: MyNull -> Paint(ANNO PAINT_SRC_DEV, COLOR 101) -> d_to_linux :: DebugIP(to_linux) -> [0] output;
+ to_srv1 :: MyNull -> [1] output;
+ to_srv2 :: MyNull -> [2] output;
+ to_srv3 :: MyNull -> [3] output;
+
+
+ Idle -> shared_ip_rw_cap :: IPRewriter(MAPPING_CAPACITY 500, drop) -> Discard;
+ Idle -> shared_ping_rw_cap :: ICMPPingRewriter(MAPPING_CAPACITY 500, drop) -> Discard;
+
+ elementclass MTunSrvRW {
+ $srv_dummy_ip, $srv_port_range |
+
+ input [0] -> from_host :: MyNull;
+ input [1] -> from_srv :: MyNull;
+
+ to_host :: MyNull -> [0] output;
+ to_srv :: MyNull -> [1] output;
+
+
+ ip_rw_from_host :: IPRewriter(MAPPING_CAPACITY shared_ip_rw_cap,
+ pattern __MTUN_IP__ 0-65535!32 6.0.0.2 - 0 ip_rw_from_srv:0);
+ ping_rw_from_host :: ICMPPingRewriter(MAPPING_CAPACITY shared_ping_rw_cap,
+ pattern __MTUN_IP__ 0-65535!32 6.0.0.2 - 0 ping_rw_from_srv:0);
+ icmp_rw_from_host :: ICMPRewriter(ip_rw_from_host ping_rw_from_host);
+
+
+
+ ip_rw_from_srv :: IPRewriter(MAPPING_CAPACITY shared_ip_rw_cap,
+ pattern $srv_dummy_ip $srv_port_range $host_ip_pattern - 0 ip_rw_from_host:0);
+ ping_rw_from_srv :: ICMPPingRewriter(MAPPING_CAPACITY shared_ping_rw_cap,
+ pattern $srv_dummy_ip $srv_port_range $host_ip_pattern - 0 ping_rw_from_host:0);
+ icmp_rw_from_srv :: ICMPRewriter(ip_rw_from_host ip_rw_from_srv
+ ping_rw_from_host ping_rw_from_srv)
+
+ from_host
+ -> from_host_cl :: IPClassifier(proto tcp or proto udp,
+ icmp type echo or type echo-reply,
+ proto icmp)
+ => ip_rw_from_host, ping_rw_from_host, icmp_rw_from_host
+ -> to_srv;
+
+ from_srv
+ -> from_srv_cl :: IPClassifier(proto tcp or proto udp,
+ icmp type echo or type echo-reply,
+ proto icmp)
+ => ip_rw_from_srv, ping_rw_from_srv, icmp_rw_from_srv
+ -> to_host;
+
+ set_mtun_ip :: Script(TYPE PASSIVE,
+ write ip_rw_from_host.pattern0 pattern $1 0-65535!32 6.0.0.2 - 0 ip_rw_from_srv:0,
+ write ping_rw_from_host.pattern0 pattern $1 0-65535!32 6.0.0.2 - 0 ping_rw_from_srv:0);
+
+ set_ip :: Script(TYPE PASSIVE,
+ write ip_rw_from_srv.pattern0 pattern $srv_dummy_ip 0-65535!32 $1 - 0 ip_rw_from_host:0,
+ write ping_rw_from_srv.pattern0 pattern $srv_dummy_ip 0-65535!32 $1 - 0 ping_rw_from_host:0);
+ }
+
+ mtun1_rw :: MTunSrvRW(6.0.0.10, 40000-49999);
+ mtun2_rw :: MTunSrvRW(6.0.0.11, 50000-59999);
+ mtun3_rw :: MTunSrvRW(6.0.0.12, 50000-59999);
+
+ from_srv1, from_srv2, from_srv3
+ => [1] mtun1_rw [0], [1] mtun2_rw [0], [1] mtun3_rw [0]
+ -> to_linux;
+
+ from_linux
+
+ -> dst_srv_cl :: IPClassifier(dst host 6.0.0.10, dst host 6.0.0.11, dst host 6.0.0.12, host 6.0.0.2) [0,1,2]
+ => [0] mtun1_rw [1], [0] mtun2_rw [1], [0] mtun3_rw [1]
+ => to_srv1, to_srv2, to_srv3;
+
+ dst_srv_cl [3] -> mtun_srv_sw :: Switch(0)
+ => [0] mtun1_rw, [0] mtun2_rw, [0] mtun3_rw;
+
+ set_mtun_ip :: Script(TYPE PASSIVE,
+ write mtun1_rw/set_mtun_ip.run $1,
+ write mtun2_rw/set_mtun_ip.run $1,
+ write mtun3_rw/set_mtun_ip.run $1);
+
+ set_ip :: Script(TYPE PASSIVE,
+ write mtun1_rw/set_ip.run $1,
+ write mtun2_rw/set_ip.run $1,
+ write mtun3_rw/set_ip.run $1);
+
+
+
+ set_mtunnel_srv_sw :: Script(
+ write mtun_srv_sw.switch $(if $(eq $(mtun1_srv_state.mtunnel_state) connected) 0
+ $(if $(eq $(mtun2_srv_state.mtunnel_state) connected) 1
+ $(if $(eq $(mtun3_srv_state.mtunnel_state) connected) 2 0))),
+ wait 10,
+ loop);
+}
+# 2 "click-config/mtunnel_client.click" 2
+
+
+
+
+
+
+elementclass MTunnelClient {
+ $mtun_ip, $src_ip, $mac, $host_ip, __REST__ $interface_id |
+
+ input [0] -> from_host :: MyNull;
+ input [1] -> from_server :: MyNull;
+
+ to_host :: MyNull -> [0] output;
+ to_server :: MyNull -> [1] output;
+
+
+ elementclass MTunnelServerHandler {
+ $mtun_ip, $src_ip, $client_state |
+
+ input [0] -> from_host :: MyNull;
+ input [1] -> from_server :: MyNull;
+
+ to_host :: MyNull -> [0] output;
+ to_server :: MyNull -> [1] output;
+
+ state :: MTunSrvState(MTUNCLIENTSTATE $client_state);
+
+ from_host
+ -> ipf :: IPFragmenter(MTU 1200, SILENT true)
+ -> cl_encap :: MTunClientEncap(MTUN_IP $mtun_ip, SRC_IP $src_ip, MTUNSTATE state)
+ -> to_server;
+
+ ipf [1]
+ -> frag_err :: ICMPError(6.0.0.2, unreachable, needfrag, PMTU 1200, COPY_ALL_ANNO true, SET_FIX_ANNO false)
+ -> to_host;
+
+ from_server
+ -> check_mtun :: CheckMTunnelHeader(DEBUG false)
+ -> hello_gen :: MTunnelHelloGenerator(SRC_IP $src_ip, MTUN_IP $mtun_ip, MTUNCLIENTSTATE $client_state, MTUNSERVERSTATE state, UDPENCAP true)
+ -> to_server;
+
+ check_mtun [1]
+ -> cl_decap :: MTunClientDecap(MTUNSTATE state, DEBUG false)
+ -> check_ip :: CheckIPHeader(0, DETAILS true)
+ -> reasm :: IPReassembler(HIMEM 131072, MAX_MTU_ANNO PMTU)
+ -> to_host;
+ }
+
+ client_rw :: MTunPacketRW($host_ip);
+ client_state :: MTunClientState(MAC $mac);
+ server1 :: MTunnelServerHandler($mtun_ip, $src_ip, client_state);
+ server2 :: MTunnelServerHandler($mtun_ip, $src_ip, client_state);
+ server3 :: MTunnelServerHandler($mtun_ip, $src_ip, client_state);
+
+ from_host -> [0] client_rw [0] -> to_host;
+ server1 -> [1] client_rw [1] -> server1;
+ server2 -> [2] client_rw [2] -> server2;
+ server3 -> [3] client_rw [3] -> server3;
+
+
+ from_server
+ -> server_demux :: MTunnelSrvDemux(MTUNSRVLIST server1/state server2/state)
+ => [1] server1 [1], [1] server2 [1]
+ -> to_server;
+
+
+
+
+
+
+ http_user :: Socket("UNIX", /tmp/click_mtun${interface_id}, HEADROOM 40)
+
+
+
+
+ -> http_udp_enc :: UDPIPEncap(0.0.0.1, 0, 0.0.0.0, 0)
+ -> [1] server3 [1]
+ -> http_touser_strip :: Strip(28)
+
+
+
+ -> http_user;
+
+
+
+
+ set_mtun_ip :: Script(TYPE PASSIVE,
+ write server1/cl_encap.mtun_ip $1,
+ write server2/cl_encap.mtun_ip $1,
+ write server3/cl_encap.mtun_ip $1,
+ write server1/hello_gen.mtun_ip $1,
+ write server2/hello_gen.mtun_ip $1,
+ write server3/hello_gen.mtun_ip $1,
+ write client_rw/set_mtun_ip.run $1,
+ );
+
+ set_src_ips :: Script(TYPE PASSIVE,
+ write server1/cl_encap.src_ip $1,
+ write server2/cl_encap.src_ip $1,
+ write server3/cl_encap.src_ip $1,
+ write server1/hello_gen.src_ip $1,
+ write server2/hello_gen.src_ip $1,
+ write server3/hello_gen.src_ip $1,
+ );
+
+ set_src_ip6s :: Script(TYPE PASSIVE,
+ write server1/cl_encap.src_ip6 $1,
+ write server2/cl_encap.src_ip6 $1,
+ write server1/hello_gen.src_ip6 $1,
+ write server2/hello_gen.src_ip6 $1,
+ );
+
+
+
+ poke :: Script(TYPE PASSIVE,
+ write server1/hello_gen.poke,
+ write server2/hello_gen.poke,
+ goto end $(eq $1 non-http),
+ write server3/hello_gen.poke,
+ );
+}
+
+
+
+
+mtun_client_state :: HandlerProxy(mtun/client_state);
+mtun1_srv_state :: HandlerProxy(mtun/server1/state);
+mtun2_srv_state :: HandlerProxy(mtun/server2/state);
+mtun3_srv_state :: HandlerProxy(mtun/server3/state);
+mtun1_hello_gen :: HandlerProxy(mtun/server1/hello_gen);
+mtun2_hello_gen :: HandlerProxy(mtun/server2/hello_gen);
+# 7 "click-config/switch.template" 2
+# 1 "click-config/common_switch.click" 1
+# 84 "click-config/common_switch.click"
+elementclass CommonSwitchNAT {
+ from_sw0_nat_rw :: IPRewriter(MAPPING_CAPACITY 10000,
+ pass 2,
+ pattern - 0-65535 1.1.2.2 - 0 from_host_nat_rw:0);
+ from_sw0_ping_rw :: ICMPPingRewriter(MAPPING_CAPACITY 1000,
+ pattern - 0-65535 1.1.2.2 - 0 from_host_ping_rw:0);
+ from_sw0_icmp_rw :: ICMPRewriter(from_sw0_nat_rw:0
+ from_sw0_ping_rw:0);
+
+ from_sw0_nat6_rw :: IP6Rewriter(MAPPING_CAPACITY 10000,
+ pass 2,
+ pattern - 0-65535 fd0a:9b09:1f7:10c1::2 - 0 from_host_nat6_rw:0);
+ from_sw0_ping6_rw :: ICMP6PingRewriter(MAPPING_CAPACITY 1000,
+ pattern - 0-65535 fd0a:9b09:1f7:10c1::2 - 0 from_host_ping6_rw:0);
+ from_sw0_icmp6_rw :: ICMP6Rewriter(from_sw0_nat6_rw:0
+ from_sw0_ping6_rw:0);
+
+ from_host_nat_rw :: IPRewriter(MAPPING_CAPACITY from_sw0_nat_rw,
+ pattern 1.1.1.1 0-65535 - - 0 from_sw0_nat_rw:0);
+ from_host_ping_rw :: ICMPPingRewriter(MAPPING_CAPACITY from_sw0_ping_rw,
+ pattern 1.1.1.1 0-65535 - - 0 from_sw0_ping_rw:0);
+ from_host_icmp_rw :: ICMPRewriter(from_host_nat_rw:0
+ from_host_ping_rw:0);
+
+ from_host_nat6_rw :: IP6Rewriter(MAPPING_CAPACITY from_sw0_nat6_rw,
+ pattern 100::1 0-65535 - - 0 from_sw0_nat6_rw:0);
+ from_host_ping6_rw :: ICMP6PingRewriter(MAPPING_CAPACITY from_sw0_ping6_rw,
+ pattern 100::1 0-65535 - - 0 from_sw0_ping6_rw:0);
+ from_host_icmp6_rw :: ICMP6Rewriter(from_host_nat6_rw:0
+ from_host_ping6_rw:0);
+
+ from_mtun_nat_rw :: IPRewriter(MAPPING_CAPACITY from_sw0_nat_rw,
+ pattern - 0-65535 - - 0 from_sw0_nat_rw:1);
+ from_mtun_nat6_rw :: IP6Rewriter(MAPPING_CAPACITY from_sw0_nat6_rw,
+ pattern - 0-65535 - - 0 from_sw0_nat6_rw:1);
+
+ from_smc_nat_rw :: IPRewriter(MAPPING_CAPACITY from_sw0_nat_rw,
+ pass 1,
+ pattern - 0-65535 1.1.2.2 - 0 from_host_nat_rw:1);
+ from_smc_ping_rw :: ICMPPingRewriter(MAPPING_CAPACITY from_sw0_ping_rw,
+ pattern - 0-65535 1.1.2.2 - 0 from_host_ping_rw:1);
+ from_smc_icmp_rw :: ICMPRewriter(from_smc_nat_rw:0
+ from_smc_ping_rw:0);
+
+ from_mgmt_nat_rw :: IPRewriter(MAPPING_CAPACITY from_sw0_nat_rw,
+ pattern 10.128.128.131 0-65535!32 10.128.128.130 8182 0 from_linux_mgmt_nat_rw:0,
+ pattern 10.128.128.131 0-65535!32 10.128.128.130 8183 0 from_linux_mgmt_nat_rw:0,
+ pattern 10.128.128.131 0-65535!32 - - 0 from_linux_mgmt_nat_rw:0,
+ pattern 10.128.128.131 - 10.128.128.130 3579 0 from_linux_mgmt_nat_rw:0,
+ pass 1);
+
+ from_mgmt_ping_rw :: ICMPPingRewriter(MAPPING_CAPACITY from_sw0_ping_rw,
+ pattern 10.128.128.131 0-65535 10.128.128.130 - 0 from_linux_mgmt_ping_rw:0);
+ from_mgmt_icmp_rw :: ICMPRewriter(from_mgmt_nat_rw:0
+ from_mgmt_ping_rw:0);
+
+ from_linux_mgmt_nat_rw :: IPRewriter(MAPPING_CAPACITY from_sw0_nat_rw,
+ pattern 10.128.128.130 - - 0 from_mgmt_nat_rw:0);
+ from_linux_mgmt_ping_rw :: ICMPPingRewriter(MAPPING_CAPACITY from_sw0_ping_rw,
+ pattern 10.128.128.130 0-65535 - - 0 from_mgmt_ping_rw:0);
+ from_linux_mgmt_icmp_rw :: ICMPRewriter(from_linux_mgmt_nat_rw:0
+ from_linux_mgmt_ping_rw:0);
+
+ input [0] -> from_sw0 :: MyNull;
+ input [1] -> from_host :: MyNull;
+ input [2] -> from_mtun :: MyNull;
+ input [3] -> from_smc :: MyNull;
+ input [4] -> from_mgmt :: MyNull;
+ input [5] -> from_linux_mgmt :: MyNull;
+
+ to_sw0 :: MyNull -> [0] output;
+ to_host :: MyNull -> [1] output;
+ to_mtun :: MyNull -> [2] output;
+ to_smc :: MyNull -> [3] output;
+ to_mgmt :: MyNull -> [4] output;
+ to_linux_mgmt :: MyNull -> [5] output;
+
+ from_sw0
+ -> IPClassifier(src 6.0.0.10 or 6.0.0.11 or 6.0.0.12 or 6.0.0.2, src 127.0.0.0/8, src ::1,
+ ip proto tcp or ip proto udp, icmp type echo or type echo-reply, icmp,
+ ip6 proto tcp or ip6 proto udp, icmp6 type echo or type echo-reply, icmp6)
+ => ([0] -> from_sw0_src_mtun_ip_drops :: Counter -> Discard;
+ [1] -> from_sw0_src_local_ip_drops :: Counter -> Discard;
+ [2] -> from_sw0_src_local_ip6_drops :: Counter -> Discard;
+ [3] -> [0] from_sw0_nat_rw [2]
+ -> from_sw0_filter :: IPFilter(allow tcp dst port 22, deny all)
+ -> [1] from_sw0_nat_rw;
+ [4] -> from_sw0_ping_rw;
+ [5] -> from_sw0_icmp_rw;
+ [6] -> [0] from_sw0_nat6_rw [2]
+ -> from_sw0_filter6 :: IPFilter(allow tcp dst port 22, deny all)
+ -> [1] from_sw0_nat6_rw;
+ [7] -> from_sw0_ping6_rw;
+ [8] -> from_sw0_icmp6_rw;);
+
+ from_host
+ -> IPClassifier(ip proto tcp or ip proto udp, icmp type echo or type echo-reply, icmp,
+ ip6 proto tcp or ip6 proto udp, icmp6 type echo or type echo-reply, icmp6)
+ => ([0] -> from_host_nat_rw;
+ [1] -> from_host_ping_rw;
+ [2] -> from_host_icmp_rw;
+ [3] -> from_host_nat6_rw;
+ [4] -> from_host_ping6_rw;
+ [5] -> from_host_icmp6_rw;);
+
+ from_mtun
+ -> IPClassifier(vers 4, vers 6) [0,1]
+ => from_mtun_nat_rw, from_mtun_nat6_rw;
+
+ from_smc
+ -> IPClassifier(src 6.0.0.10 or 6.0.0.11 or 6.0.0.12 or 6.0.0.2, src 127.0.0.0/8, src ::1,
+ ip proto tcp or proto udp, icmp type echo or type echo-reply, icmp)
+ => ([0] -> from_smc_src_mtun_ip_drops :: Counter -> Discard;
+ [1] -> from_smc_src_local_ip_drops :: Counter -> Discard;
+ [2] -> from_smc_src_local_ip6_drops :: Counter -> Discard;
+ [3] -> from_smc_nat_rw [1]
+ -> from_smc_filter :: IPFilter(allow ip tcp dst port 80, allow ip tcp dst port 443, deny all)
+ -> [1] from_smc_nat_rw;
+ [4] -> from_smc_ping_rw;
+ [5] -> from_smc_icmp_rw;);
+
+ from_sw0_nat_rw => ([0] -> to_host; [1] -> to_mtun);
+ from_sw0_ping_rw => ([0] -> to_host; [1] -> to_mtun);
+ from_sw0_icmp_rw => ([0] -> to_host; [1] -> to_mtun; [2] -> Discard);
+
+ from_sw0_nat6_rw => ([0] -> to_host; [1] -> to_mtun);
+ from_sw0_ping6_rw => ([0] -> to_host; [1] -> to_mtun);
+ from_sw0_icmp6_rw => ([0] -> to_host; [1] -> to_mtun; [2] -> Discard);
+
+ from_host_nat_rw => ([0] -> to_sw0;
+ [1] -> to_smc);
+ from_host_ping_rw => ([0] -> to_sw0; [1] -> to_smc);
+ from_host_icmp_rw => ([0] -> to_sw0; [1] -> to_smc);
+
+ from_host_nat6_rw -> to_sw0;
+ from_host_ping6_rw -> to_sw0;
+ from_host_icmp6_rw -> to_sw0;
+
+ from_mtun_nat_rw -> to_sw0;
+ from_mtun_nat6_rw -> to_sw0;
+
+ from_smc_nat_rw -> to_host;
+ from_smc_ping_rw -> to_host;
+ from_smc_icmp_rw => ([0] -> to_host; [1] -> Discard);
+
+ from_mgmt
+ -> IPClassifier(ip proto tcp or ip proto udp, icmp type echo or type echo-reply, icmp)
+ => ( [0] -> mgmt_dns_req_cl :: DNSRequestClassifier()
+ => ( [0] -> mgmt_web_req_cl :: IPClassifier(ip tcp dst port www, ip tcp dst port https, -)
+ => ( [0] -> [0] from_mgmt_nat_rw;
+ [1] -> [1] from_mgmt_nat_rw;
+ [2] -> [4] from_mgmt_nat_rw [1]
+ -> from_mgmt_filter :: IPFilter(deny all)
+ -> [2] from_mgmt_nat_rw; );
+ [1] -> [3] from_mgmt_nat_rw; );
+ [1] -> from_mgmt_ping_rw -> to_linux_mgmt;
+ [2] -> from_mgmt_icmp_rw [0] -> to_linux_mgmt; );
+
+ from_mgmt_nat_rw [0]
+ -> to_linux_mgmt;
+
+ from_mgmt_icmp_rw [1]
+ -> Discard;
+
+ from_linux_mgmt
+ -> IPClassifier(ip proto tcp or ip proto udp, icmp type echo or type echo-reply, icmp)
+ => ( [0] -> from_linux_mgmt_nat_rw -> [0];
+ [1] -> from_linux_mgmt_ping_rw -> [0];
+ [2] -> from_linux_mgmt_icmp_rw -> [0]; )
+ -> to_mgmt;
+
+ set_nat_host_ip :: Script(TYPE PASSIVE,
+ write from_host_nat_rw.pattern0 pattern $1 0-65535 - - 0 from_sw0_nat_rw:0,
+ write from_host_ping_rw.pattern0 pattern $1 0-65535 - - 0 from_sw0_ping_rw:0,
+ );
+
+ set_nat_host_ip6 :: Script(TYPE PASSIVE,
+ write from_host_nat6_rw.pattern0 pattern $1 0-65535 - - 0 from_sw0_nat6_rw:0,
+ write from_host_ping6_rw.pattern0 pattern $1 0-65535 - - 0 from_sw0_ping6_rw:0,
+ );
+
+ set_nat_internal_ip :: Script(TYPE PASSIVE,
+ write from_sw0_nat_rw.pattern1 pattern - 0-65535 $1 - 0 from_host_nat_rw:0,
+ write from_sw0_ping_rw.pattern0 pattern - 0-65535 $1 - 0 from_host_ping_rw:0,
+ write from_smc_nat_rw.pattern1 pattern - 0-65535 $1 - 0 from_host_nat_rw:1,
+ write from_smc_ping_rw.pattern0 pattern - 0-65535 $1 - 0 from_host_ping_rw:1,
+ );
+
+ set_nat_internal_ip6 :: Script(TYPE PASSIVE,
+ write from_sw0_nat6_rw.pattern1 pattern - 0-65535 $1 - 0 from_host_nat6_rw:0,
+ write from_sw0_ping6_rw.pattern0 pattern - 0-65535 $1 - 0 from_host_ping6_rw:0,
+ );
+};
+
+elementclass ProcessForPCap {
+ input
+ -> Classifier(12/0800, -)
+ => ( [0] -> cip :: CheckIPHeader(14)
+ => ( [0] -> IPReassembler(HIMEM 131072, MAX_MTU_ANNO PMTU)
+ -> mtun_filter :: IPFilter(allow all)
+ -> IPFragmenter(MTU_ANNO PMTU)
+ -> [0];
+ [1] -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+ -> SetTimestamp
+ -> VLANEncap(VLAN_TCI)
+ -> output;
+
+ mtun_filter_config :: Script(TYPE PASSIVE,
+ init mtun_filtering_enabled false,
+ init management_ip 1.1.1.1,
+ init mtun_http_remote_ip1 6.0.0.2,
+ init mtun_http_remote_port1 80,
+ init mtun_http_remote_ip2 6.0.0.2,
+ init mtun_http_remote_port2 80,
+
+ writeq mtun_filter.config "0 all",
+ goto end $(not $mtun_filtering_enabled),
+ writeq mtun_filter.config "deny udp port 7351 and host $management_ip, deny tcp port $mtun_http_remote_port1 and host $mtun_http_remote_ip1 and host $management_ip, deny tcp port $mtun_http_remote_port2 and host $mtun_http_remote_ip2 and host $management_ip, allow all");
+};
+# 8 "click-config/switch.template" 2
+# 18 "click-config/switch.template"
+require(bcm_click);
+# 1 "click-config/switch/io-real/broadcom.click" 1
+to_wired0 :: MyNull
+-> IPFragmenter(1500)
+-> from_wired0 :: KernelTun(1.1.2.2/30, DEVNAME wired0, BURST 8)
+
+to_intra_stack :: MyNull
+-> from_intra_stack :: KernelTun(DEVNAME intra_stack)
+
+to_arping :: MyNull
+-> from_arping :: KernelTap(DEVNAME arping, ETHER __MY_MAC_ADDRESS__);
+
+to_linux_mgmt :: MyNull
+-> from_linux_mgmt :: KernelTun(10.128.128.130/32, DEVNAME linux_mgmt);
+
+to_sockproxy0 :: MyNull
+-> from_sockproxy0 :: Socket(UDP, 127.0.0.1, 3000);
+
+to_sockproxy_pim :: MyNull
+-> from_sockproxy_pim :: Socket(UDP, 127.0.0.1, 3001);
+
+to_mgmt0 :: ToDevice(mgmt0);
+from_mgmt0 :: FromDevice(mgmt0, METHOD LINUX);
+
+to_sw0 :: ToBroadcomSwitch(TX_PPORT_ANNO SWITCH_TX_PPORT, TX_LPORT_ANNO SWITCH_TX_LPORT,
+ VLAN_TCI_ANNO VLAN_TCI, SWITCH_PORT_TABLE switch_port_table,
+ RX_BLOCK_PPORT_ANNO SWITCH_RX_PPORT, RX_BLOCK_LPORT_ANNO SWITCH_RX_LPORT, HW_CTRL sw0_ctrl,
+ IS_MIRROR_ANNO SWITCH_IS_MIRROR, TX_COS_ANNO PAINT_SWITCH_TX_COS, INTRA_STACK_TX_ANNO SWITCH_INTRA_STACK_TX);
+
+from_sw0 :: FromBroadcomSwitch(WRITE_PPORT_ANNO SWITCH_RX_PPORT, WRITE_LEARN_ANNO SWITCH_LEARN,
+ WRITE_SFLOW_TX_PPORT_ANNO PAINT_SFLOW_TX_PPORT, WRITE_SFLOW_INFO_ANNO PAINT_SFLOW_INFO_BYTE,
+ VLAN_TCI_ANNO VLAN_TCI, ETHER __MY_MAC_ADDRESS__, SWITCH_PORT_TABLE switch_port_table,
+ SWITCH_L3_HW_MISS_ANNO SWITCH_L3_HW_MISS, HW_CTRL sw0_ctrl, BURST 8, INGRESS_COSQ_ANNO INGRESS_COSQ);
+
+from_sw0
+-> d_from_sw0 :: DebugPrint(from_sw0)
+-> from_sw0_dump_sk :: ToDumpSocket("/tmp/from_sw0_pcap", VLAN_ANNO VLAN_TCI)
+-> from_switch :: MyNull;
+
+to_switch :: MyNull
+-> d_to_sw0 :: DebugPrintNoCl(to_sw0)
+-> to_sw0_dump_sk :: ToDumpSocket("/tmp/to_sw0_pcap", VLAN_ANNO VLAN_TCI)
+-> to_sw0;
+
+to_sw0 [1]
+-> from_switch_for_tunnel :: MyNull;
+
+to_sw0, from_sw0 [1]
+-> sw0_pcap_process :: ProcessForPCap
+-> to_pcap_dump :: ToDumpSocket("/tmp/click_pcap_dump");
+
+sw0_ctrl :: BroadcomSwitchController(EVENT_LOG event_log, STP stp, LACP lacp, SWITCH_PORT_TABLE switch_port_table, ETHER __MY_MAC_ADDRESS__, BOARD_TYPE __MY_BOARD_TYPE__,
+ INIT_NUM_PORTS_CALL client_ip_table.setup_ports_for_switch, MACTABLE_STATUS_CHANGE_CALL l3_update_hardware.proc_mactable_change $mac $vlan $port $locked,
+ SFP_MANAGER sfp_mgr, SET_MIRROR_LOOPBACK_CALL set_mirror_looback_hw.run $enable, SWITCH_RPC_CLIENT switch_rpc_client,
+ UPDATE_HW_TABLE l3_update_hardware);
+
+
+add_per_port_rules :: Script(TYPE PASSIVE,
+ set i 0,
+ label loop,
+ write sw0_ctrl.bcm_fp_entry_del $(add $1 $i),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY $(add $1 $i), PORT $(add $i 1)," $2,
+ set i $(add $i 1),
+ goto loop $(ne $i __NUM_SWITCHPORTS__));
+
+init_script_hw :: Script(TYPE ACTIVE,
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 100, TYPE ipv4, DESCRIPTION DHCP-Client, IPPROTO udp, L4_SRC_PORT 68, L4_DST_PORT 67, COPY_TO_CPU true, CPU_QUEUE 4, ALLOW_FORWARDING false, COPY_TO_CPU_ID 100, ENCAP eth",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 103, TYPE ipv4, DESCRIPTION DHCP-Server, IPPROTO udp, L4_SRC_PORT 67, L4_DST_PORT 68, COPY_TO_CPU true, CPU_QUEUE 4, ALLOW_FORWARDING false, COPY_TO_CPU_ID 103, ENCAP eth",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 133, TYPE ipv4, DESCRIPTION DHCP-Server, IPPROTO udp, L4_SRC_PORT 67, L4_DST_PORT 68, COPY_TO_CPU true, CPU_QUEUE 4, COPY_TO_CPU_ID 133, ENCAP higig",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 107, TYPE arp, DESCRIPTION ARP, OPCODE reply, DST_MAC FF:FF:FF:FF:FF:FF, COPY_TO_CPU true, CPU_QUEUE 4, COPY_TO_CPU_ID 107",
+
+
+
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 127, TYPE ipv6, DESCRIPTION IPV6-All-Nodes-Catch-All, DST_IP FF02::1, COPY_TO_CPU_GREEN true, GREEN_INTERNAL_PRIORITY 2, COPY_TO_CPU_ID 127, POLICER_MODE 0, COMMITTED_RATE 10, COMMITTED_BURST_SIZE 100, POLICER_PACKET true, ALLOW_UNSUPPORTED true, REDIRECT_PORTS all",
+
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 128, TYPE ipv6, DESCRIPTION NDP-Solicited-Catch-All, DST_IP FF02::1:FF00:0/104, REDIRECT_PORTS all",
+
+
+
+ write add_per_port_rules.run 241 "TYPE non-forwarded, DESCRIPTION BPDU, DST_MAC 01:80:C2:00:00:00, GREEN_INTERNAL_PRIORITY 7, COPY_TO_CPU_GREEN true, ALLOW_FORWARDING false, POLICER_MODE 0, COMMITTED_RATE 10, COMMITTED_BURST_SIZE 100, POLICER_PACKET true, L2_CACHE_HIT true",
+
+ write add_per_port_rules.run 301 "TYPE non-forwarded, DESCRIPTION LACP, DST_MAC 01:80:C2:00:00:02, GREEN_INTERNAL_PRIORITY 7, COPY_TO_CPU_GREEN true, ALLOW_FORWARDING false, POLICER_MODE 0, COMMITTED_RATE 10, COMMITTED_BURST_SIZE 100, POLICER_PACKET true, L2_CACHE_HIT true",
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 120, TYPE non-forwarded, DESCRIPTION LLDP, DST_MAC 01:80:C2:00:00:0E, GREEN_INTERNAL_PRIORITY 7, COPY_TO_CPU_GREEN true, COPY_TO_CPU_ID 120, ALLOW_FORWARDING false, POLICER_MODE 0, COMMITTED_RATE $(sw0_ctrl.num_ports_per_asic), COMMITTED_BURST_SIZE 1000, POLICER_PACKET true, L2_CACHE_HIT true",
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 121, TYPE non-forwarded, DESCRIPTION non-fwd, DST_MAC 01:80:C2:00:00:00, DST_MAC_MASK FF:FF:FF:FF:FF:F0, GREEN_INTERNAL_PRIORITY 7, COPY_TO_CPU_GREEN true, COPY_TO_CPU_ID 121, ALLOW_FORWARDING false, POLICER_MODE 0, COMMITTED_RATE $(sw0_ctrl.num_ports_per_asic), COMMITTED_BURST_SIZE 1000, POLICER_PACKET true, L2_CACHE_HIT true",
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 122, TYPE snap, DESCRIPTION UDLD-Qualifier, DST_MAC 01:00:0C:CC:CC:CC, SNAP_ORG 0x00000C, SNAP_TYPE 0x0111, ENCAP eth, SET_SOURCE_CLASS 2",
+ write add_per_port_rules.run 401 "TYPE non-forwarded, DESCRIPTION UDLD, QUALIFY_SOURCE_CLASS 2, ALLOW_FORWARDING false, COPY_TO_CPU_GREEN true, GREEN_INTERNAL_PRIORITY 7, ENCAP eth, POLICER_MODE 0, COMMITTED_RATE 10, COMMITTED_BURST_SIZE 50, POLICER_PACKET true",
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 119, TYPE snap, DESCRIPTION Loop-Detection-Qualifier, DST_MAC FF:FF:FF:FF:FF:FF, SNAP_ORG 0x00000C, SNAP_TYPE 0x013C, ENCAP eth, SET_SOURCE_CLASS 3",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 118, TYPE non-forwarded, DESCRIPTION Loop-Detecton, QUALIFY_SOURCE_CLASS 3, ALLOW_FORWARDING false, COPY_TO_CPU_GREEN true, GREEN_INTERNAL_PRIORITY 2, ENCAP eth, POLICER_MODE 0, COMMITTED_RATE 50, COMMITTED_BURST_SIZE 500, POLICER_PACKET true",
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 240, TYPE ipv4, DESCRIPTION NHOP, QUALIFY_L3_CLASS 1, ALLOW_FORWARDING false, GREEN_INTERNAL_PRIORITY 2, COPY_TO_CPU_GREEN true, POLICER_MODE 0, COMMITTED_RATE 2000, COMMITTED_BURST_SIZE 2000, POLICER_PACKET true, COPY_TO_CPU_ID 240, PRIORITY -10",
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 361, TYPE acl, PACKET_RES l2_unknown_uc, INTERNAL_PRIORITY 2",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 362, TYPE acl, PACKET_RES l2_unknown_mc, INTERNAL_PRIORITY 2",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 363, TYPE acl, PACKET_RES l3_unknown_uc, INTERNAL_PRIORITY 2",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 364, TYPE acl, PACKET_RES l3_unknown_mc, INTERNAL_PRIORITY 2");
+
+
+set_mirror_looback_hw :: Script(TYPE PASSIVE,
+ init enabled false,
+ goto end $(eq $1 $enabled),
+ set enabled $1,
+ goto enable $(eq $1 true),
+ writeq sw0_ctrl.bcm_fp_entry_del 80,
+ writeq sw0_ctrl.bcm_fp_entry_del 81,
+ writeq sw0_ctrl.bcm_fp_entry_del 82,
+ writeq sw0_ctrl.bcm_fp_entry_del 83,
+ writeq sw0_ctrl.bcm_fp_entry_del 84,
+ writeq sw0_ctrl.bcm_fp_entry_del 85,
+ goto end,
+ label enable,
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 80, TYPE ipv4, DESCRIPTION Mirror-Loopback, LOOPBACK mirror, BLOCK_FROM_CPU true, PRIORITY 5",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 81, TYPE ipv6, DESCRIPTION Mirror-Loopback, LOOPBACK mirror, BLOCK_FROM_CPU true, PRIORITY 5",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 82, TYPE arp, DESCRIPTION Mirror-Loopback, LOOPBACK mirror, BLOCK_FROM_CPU true, PRIORITY 5",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 83, TYPE non-forwarded, DESCRIPTION Mirror-Loopback, LOOPBACK mirror, BLOCK_FROM_CPU true, PRIORITY 5",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 84, TYPE acl, DESCRIPTION Mirror-Loopback, LOOPBACK mirror, BLOCK_FROM_CPU true, PRIORITY 5",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 85, TYPE acl6, DESCRIPTION Mirror-Loopback, LOOPBACK mirror, BLOCK_FROM_CPU true, PRIORITY 5");
+
+
+configure_ospf_hw :: Script(TYPE PASSIVE,
+ init enabled false,
+ goto end $(eq $1 $enabled),
+ set enabled $1,
+ goto enable $(eq $1 true),
+ writeq sw0_ctrl.bcm_fp_entry_del 105,
+ goto end,
+ label enable,
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 105, TYPE ipv4, DESCRIPTION OSPF, IPPROTO ospf, COPY_TO_CPU true, CPU_QUEUE 5, COPY_TO_CPU_ID 105, ENCAP eth, PRIORITY 10");
+
+
+configure_vrrp_hw :: Script(TYPE PASSIVE,
+ init enabled false,
+ goto end $(eq $1 $enabled),
+ set enabled $1,
+ goto enable $(eq $1 true),
+ writeq sw0_ctrl.bcm_fp_entry_del 106,
+ goto end,
+ label enable,
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 106, TYPE ipv4, DESCRIPTION VRRP, IPPROTO vrrp, DST_IP 224.0.0.18, COPY_TO_CPU true, CPU_QUEUE 5, COPY_TO_CPU_ID 106");
+
+
+configure_pim_hw :: Script(TYPE PASSIVE,
+ init enabled false,
+ goto end $(eq $1 $enabled),
+ set enabled $1,
+ goto enable $(eq $1 true),
+ writeq sw0_ctrl.bcm_fp_entry_del 113,
+ writeq sw0_ctrl.bcm_fp_entry_del 114,
+ goto end,
+ label enable,
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 113, TYPE ipv4, DESCRIPTION PIM-REGISTER, IPPROTO pimrgstr, COPY_TO_CPU true, CPU_QUEUE 1, ALLOW_FORWARDING true, COPY_TO_CPU_ID 113, ENCAP eth, PRIORITY 11",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 114, TYPE ipv4, DESCRIPTION PIM-NONREGISTER, IPPROTO pim, COPY_TO_CPU true, CPU_QUEUE 3, ALLOW_FORWARDING true, COPY_TO_CPU_ID 114, ENCAP eth, PRIORITY 10");
+
+
+configure_pim_igmp_hw :: Script(TYPE PASSIVE,
+ init enabled false,
+ goto end $(eq $1 $enabled),
+ set enabled $1,
+ goto enable $(eq $1 true),
+ writeq sw0_ctrl.bcm_fp_entry_del 115,
+ goto end,
+ label enable,
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 115, TYPE ipv4, DESCRIPTION IGMP, IPPROTO igmp, COPY_TO_CPU true, CPU_QUEUE 2, ALLOW_FORWARDING true, COPY_TO_CPU_ID 115, ENCAP eth");
+
+set_cdp_steal :: Script(TYPE PASSIVE,
+ writeq sw0_ctrl.bcm_fp_entry_del 110,
+ writeq sw0_ctrl.bcm_fp_entry_del 123,
+ goto end $(not $1),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 110, TYPE snap, DESCRIPTION CDP, DST_MAC 01:00:0c:cc:cc:cc, SNAP_ORG 0x00000c, SNAP_TYPE 0x2000, ENCAP eth, SET_SOURCE_CLASS 1",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 123, TYPE non-forwarded, DESCRIPTION CDP-Qualifier, QUALIFY_SOURCE_CLASS 1, ALLOW_FORWARDING false, COPY_TO_CPU_GREEN true, GREEN_INTERNAL_PRIORITY 2, ENCAP eth, POLICER_MODE 0, COMMITTED_RATE $(sw0_ctrl.num_ports_per_asic), COMMITTED_BURST_SIZE 1000, POLICER_PACKET true");
+
+
+
+
+
+
+reconfigure_sensitive_acls_hw :: Script(TYPE PASSIVE,
+ write set_switch_meraki_com_ip_hw.run,
+ write set_host_ip_hw.run,
+ write set_host_ip6_hw.run,
+ write set_l3_interface_rules_hw.run,
+ write set_uplink_ips_hw.run,
+ write set_ns_handling_hw.run);
+
+set_ns_handling_hw :: Script(TYPE PASSIVE,
+ init dns_inspection_enabled true,
+ init mdns_inspection_enabled true,
+
+ write sw0_ctrl.bcm_fp_entry_del 101,
+ write sw0_ctrl.bcm_fp_entry_del 102,
+
+ goto do_mdns $(not $dns_inspection_enabled),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 101, TYPE ipv4, DESCRIPTION DNS-Response, IPPROTO udp, L4_SRC_PORT 53, COPY_TO_CPU_GREEN true, GREEN_INTERNAL_PRIORITY 3, ALLOW_FORWARDING_GREEN false, COPY_TO_CPU_ID 101, POLICER_MODE 0, COMMITTED_RATE 200, COMMITTED_BURST_SIZE 200, POLICER_PACKET true, ENCAP eth",
+
+ label do_mdns,
+ goto end $(not $mdns_inspection_enabled),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 102, TYPE ipv4, DESCRIPTION MDNS, IPPROTO udp, L4_SRC_PORT 5353, L4_DST_PORT 5353, COPY_TO_CPU_GREEN true, GREEN_INTERNAL_PRIORITY 2, ALLOW_FORWARDING_GREEN false, COPY_TO_CPU_ID 102, POLICER_MODE 0, COMMITTED_RATE 100, COMMITTED_BURST_SIZE 100, POLICER_PACKET true, ENCAP eth");
+
+
+
+set_switch_meraki_com_ip_hw :: Script(TYPE PASSIVE,
+ init smc_enabled false,
+ init smc_ip "",
+
+ write sw0_ctrl.bcm_fp_entry_del 200,
+ write sw0_ctrl.bcm_fp_entry_del 201,
+ goto end $(or $(not $smc_enabled) $(eq $smc_ip "")),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 200, TYPE ipv4, DESCRIPTION SMC, DST_IP $smc_ip, COPY_TO_CPU true, CPU_QUEUE 6, ALLOW_FORWARDING false, COPY_TO_CPU_ID 200, ENCAP eth",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 201, TYPE arp, DESCRIPTION ARP-SMC, TPA $smc_ip, COPY_TO_CPU true, CPU_QUEUE 6, ALLOW_FORWARDING false, COPY_TO_CPU_ID 201, ENCAP eth, PRIORITY 2");
+
+set_l3_interface_rules_hw :: Script(TYPE PASSIVE,
+ init interfaces,
+ write set_l3_interface_rules_helper_hw.run $interfaces);
+
+set_l3_interface_rules_helper_hw :: Script(TYPE PASSIVE,
+ init rule_base 1000,
+ init rules_added 0,
+
+ label del_loop,
+ goto add_loop $(le $rules_added 0),
+ set rules_added $(sub $rules_added 1),
+ writeq sw0_ctrl.bcm_fp_entry_del $(add $rule_base $rules_added),
+ goto del_loop,
+
+ label add_loop,
+ goto end $(eq $# 0),
+ setq intf_info $(shift),
+ set vlan $(shift intf_info),
+ set ip $(shift intf_info),
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY $(add $rule_base $rules_added), TYPE arp, DESCRIPTION ARP, OPCODE any, TPA $ip, VID $vlan, COPY_TO_CPU true, CPU_QUEUE 4, ALLOW_FORWARDING false, ENCAP eth",
+ set rules_added $(add $rules_added 1),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY $(add $rule_base $rules_added), TYPE ipv4, DESCRIPTION DHCP-Relay, QUALIFY_L3_CLASS 1, IPPROTO udp, DST_IP $ip, L4_SRC_PORT 67, L4_DST_PORT 67, COPY_TO_CPU true, CPU_QUEUE 4, ALLOW_FORWARDING false, ENCAP eth, PRIORITY 1",
+ set rules_added $(add $rules_added 1),
+
+ goto add_loop
+);
+
+
+
+set_arping_hw :: Script(TYPE PASSIVE,
+ writeq sw0_ctrl.bcm_fp_entry_del 104,
+ goto end $(or $(eq $1 "0.0.0.0") $(eq $1 "")),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 104, TYPE arp, DESCRIPTION ARP-mgmt, OPCODE reply, TPA $1, COPY_TO_CPU true, CPU_QUEUE 6, ALLOW_FORWARDING false, COPY_TO_CPU_ID 104, ENCAP eth, PRIORITY 2");
+
+configure_igmp_snoop_hw :: Script(TYPE PASSIVE,
+ init enabled false,
+ goto end $(eq $1 $enabled),
+ set enabled $1,
+ goto enable $(eq $1 true),
+ writeq sw0_ctrl.bcm_fp_entry_del 109,
+ writeq sw0_ctrl.bcm_fp_entry_del 111,
+ goto end,
+ label enable,
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 109, TYPE ipv4, DESCRIPTION IGMP, IPPROTO igmp, COPY_TO_CPU true, CPU_QUEUE 2, ALLOW_FORWARDING false, COPY_TO_CPU_ID 109, ENCAP eth",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 111, TYPE ipv4, DESCRIPTION IGMP, IPPROTO igmp, BLOCK_FROM_CPU true, ALLOW_FORWARDING true, ENCAP higig");
+
+
+configure_mld_snoop_hw :: Script(TYPE PASSIVE,
+ init enabled false,
+ goto end $(eq $1 $enabled),
+ set enabled $1,
+ goto enable $(eq $1 true),
+ writeq sw0_ctrl.bcm_fp_entry_del 116,
+ writeq sw0_ctrl.bcm_fp_entry_del 117,
+ goto end,
+ label enable,
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 116, TYPE ipv6, DESCRIPTION MLD, IPPROTO hopbyhop, EXTNH 58, DST_IP FF00::/FF00::, COPY_TO_CPU_GREEN true, GREEN_INTERNAL_PRIORITY 2, COPY_TO_CPU_ID 116, POLICER_MODE 0, COMMITTED_RATE 10, COMMITTED_BURST_SIZE 100, POLICER_PACKET true, ALLOW_FORWARDING false, ENCAP eth, PRIORITY 10",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 117, TYPE ipv6, DESCRIPTION MLD, IPPROTO hopbyhop, EXTNH 58, DST_IP FF00::/FF00::, BLOCK_FROM_CPU true, ALLOW_FORWARDING true, ENCAP higig, PRIORITY 10");
+
+
+
+set_host_ip_hw :: Script(TYPE PASSIVE,
+ init management_vid -1,
+ init switch_ip "",
+
+ write sw0_ctrl.bcm_fp_entry_del 213,
+ write sw0_ctrl.mgmt_vlan4 0,
+ goto end $(or $(le $management_vid 0) $(eq $switch_ip "")),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 213, TYPE arp, DESCRIPTION ARP-mgmt, VID $management_vid, TPA $switch_ip, ALLOW_FORWARDING false, COPY_TO_CPU true, CPU_QUEUE 6, COPY_TO_CPU_ID 213, PRIORITY 2",
+ write sw0_ctrl.mgmt_vlan4 $management_vid);
+
+
+
+
+set_host_ip6_hw :: Script(TYPE PASSIVE,
+ init management_vid -1,
+ init switch_ip6local "",
+ init switch_ip6 "",
+
+ write sw0_ctrl.bcm_fp_entry_del 223,
+ write sw0_ctrl.bcm_fp_entry_del 224,
+ write sw0_ctrl.mgmt_vlan6 0,
+ goto end $(or $(le $management_vid 0) $(eq $switch_ip6local "")),
+ write sw0_ctrl.mgmt_vlan6 $management_vid,
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 223, TYPE ipv6, DESCRIPTION IPV6-Solicited-MC-Local, VID $management_vid, DST_MC $switch_ip6local, ALLOW_FORWARDING false, COPY_TO_CPU true, CPU_QUEUE 6, COPY_TO_CPU_ID 223, PRIORITY 2",
+ goto end $(eq $switch_ip6 ""),
+
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 224, TYPE ipv6, DESCRIPTION IPV6-Solicted-MC-Global, VID $management_vid, DST_MC $switch_ip6, ALLOW_FORWARDING false, COPY_TO_CPU true, CPU_QUEUE 4, COPY_TO_CPU_ID 224, PRIORITY 2");
+
+set_uplink_ips_hw :: Script(TYPE PASSIVE,
+ init vers,
+ init ips,
+ init vlans,
+ init rule_base 500,
+ init rules_added 0,
+
+ setq vers_temp "$vers",
+ setq ips_temp "$ips",
+ setq vlans_temp "$vlans",
+
+ label del_loop,
+ goto add_loop $(le $rules_added 0),
+ set rules_added $(sub $rules_added 1),
+ write sw0_ctrl.bcm_fp_entry_del $(add $rule_base $rules_added),
+ goto del_loop,
+
+ label add_loop,
+ goto end $(eq $(length $ips_temp) 0),
+ set curr_ver $(shift vers_temp),
+ set curr_ip $(shift ips_temp),
+ set curr_vlan $(shift vlans_temp),
+
+ set curr_rule_id $(add $rule_base $rules_added),
+ goto is_v6 $(eq $curr_ver 6),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY $curr_rule_id, TYPE arp, DESCRIPTION ARP-mgmt, VID $curr_vlan, TPA $curr_ip, ALLOW_FORWARDING false, COPY_TO_CPU true, CPU_QUEUE 6, PRIORITY 2",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY $(add $curr_rule_id 1), TYPE ipv4, DESCRIPTION IPV4-mgmt, VID $curr_vlan, DST_IP $curr_ip, ALLOW_FORWARDING false, COPY_TO_CPU true, CPU_QUEUE 6, PRIORITY 10",
+ set rules_added $(add $rules_added 2),
+ goto add_loop,
+
+ label is_v6,
+
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY $curr_rule_id, TYPE ipv6, DESCRIPTION IPV6-mgmt, VID $curr_vlan, DST_IP $curr_ip, ALLOW_FORWARDING false, COPY_TO_CPU true, CPU_QUEUE 6, PRIORITY 10",
+ set rules_added $(add $rules_added 1),
+
+ goto add_loop);
+
+
+remove_redirect_acl :: Script(TYPE PASSIVE,
+ init rule_base 1510,
+
+ set num_rules $(add 2 $2),
+ set port_rule_start_idx $(mul $1 9),
+ set curr_rule_id $(add $rule_base $port_rule_start_idx),
+
+ set port_rule_idx 0,
+ label del_loop,
+ writeq sw0_ctrl.bcm_fp_entry_del $(add $curr_rule_id $port_rule_idx),
+ set port_rule_idx $(add $port_rule_idx 1),
+ goto del_loop $(lt $port_rule_idx $num_rules),
+
+ writeq sw0_ctrl.bcm_fp_entry_del $(add $curr_rule_id 8));
+
+
+
+set_redirect_acl :: Script(TYPE PASSIVE,
+ init rule_base 1510,
+
+ set port_rule_idx $(mul $1 9),
+ set curr_rule_id $(add $rule_base $port_rule_idx),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY $curr_rule_id, SRC_MAC $2, TYPE acl, DESCRIPTION redirect-DNS, PRIORITY 100, IPPROTO udp, L4_DST_PORT 53, ALLOW_FORWARDING true",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY $(add $curr_rule_id 1), SRC_MAC $2, TYPE acl, DESCRIPTION redirect-http, PRIORITY 100, IPPROTO tcp, L4_DST_PORT 80, ALLOW_FORWARDING false, COPY_TO_CPU true, CPU_QUEUE 2",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY $(add $curr_rule_id 8), SRC_MAC $2, TYPE acl, DESCRIPTION redirect-drop, PRIORITY 100, ALLOW_FORWARDING false");
+
+set_additional_redirect_acl :: Script(TYPE PASSIVE,
+ init rule_base 1510,
+
+ set port_rule_idx $(mul $1 9),
+ set port_rule_offset $(add $3 2),
+ set curr_rule_id $(add $rule_base $port_rule_idx),
+
+ writeq sw0_ctrl.bcm_fp_entry_del $(add $curr_rule_id $port_rule_offset),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY $(add $curr_rule_id $port_rule_offset), TYPE acl, DESCRIPTION redirect-additional, SRC_MAC $2, PRIORITY 101, DST_IP $4, ALLOW_FORWARDING true");
+
+set_port_restrict_acl :: Script(TYPE PASSIVE,
+ writeq sw0_ctrl.bcm_fp_entry_del 5000,
+ writeq sw0_ctrl.bcm_fp_entry_del 5001,
+ setq ports $1,
+
+ goto stop $(le $(length $ports) 0),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 5000, TYPE acl, DESCRIPTION restrict-dns, PRIORITY 100, IPPROTO udp, L4_DST_PORT 53, ALLOW_FORWARDING true, PORTS $1",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 5001, TYPE acl, DESCRIPTION restrict-drop, PRIORITY 100, ALLOW_FORWARDING false, PORTS $1",
+);
+# 406 "click-config/switch/io-real/broadcom.click"
+set_dai_arp_redirection :: Script(TYPE PASSIVE,
+ writeq sw0_ctrl.bcm_fp_entry_del 107,
+ writeq sw0_ctrl.bcm_fp_entry_del 112,
+ goto dai_disable $(eq $1 none),
+ goto response_only $(eq $1 response),
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 107, TYPE arp, DESCRIPTION ARP, OPCODE reply, DST_MAC FF:FF:FF:FF:FF:FF, COPY_TO_CPU true, CPU_QUEUE 4, COPY_TO_CPU_ID 107, ENCAP higig",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 112, TYPE arp, DESCRIPTION ARP, PRIORITY 1, COPY_TO_CPU true, CPU_QUEUE 4, ALLOW_FORWARDING false, COPY_TO_CPU_ID 112, ENCAP eth",
+ goto end,
+
+ label response_only,
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 107, TYPE arp, DESCRIPTION ARP, OPCODE reply, DST_MAC FF:FF:FF:FF:FF:FF, COPY_TO_CPU true, CPU_QUEUE 4, COPY_TO_CPU_ID 107, ENCAP higig",
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 112, TYPE arp, DESCRIPTION ARP, OPCODE reply, PRIORITY 1, COPY_TO_CPU true, CPU_QUEUE 4, ALLOW_FORWARDING false, COPY_TO_CPU_ID 112, ENCAP eth",
+ goto end,
+
+ label dai_disable,
+ writeq sw0_ctrl.bcm_fp_entry_add "ENTRY 107, TYPE arp, DESCRIPTION ARP, OPCODE reply, DST_MAC FF:FF:FF:FF:FF:FF, COPY_TO_CPU true, CPU_QUEUE 4, COPY_TO_CPU_ID 107",
+ label end);
+
+enable_resp_dai :: Script(TYPE PASSIVE,
+ write ingress_resp_dai_handler/ingress_resp_dai_checker.validation_enabled $1,
+ write l3_ingress_resp_dai_checker.validation_enabled $1,
+ write ingress_resp_dai_handler/drop_arp_dai_disabled.switch $(if $1 0 -1)
+);
+
+enable_req_dai :: Script(TYPE PASSIVE,
+ write ingress_req_dai_checker.validation_enabled $1,
+ write l3_ingress_req_dai_checker.validation_enabled $1,
+);
+# 20 "click-config/switch.template" 2
+
+
+
+
+
+
+sfp_mgr :: SFPManager(EVENT_LOG event_log);
+
+arp_table :: ARPTable(INVALID_ENTRY_HANDLER self_sw_arp_timeout.run $addr $vlan $eth);
+l3_update_hardware :: UpdateHardwareTable(SWITCH_HARDWARE_INTERFACE sw0_ctrl,
+ ROUTE_TABLE l3_route_table,
+ VLAN_ANNO VLAN_TCI,
+ SWITCH_L3_HW_MISS_ANNO SWITCH_L3_HW_MISS,
+ SWITCH_RPC_CLIENT switch_rpc_client,
+ SWITCH_PORT_TABLE switch_port_table,
+ DEBUG false,
+ EVENT_LOG event_log);
+
+switch_table :: SwitchTable(CIT client_ip_table, PER_PORT_CAPACITY 40);
+syslog_event_log :: SyslogSourceUDP(SRC_PORT 5555);
+event_log :: EventLog(TABLE client_ip_table,
+ SYSLOG syslog_event_log);
+
+route_state_table :: RouteStateTable;
+
+switch_intf_table :: SwitchIntfTable(SWITCH_HARDWARE sw0_ctrl,
+ MAC __MY_MAC_ADDRESS__,
+ INTERFACE_HC interface_update_callback.run $ips $vlans $netmasks $broadcasts $mac);
+
+
+
+
+
+
+
+interface_update_callback :: Script(TYPE PASSIVE,
+
+ setq ips $1,
+ setq vlans $2,
+ setq netmasks $3,
+ setq broadcasts $4,
+ setq mac $5,
+
+ writeq l3_update_hardware.refresh_hw "",
+ setq vlan_filter_cfg "",
+ setq vlan_ips "",
+ setq l3_arpvlan_filter_cfg "",
+ setq broadcast_filter "dst 255.255.255.255 or dst 224.0.0.0/4 or ip hl > 5",
+# 76 "click-config/switch.template"
+ writeq wan0_l3_ar.config "COPY_ANNO true",
+ set no_l3 $(if $(eq $1 "") true false),
+ goto skip_l3 $no_l3,
+
+ label loop,
+ set ipa $(shift ips),
+ set vlan $(shift vlans),
+ set netmask $(shift netmasks),
+ set broadcast $(shift broadcasts),
+
+ setq vlan_filter_cfg $(if $(eq $(length $vlan_filter_cfg) 0) "$vlan" "$vlan_filter_cfg,$vlan"),
+ setq vlan_ips $(if $(eq $(length $vlan_ips) 0) "\"$vlan $ipa\"" "$vlan_ips \"$vlan $ipa\""),
+ setq broadcast_filter "$broadcast_filter or dst $broadcast",
+ setq l3_arpvlan_filter_cfg $(if $(eq $(length $l3_arpvlan_filter_cfg) 0) "$ipa $vlan" "$l3_arpvlan_filter_cfg, $ipa $vlan"),
+
+ write wan0_l3_ar.add $ipa $mac,
+
+ goto loop $(ne $(length $ips) 0),
+ label skip_l3,
+ write wan0_l3_arp_vlan_filter.set $l3_arpvlan_filter_cfg,
+ write ingress_resp_dai_handler/wan0_l3_arp_resp_vlan_filter.set $l3_arpvlan_filter_cfg,
+
+ writeq routable_interface_vlans.vlan_config $(if $no_l3 "0-4095 1" "0-4095 1, \"$vlan_filter_cfg\" 0"),
+ setq vlan_filter_cfg $(if $no_l3 "0-4095 drop" "0-4095 drop, \"$vlan_filter_cfg\" 0"),
+ write l3_interface_traffic_vlan_filter.vlan_config $vlan_filter_cfg,
+
+
+ write set_l3_interface_rules_hw.set interfaces $vlan_ips,
+ write reconfigure_sensitive_acls_hw.run,
+
+
+ write from_wan0_ip_cl2.conf7 $broadcast_filter,
+
+ write interface_announce.stop_announce,
+ writeq interface_announce.set_ips $1,
+ write interface_announce.queue_announce,
+
+ write set_routing_mac.run $mac,
+ );
+
+
+
+
+set_routing_mac :: Script(TYPE PASSIVE,
+ write dhcp_relay.eth $1,
+ write interface_announce.eth $1,
+ write l3_arpq.mac $1,
+ write wan0_ip_hef.ether $1,
+ write sflow_eth_filter.ether $1,
+ write dhcp_routing_ef.ether $1,
+
+ goto using_stack_mac $(ne $1 __MY_MAC_ADDRESS__),
+ write stack_ef.ether 00:00:00:11:11:11,
+ goto end,
+ label using_stack_mac,
+ write stack_ef.ether $1,
+ );
+
+mtun :: MTunnelClient(__MTUN_IP__, 1.1.1.1, __MY_MAC_ADDRESS__, -);
+
+nat_wan0_arpq :: ARPQuerier(1.1.1.1/24, __MY_MAC_ADDRESS__, BROADCAST 1.255.255.255, COPY_ANNO true, VLAN_ANNO VLAN_TCI, TABLE arp_table);
+wan0_ndsolicit :: IP6NDSolicitor(IP6 ::1/128, COPY_ANNO true, VLAN_ANNO VLAN_TCI, MULTICAST_POLL true, ETH __MY_MAC_ADDRESS__);
+
+wan0_pinger :: Pinger(DST "8.8.8.8, INTERVAL 5s", SRC 1.1.1.1, ACTIVE false);
+wan0_lan_connectivity :: LANConnectivityDetector(ETHER __MY_MAC_ADDRESS__, SRC 1.1.1.1, ACTIVE false,
+ IPCONFLICT_INTERVAL 60s, IPCONFLICT_PASS_INTERVAL 60s,
+ IPGATEWAY_INTERVAL 1s, IPGATEWAY_PASS_INTERVAL 15s);
+wan0_resolver :: DNSResolver(DST 8.8.8.8, SRC 1.1.1.1);
+wan0_dns_lookup :: DNSLookup(INTERVAL .1s, ACTIVE false, RESOLVER wan0_resolver);
+wan0_dns_nxlookup :: DNSLookupNXDomain(DOMAIN no-dns.meraki.com, ACTIVE false, RESOLVER wan0_resolver);
+
+uplinkstate :: UplinkState(UPLINK_IP_CHANGE_CALL announce_uplink_ip.run $ver $ip $vlan $is_static $added,
+ DAI_WHITELIST_GW_CALL dai_whitelist_gw.run $mac $vid $ip,
+ SWITCH_PORT_TABLE switch_port_table);
+uplink_dhcp_client :: UplinkDHCPClient(VLAN_ANNO VLAN_TCI, UPLINK_STATE uplinkstate, ETH __MY_MAC_ADDRESS__, AP_WIRED_CLIENT_SAFE true);
+uplink_v6conf_client :: UplinkV6ConfClient(VLAN_ANNO VLAN_TCI, UPLINK_STATE uplinkstate, ETH __MY_MAC_ADDRESS__, AP_WIRED_CLIENT_SAFE true);
+uplink_gw_arp_prober :: UplinkGWARPProber(VLAN_ANNO VLAN_TCI, SWITCH_PORT_TABLE switch_port_table, SWITCH_PORT_ANNO SWITCH_RX_LPORT, UPLINK_STATE uplinkstate, ETH __MY_MAC_ADDRESS__);
+uplink_gw_nd_prober :: UplinkGWNDProber(VLAN_ANNO VLAN_TCI, SWITCH_PORT_TABLE switch_port_table, SWITCH_PORT_ANNO SWITCH_RX_LPORT, UPLINK_STATE uplinkstate, ETH __MY_MAC_ADDRESS__);
+
+set_dhcp_traffic_vlan_max :: Script(TYPE PASSIVE,
+ write add_dhcp_traffic_vlan.set max_vlans $1,
+ write add_dhcp_traffic_vlan.set num_vlans 0,
+ write uplinkstate.clear_dhcp_traffic_vlans,
+ write switch_vlan_ctr_in.reset);
+
+add_dhcp_traffic_vlan :: Script(TYPE PASSIVE,
+ init max_vlans 0,
+ init num_vlans 0,
+
+ goto end $(eq $1 0),
+ set num_vlans $(add $num_vlans 1),
+ goto end $(gt $num_vlans $max_vlans),
+ write uplinkstate.add_dhcp_traffic_vlan $1);
+
+mdns_services :: MDNSServiceTracker();
+
+big_acl :: BigACL(CIT client_ip_table);
+
+client_ip_table :: ClientIPTable(
+ INTERVAL 10,
+ CONFIRMED_TIMEOUT 120,
+ IP __MTUN_IP__,
+ MAC __MY_MAC_ADDRESS__,
+ IGNORE_MAC_LIST __MY_MAC_ADDRESS__,
+ MAX_VAP 15,
+ SRC_CLI_ANNO SRC_CLI_PTR,
+ DST_CLI_ANNO DST_CLI_PTR,
+ ACCT_ANNO PAINT_ACCT,
+ BA big_acl,
+ TA cli_h/traffic_analysis,
+ CLI_CSET_LRU_CAPACITY 300,
+ DEFAULT_NO_NAT true);
+
+dhcp_tracker :: DHCPTracker(VAP_ANNO PAINT_VAP, VLAN_ANNO VLAN_TCI, CIT client_ip_table,
+ PORT_ANNO SWITCH_RX_LPORT, SWITCH_RPC_CLIENT switch_rpc_client,
+ SWITCH_PORT_TABLE switch_port_table);
+dhcp_relay :: DHCPRelay(VLAN_ANNO VLAN_TCI, ETH __MY_MAC_ADDRESS__);
+
+live_traffic :: LiveTraffic(CLIENT_IP_TABLE client_ip_table);
+
+dns_painter :: DNSPainter(TA_DNS_HOST, MAP_CAPACITY 10000);
+
+
+
+useless_ssl_painter :: SSLPainter(TA_SSL_HOST, TA_IS_SSL, CIT client_ip_table);
+useless_http_painter :: HTTPPainter(TA_HTTP_HOST, TA_HTTP_CONTENT_TYPE, TA_HTTP_USER_AGENT, TA_HTTP_URI, CIT client_ip_table)
+
+hostapd_session_id_table :: SwitchHostapdSessionIDTable(SWITCH_AUTH_PORT_TABLE switch_auth_port_table, IP __MTUN_IP__);
+elementclass ClientsHandler {
+ traffic_analysis :: TrafficAnalysis(client_ip_table, TCP_CACHE_ENABLED false,
+ SRC_FLOW_ANNO SRC_CLI_FLOW_PTR, DST_FLOW_ANNO DST_CLI_FLOW_PTR,
+ DNS_PAINTER dns_painter, SSL_PAINTER useless_ssl_painter, HTTP_PAINTER useless_http_painter,
+ VLAN_ANNO VLAN_TCI, SRC_PORT_ANNO PAINT_SRC_DEV, IS_HTTP_REQUEST PAINT_IS_HTTP_REQUEST,
+ P2P_ANNO TA_P2P, VAP_ANNO PAINT_VAP, IS_SSL_ANNO TA_IS_SSL);
+}
+
+cli_h :: ClientsHandler;
+
+
+
+
+elementclass NAT {
+ common_switch_nat :: CommonSwitchNAT;
+
+ from_host_alt_nat_rw :: IPRewriter(MAPPING_CAPACITY common_switch_nat/from_sw0_nat_rw,
+ pattern 1.1.1.1 0-65535 - - 0 common_switch_nat/from_sw0_nat_rw:0);
+
+ from_redirect_client :: IPRewriter(MAPPING_CAPACITY common_switch_nat/from_sw0_nat_rw,
+ pattern - - - 2100 0 common_switch_nat/from_host_nat_rw:1);
+ to_redirect_client :: IPRewriter(MAPPING_CAPACITY common_switch_nat/from_sw0_nat_rw,
+ pattern - 80 - - 0 common_switch_nat/from_host_nat_rw:1);
+
+ hostapd_radius_das_forwarder :: SwitchHostapdRadiusDasForwarder(0,
+ common_switch_nat/from_host_nat_rw, 0,
+ SWITCH_HAPD_SIT hostapd_session_id_table, DADDR 1.1.2.2,
+ DPORT_BASE 1710);
+
+ from_sw0_hostapd_rw :: IPRewriter(MAPPING_CAPACITY common_switch_nat/from_sw0_nat_rw,
+ hostapd_radius_das_forwarder);
+
+ input [0] -> from_sw0 :: MyNull;
+ input [1] -> from_host :: MyNull;
+ input [2] -> from_mtun :: MyNull -> [2] common_switch_nat;
+ input [3] -> from_smc :: MyNull -> [3] common_switch_nat;
+ input [4] -> from_mgmt :: MyNull -> [4] common_switch_nat;
+ input [5] -> from_linux_mgmt :: MyNull -> [5] common_switch_nat;
+ input [6] -> from_client :: MyNull;
+ input [7] -> Discard;
+
+ to_sw0 :: MyNull -> [0] output;
+ common_switch_nat [1] -> to_host :: MyNull -> [1] output;
+ common_switch_nat [2] -> to_mtun :: MyNull -> [2] output;
+ common_switch_nat [3] -> IPClassifier(tcp src port 2100, -)
+ => ([0] -> to_redirect_client -> [0]; [1] -> [0];)
+ -> to_smc :: MyNull -> [3] output;
+ common_switch_nat [4] -> to_mgmt :: MyNull -> [4] output;
+ common_switch_nat [5] -> to_linux_mgmt :: MyNull -> [5] output;
+ Idle -> [6] output;
+ to_l3 :: MyNull -> [7] output;
+
+ common_switch_nat [0] -> to_sw0_cl :: IPClassifier(false, -)
+ => ([0] -> to_l3; [1] -> to_sw0);
+
+ from_sw0
+ -> from_sw0_cl :: IPClassifier(udp dst port 3799 or udp dst port 1700,
+ ip proto tcp or ip proto udp, -)
+ => ( [0] -> from_sw0_hostapd_rw -> to_host;
+ [1] -> from_sw0_alt_cl :: IPClassifier(false, -)
+ => ( [0] -> from_sw0_alt_ip_filter :: IPClassifier(true, -)
+ => ([0] -> [0]; [1] -> Discard;)
+ -> [0];
+ [1] -> [0];)
+ -> [0];
+ [2] -> [0];)
+ -> [0] common_switch_nat;
+
+ from_host
+ -> from_host_cl :: IPClassifier(ip proto tcp or ip proto udp, -)
+ => ( [0] -> alt_route_cl:: IPClassifier(false, -)
+ => ( [0] -> from_host_alt_nat_rw -> to_sw0_cl;
+ [1] -> [0];)
+ -> [0];
+ [1] -> [0];)
+ -> [1] common_switch_nat;
+
+ from_client
+ -> from_client_filter :: IPFilter(allow ip tcp dst port 80, deny all)
+ -> from_redirect_client
+ -> from_smc;
+}
+
+nat :: NAT;
+Idle -> [7] nat;
+nat [6] -> Discard;
+
+ip6_out :: MyNull;
+
+syslog_event_log
+->syslog_mgmt_vid_check :: Switch(0)
+=> ( [0] -> [2] nat;
+ [1] -> l3_pre_routing :: MyNull;);
+
+from_wired0
+-> d_from_wired0 :: DebugPrint(from_wired0)
+-> Classifier(0/4?, 0/6?)
+=> ( [0] -> from_wired0_cip :: CheckIPHeader(0)
+ -> IPReassembler(HIMEM 131072, MAX_MTU_ANNO PMTU) -> [0];
+ [1] -> from_wired0_cip6 :: CheckIP6Header(OFFSET 0)
+ -> IPFilter(deny ip6 proto 44, allow all) -> [0]; )
+-> from_wired0_ip_cl :: IPClassifier(dst host 6.0.0.10 or 6.0.0.11 or 6.0.0.12 or 6.0.0.2, ip udp src port bootps, -)
+=> ( [0] -> [0] mtun;
+ [1] -> [1] dhcp_relay;
+ [2] -> [1] nat; );
+
+nat [1]
+-> nat_to_wired0 :: MyNull
+-> d_to_wired0 :: DebugPrint(to_wired0)
+-> SetPacketType(HOST)
+-> to_wired0;
+
+mtun [0]
+-> nat_to_wired0;
+
+nat [2]
+-> [1] mtun [1]
+-> [2] nat;
+
+
+direct_to_switch_highprio :: Paint(ANNO PAINT_SWITCH_TX_COS, COLOR 7);
+direct_to_switch_lowprio :: Paint(ANNO PAINT_SWITCH_TX_COS, COLOR 0);
+
+
+direct_to_wan0_highprio :: Paint(ANNO PAINT_SWITCH_TX_COS, COLOR 7);
+direct_to_wan0_lowprio :: Paint(ANNO PAINT_SWITCH_TX_COS, COLOR 0);
+
+set_arping_vlan_ip :: Script(TYPE PASSIVE,
+ write arping_res_check_ip_vid.set $2 $1,
+ writeq arping_req_vlan_paint.color $(htons $1));
+
+arping_res_check_ip_vid :: ARPVLANFilter(VLAN_TCI_ANNO VLAN_TCI)
+-> d_to_arping :: DebugPrint(to_arping)
+-> SetPacketType(HOST)
+-> to_arping_iprw :: StoreIPAddress(1.1.2.2, 38)
+-> to_arping;
+
+from_arping
+-> from_arping_iprw :: StoreIPAddress(1.1.1.1, 28)
+-> arping_req_vlan_paint :: Paint(ANNO VLAN_TCI, COLOR 256)
+-> d_from_arping :: DebugPrint(from_arping)
+-> direct_to_wan0_lowprio;
+
+l3_arpq :: ARPQuerier(1.1.1.1, __MY_MAC_ADDRESS__, BROADCAST 1.255.255.255, COPY_ANNO true, VLAN_ANNO VLAN_TCI, TABLE arp_table)
+Idle -> [1] l3_arpq;
+
+wan0_l3_arp_vlan_filter :: ARPVLANFilter(VLAN_TCI_ANNO VLAN_TCI);
+
+rpc_mrmp_tx :: MRMPSender(TYPE 1, MAC_ANNO DST_MAC, MAX_QUEUE_SIZE 2000, CONN_RESET_CALL switch_rpc_client.reset_connection $mac);
+rpc_mrmp_rx :: MRMPReceiver(TYPE 1, MAC_ANNO DST_MAC);
+
+switch_rpc_server :: SwitchRPCServer(MAC_ANNO DST_MAC, SWITCH_PORT_TABLE switch_port_table, HW_INTF sw0_ctrl, UPDATE_HW_TABLE l3_update_hardware, STP_PROXY stp_proxy,
+ DHCP_TRACKER dhcp_tracker, ARP_TABLE arp_table);
+
+rpc_mrmp_rx
+=> ( [0] -> switch_rpc_client :: SwitchRPCClient(MAC_ANNO DST_MAC, SWITCH_PORT_TABLE switch_port_table)
+ => ( [0] -> [0];
+ [1] -> switch_rpc_server
+ => ( [0] -> [0];
+ [1] -> switch_rpc_client; )
+ -> [0]; )
+ -> rpc_mrmp_tx
+ -> mrmp_ether_encap :: MRMPEtherEncap(SRC __MY_MAC_ADDRESS__, MAC_ANNO DST_MAC)
+ -> mrmp_set_vid :: SetVLANAnno(VLAN_TCI_ANNO VLAN_TCI, VLAN_ID 4095)
+ -> mrmp_mark_intra_stack_tx :: Paint(ANNO SWITCH_INTRA_STACK_TX, COLOR 1)
+ -> direct_to_wan0_highprio;
+ [1] -> mrmp_ether_encap; );
+
+rpc_mrmp_tx
+-> mrmp_ether_encap;
+
+smc_cli_tracker :: ClientIPTracker(client_ip_table, SWITCH_PORT_ANNO SWITCH_RX_LPORT, SET_SRC_CLI_ANNO SRC_CLI_PTR, SET_VAP_ANNO PAINT_VAP, READ_VLAN_ANNO VLAN_TCI, SWITCH_PORT_TABLE switch_port_table);
+
+l3_ingress_req_dai_checker :: DAIChecker(PORT_ANNO SWITCH_RX_PPORT, SWITCH_PORT_TABLE switch_port_table,
+ DHCP_TRACKER dhcp_tracker, VLAN_ANNO VLAN_TCI, EVENT_LOG event_log);
+
+l3_ingress_resp_dai_checker :: DAIChecker(PORT_ANNO SWITCH_RX_PPORT, SWITCH_PORT_TABLE switch_port_table,
+ DHCP_TRACKER dhcp_tracker, VLAN_ANNO VLAN_TCI, EVENT_LOG event_log);
+
+ingress_req_dai_checker :: DAIChecker(PORT_ANNO SWITCH_RX_PPORT, SWITCH_PORT_TABLE switch_port_table,
+ DHCP_TRACKER dhcp_tracker, VLAN_ANNO VLAN_TCI, EVENT_LOG event_log);
+# 400 "click-config/switch.template"
+elementclass DAIRespCheckHandler {
+ ingress_resp_dai_checker :: DAIChecker(PORT_ANNO SWITCH_RX_PPORT, SWITCH_PORT_TABLE switch_port_table,
+ DHCP_TRACKER dhcp_tracker, VLAN_ANNO VLAN_TCI, EVENT_LOG event_log);
+ input
+ -> dai_checkmssid_in :: CheckMSSID(PORT_ANNO SWITCH_RX_PPORT, MSSID 0, SWITCH_PORT_TABLE switch_port_table)
+ => ( [0] -> ingress_resp_dai_checker -> [0];
+ [1] -> [0];
+ )
+ -> wan0_mgmt_arp_resp_vlan_filter :: ARPVLANFilter(VLAN_TCI_ANNO VLAN_TCI)
+ => ( [0] -> to_out :: MyNull;
+ [1] -> wan0_smc_arp_resp_vlan_filter :: ARPVLANFilter(VLAN_TCI_ANNO VLAN_TCI)
+ => ( [0] -> to_out;
+ [1] -> wan0_l3_arp_resp_vlan_filter :: ARPVLANFilter(VLAN_TCI_ANNO VLAN_TCI)
+ => ( [0] -> to_out;
+ [1] -> [0];
+ )
+ -> [0];
+ )
+ -> [0];
+ )
+ -> Tee
+ => ( [0] -> to_out;
+ [1] -> dai_checkmssid_out :: CheckMSSID(PORT_ANNO SWITCH_RX_PPORT, MSSID 0, SWITCH_PORT_TABLE switch_port_table)
+ => ( [0] -> drop_arp_dai_disabled :: Switch(-1) -> to_switch_out :: MyNull;
+ [1] -> EtherDstFilter(FF:FF:FF:FF:FF:FF)
+ => ( [0] -> Discard;
+ [1] -> to_switch_out;
+ );
+ );
+ );
+
+ to_out -> [0] output;
+ to_switch_out -> [1] output;
+
+}
+
+ingress_resp_dai_handler :: DAIRespCheckHandler;
+client_eth_dst_tracker :: ClientEthDstTracker(client_ip_table, PORT_ANNO PAINT_SFLOW_TX_PPORT_PNUM, SET_DST_CLI_ANNO DST_CLI_PTR, SET_VAP_ANNO PAINT_VAP);
+
+ingress_resp_dai_handler [1]
+-> direct_to_switch :: MyNull;
+
+dai_whitelist_gw :: Script(TYPE PASSIVE,
+ writeq dhcp_tracker.add_whitelisted_snoop_entries "MAC $1, VID $2, IP $3, TYPE GW_STATIC",
+);
+
+
+
+
+l3_proc_on_master :: MyNull
+-> Paint(0, SWITCH_L3_HW_MISS)
+-> l3_to_master :: MyNull;
+
+elementclass L3FlowLimiter {
+ input
+ -> SwitchIntfClassifier(SWITCH_INTF_TABLE switch_intf_table, MATCH_IP true)
+ => ( [0] -> [0];
+ [1] -> CheckPaint(ANNO SWITCH_L3_HW_MISS, OP =, COLOR 0)
+ => ( [0] -> [0];
+ [1] -> HardwareL3Limiter(l3_update_hardware)
+ -> [0]; )
+ -> [0]; )
+ -> output;
+}
+
+elementclass DNSSnoop {
+ input
+ -> dns_snoop_cl :: Classifier(12/0800, -)
+ => ( [0] -> dns_resp_cl :: IPClassifier(udp src port 53, -)
+ => ( [0] -> dns_redirect_cl :: SwitchRedirectClassifier(SWITCH_PORT_TABLE switch_port_table, SWITCH_AUTH_PORT_TABLE switch_auth_port_table, PPORT_ANNO SWITCH_RX_PPORT, MATCH_DST true)
+ => ( [0] -> [0];
+ [1] -> switch_splash_dns_snoop :: SwitchSplashDNSSnoop(SWITCH_AUTH_PORT_TABLE switch_auth_port_table)
+ -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+ -> output;
+}
+
+elementclass StackForwardRadius {
+ local_switch::MyNull -> [0] output;
+ msstp_encap_out::MyNull -> [1] output;
+ elementclass SwitchPaint {
+ output0 :: MyNull -> [0] output;
+ output1 :: MyNull -> [1] output;
+ input -> input_switch :: Switch(0)
+ => ( [0] -> output0;
+ [1] -> mssid_paint :: Paint(ANNO SWITCH_TX_PPORT_MSSID, COLOR 0)
+ -> pnum_paint :: Paint(ANNO SWITCH_TX_PPORT_PNUM, COLOR 255)
+ -> output1;
+ );
+ };
+ switch_paint_0 :: SwitchPaint => local_switch, msstp_encap_out;
+ switch_paint_1 :: SwitchPaint => local_switch, msstp_encap_out;
+ switch_paint_2 :: SwitchPaint => local_switch, msstp_encap_out;
+ switch_paint_3 :: SwitchPaint => local_switch, msstp_encap_out;
+ switch_paint_4 :: SwitchPaint => local_switch, msstp_encap_out;
+ switch_paint_5 :: SwitchPaint => local_switch, msstp_encap_out;
+ switch_paint_6 :: SwitchPaint => local_switch, msstp_encap_out;
+ switch_paint_7 :: SwitchPaint => local_switch, msstp_encap_out;
+
+ input
+ -> dst_port_cl :: Classifier(12/0800 23/11 36/c35?,
+ 12/0800 23/11 36/c36?,
+ 12/0800 23/11 36/c37?,
+ 12/0800 23/11 36/c38?,
+ 12/0800 23/11 36/c39?,
+ 12/0800 23/11 36/c3a?,
+ 12/0800 23/11 36/c3b?,
+ 12/0800 23/11 36/c3c?,
+ -,
+ )
+ => switch_paint_0, switch_paint_1, switch_paint_2, switch_paint_3,
+ switch_paint_4, switch_paint_5, switch_paint_6, switch_paint_7,
+ local_switch;
+
+};
+
+stack_fwd_radius :: StackForwardRadius;
+
+from_wan0 :: MyNull
+-> wan0_counter :: Counter()
+-> Classifier(12/0800, -)
+=> ( [0] -> prelim_ip_reassem :: IPReassembler(HIMEM 131072, MAX_MTU_ANNO PMTU)
+ -> prelim_ip_cl :: IPClassifier(false, tcp dst port www, false, ip udp src port 5353 dst port 5353, -)
+ => ( [0] -> smc_cli_tracker -> Strip(14) -> [3] nat;
+ [1] -> redirect_cl :: SwitchRedirectClassifier(SWITCH_PORT_TABLE switch_port_table, SWITCH_AUTH_PORT_TABLE switch_auth_port_table, PPORT_ANNO SWITCH_RX_PPORT)
+ => ( [0] -> [0];
+ [1] -> Strip(14)
+ -> [6] nat; )
+ -> [0];
+ [2] -> stack_fwd_radius
+ => ( [0] -> Align(4, 0) -> [0] nat;
+ [1] -> msstp_encap :: MyNull; );
+ [3] -> from_wan0_ip :: MyNull;
+ [4] -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+-> CheckStackMaster(sw0_ctrl)
+=> ( [0] -> [0];
+ [1] -> eth_ip_mcast_cl :: Classifier(0/01005E00%FFFFFF80, 0/3333%FFFF, -)
+ => ( [0] -> l3_to_master;
+ [1] -> IPClassifier(dst FF02::1 or dst FF02:0:0:0:0:1:FF00::/104, -)
+ => ( [0] -> Tee => [0], l3_to_master;
+ [1] -> l3_to_master; )
+ -> [0];
+ [2] -> [0]; )
+ -> stack_ef :: EtherDstFilter(00:00:00:11:11:11)
+ => ( [0] -> Classifier(12/0800, -)
+ => ( [0] -> L3FlowLimiter -> [0];
+ [1] -> [0]; )
+ -> Classifier(12/0806 20/0001, 12/0806 20/0002, -)
+ => ( [0] -> l3_ingress_req_dai_checker -> [0];
+ [1] -> l3_ingress_resp_dai_checker -> [0];
+ [2] -> [0]; )
+ -> l3_to_master;
+ [1] -> [0]; )
+ -> [0]; )
+-> Classifier(12/0800, 12/0806 20/0001, 12/0806 20/0002, 12/86DD, 14/AAAA0300180A1001)
+=> ( [0] -> from_wan0_ip;
+ [1] -> wan0_arp_req_print :: ARPPrint(wan0_arp_req, ACTIVE false)
+ -> GetIPAddress(28)
+ -> wan0_arp_req_checkmssid :: CheckMSSID(PORT_ANNO SWITCH_RX_PPORT, MSSID 0, SWITCH_PORT_TABLE switch_port_table)
+ => ( [0] -> ingress_req_dai_checker -> [0];
+ [1] -> [0];)
+ -> l2_dhcp_relay_arp_sw :: Switch(0)
+ => ( [0] -> [0];
+ [1] -> wan0_l3_arp_vlan_filter; )
+
+
+ -> SwitchIntfClassifier(SWITCH_INTF_TABLE switch_intf_table, VLAN_ANNO VLAN_TCI, MATCH_VLAN true)
+ => ( [0] -> l3_arp_sniffer :: ARPSniffer(arp_table, VLAN_ANNO VLAN_TCI)
+ -> wan0_l3_arp_vlan_filter
+ => ( [0] -> CheckStackMaster(sw0_ctrl)
+ => ( [0] -> [0];
+ [1] -> l3_proc_on_master; )
+ -> wan0_l3_ar :: ARPResponder(COPY_ANNO true)
+ -> direct_to_wan0_ignore_rx_port :: MyNull;
+ [1] -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+ -> wan0_mgmt_arp_vlan_filter :: ARPVLANFilter(VLAN_TCI_ANNO VLAN_TCI)
+ => ( [0] -> wan0_mgmt_ar :: ARPResponder(COPY_ANNO true)
+ -> direct_to_wan0_ignore_rx_port;
+ [1] -> wan0_smc_arp_vlan_filter :: ARPVLANFilter(VLAN_TCI_ANNO VLAN_TCI)
+ => ( [0] -> wan0_smc_ar :: ARPResponder(COPY_ANNO true, 1.1.1.1 __MY_MAC_ADDRESS__) -> [0];
+ [1] -> direct_to_switch; )
+ -> direct_to_wan0_ignore_rx_port; );
+ [2] -> wan0_arp_resp_print :: ARPPrint(wan0_arp_resp, ACTIVE false)
+ -> uplink_gw_arp_prober
+ -> wan0_lan_connectivity [0]
+ -> ingress_resp_dai_handler [0]
+ -> [1] nat_wan0_arpq;
+ [3] -> from_wan0_ip6 :: MyNull;
+ [4] -> HostEtherFilter(__MY_MAC_ADDRESS__)
+ -> DropBroadcasts(VERBOSE false)
+ -> wan0_mrmp_check_vid :: CheckVID(VLAN_TCI, 4095)
+ -> wan0_mrmp_ether_decap :: MRMPEtherDecap(DST_MAC)
+ -> wan0_mrmp_check_header :: CheckMRMPHeader
+ -> wan0_mrmp_classifier :: MRMPClassifier(1)
+ -> Classifier(6/0000%8000, 6/8000%8000)
+ => ( [0] -> rpc_mrmp_rx;
+ [1] -> [1] rpc_mrmp_tx; ); );
+
+switch_mrt :: MulticastRoutingTable(VLAN_ANNO VLAN_TCI, INTF_TABLE switch_intf_table,
+ SWITCH_HARDWARE_INTERFACE sw0_ctrl, SWITCH_RPC_CLIENT switch_rpc_client,
+ IGMP_SNOOP_TABLE igmp_table)
+=> ( [0] -> add_router_ports_mrt_forward :: AddRouterPortsUnknownMc(VLAN_TCI_ANNO VLAN_TCI, IGMP_SNOOP_TABLE igmp_table)
+ -> l3_arpq;
+ [1] -> from_wan0_ip_pim :: MyNull;
+ [2] -> Discard; )
+
+maybe_l2_forward_acl_special_case :: MyNull
+-> IPFilter(allow udp src port 53,
+
+ allow ip udp src port 5353 dst port 5353,
+
+ allow ip udp src port 68 dst port 67,
+ allow ip udp src port 67 dst port 68,
+ deny all)
+-> HostEtherFilter(__MY_MAC_ADDRESS__)
+=> ( [0] -> DropBroadcasts(VERBOSE false)
+ => ( [0] -> Discard;
+ [1] -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+-> acl_frag :: IPFragmenter(MTU_ANNO PMTU)
+-> direct_to_wan0_lowprio;
+
+ospf_hello_inspector :: OspfHelloInspector(ARP_TABLE arp_table,
+ UPDATE_HW_TABLE l3_update_hardware,
+ SWITCH_HARDWARE_INTERFACE sw0_ctrl,
+ SWITCH_INTF_TABLE switch_intf_table,
+ SWITCH_PORT_TABLE switch_port_table,
+ SWITCH_RPC_CLIENT switch_rpc_client,
+ SWITCH_PORT_ANNO SWITCH_RX_LPORT,
+ VLAN_TCI_ANNO VLAN_TCI);
+
+from_wan0_ip
+-> from_wan0_ipreass :: IPReassembler(HIMEM 131072, MAX_MTU_ANNO PMTU)
+-> from_wan0_ip_cl1 :: IPClassifier(udp src port 5353 and dst port 5353, -)
+=> ( [0] -> wan0_mdns_print :: IPPrint(mdns_wan0, ACTIVE false) -> mdns_services -> [0];
+ [1] -> [0]; )
+-> routable_interface_vlans :: VLANSwitch(VLAN_TCI, "0-4095 1")
+=> ( [0] -> wan0_ip_hef :: EtherDstFilter(__MY_MAC_ADDRESS__)
+ => ( [0] -> [0];
+ [1] -> Paint(1, SWITCH_DONT_SW_ROUTE)
+ -> [0]; )
+ -> [0];
+ [1] -> Paint(1, SWITCH_DONT_SW_ROUTE)
+ -> [0]; )
+-> from_wan0_ip_cl2 :: IPClassifier(ip udp src port bootps dst port bootpc,
+ ip udp src port bootps dst port bootps,
+ proto 89, proto 112, proto 103 or proto 2, false, false,
+ dst 255.255.255.255 or dst 224.0.0.0/4 or ip hl > 5, -)
+=> ( [0] -> Tee
+ => ( [0] -> uplink_dhcp_client;
+ [1] -> wan0_dhcp_cli_checkmssid :: CheckMSSID(PORT_ANNO SWITCH_RX_PPORT, MSSID 0, SWITCH_PORT_TABLE switch_port_table) -> [0]; )
+ -> [0];
+ [1] -> Tee
+ => ( [0] -> [0];
+ [1] -> dhcp_s2s_relay :: MyNull; )
+ -> [0];
+ [2] -> ospf_hello_inspector -> Strip(14) -> from_wan0_ip_ospf :: MyNull;
+ [3] -> to_vrrp :: MyNull;
+ [4] -> route_or_forward_pim_igmp :: MyNull;
+ [5] -> mgmt_vid_check :: CheckVID(VLAN_TCI, 1) [0,1] => from_wan0_ip_to_mgmt :: { [0,1] => [0,1] };
+ [6] -> route_or_forward_mcast_data :: MyNull;
+ [7] -> Paint(1, SWITCH_DONT_SW_ROUTE) -> [0];
+ [8] -> [0]; )
+-> route_or_forward :: MyNull;
+
+from_wan0_ip6
+-> from_wan0_ip6_cl1 :: IPClassifier(icmp6 type neighborsolicit, icmp6 type neighboradvert, icmp6 type routeradvert, ip6 proto 44, false, dst FF00::/8, -)
+=> ( [0] -> wan0_mgmt_nd_vlan_filter :: NDVLANFilter(VLAN_TCI_ANNO VLAN_TCI)
+ -> wan0_mgmt_ndadv :: IP6NDAdvertiser(COPY_ANNO true, ::1 __MY_MAC_ADDRESS__)
+ -> direct_to_wan0_ignore_rx_port;
+ [1] -> uplink_gw_nd_prober
+ -> [1] wan0_ndsolicit;
+ [2] -> Strip(14) -> uplink_v6conf_client;
+ [3] -> Discard;
+ [4] -> mgmt_vid6_check :: CheckVID(VLAN_TCI, 1) => [0] from_wan0_ip_to_mgmt, Discard;
+ [5] -> route_or_forward_mcast_data_ip6 :: MyNull;
+ [6] -> [0]; )
+-> Discard;
+
+route_or_forward_mcast_data
+-> add_router_ports_unknown_mc :: AddRouterPortsUnknownMc(VLAN_TCI_ANNO VLAN_TCI, IGMP_SNOOP_TABLE igmp_table)
+-> MulticastVlanClassifier(MULTICAST_ROUTING_TABLE switch_mrt, VLAN_ANNO VLAN_TCI)
+=> ( [0] -> Strip(14) -> [0] switch_mrt;
+ [1] -> route_or_forward; );
+
+route_or_forward_mcast_data_ip6
+-> add_router_ports_unknown_mc_ip6 :: AddRouterPortsUnknownMcIp6(VLAN_TCI_ANNO VLAN_TCI, MLD_SNOOP_TABLE mld_table)
+-> Discard;
+
+route_or_forward_pim_igmp
+-> IPClassifier(dst 224.0.0.0/4, -)
+=> ( [0] -> MulticastVlanClassifier(MULTICAST_ROUTING_TABLE switch_mrt, VLAN_ANNO VLAN_TCI)
+ => ( [0] -> Strip(14) -> from_wan0_ip_pim;
+ [1] -> route_or_forward; );
+ [1] -> [0]; )
+-> GetIPAddress(IP dst)
+-> SwitchIntfClassifier(SWITCH_INTF_TABLE switch_intf_table, MATCH_IP true)
+=> ( [0] -> Strip(14) -> pim_register_decap :: PimRegisterDecap(VLAN_TCI_ANNO VLAN_TCI)
+ => ( [0] -> from_wan0_ip_pim;
+ [1] -> CheckIPHeader(0, CHECKSUM false) -> [1] switch_mrt; );
+ [1] -> [0]; )
+-> route_or_forward;
+
+route_or_forward
+-> acl_ip_filter :: IPFilter(allow all)
+-> GetIPAddress(IP dst)
+-> SwitchIntfClassifier(SWITCH_INTF_TABLE switch_intf_table, MATCH_IP true)
+=> ( [0] -> from_wan0_ip_to_l3_interfaces :: MyNull;
+ [1] -> [0]; )
+-> handle_no_sw_route :: CheckPaint(ANNO SWITCH_DONT_SW_ROUTE, OP =, COLOR 0)
+=> ( [0] -> [0];
+ [1] -> maybe_l2_forward_acl_special_case; )
+-> Strip(14)
+-> DecIPTTL
+=> ( [0] -> [0];
+ [1] -> l3_timeexceeded_rate_limiter :: RatedSplitter(1)
+ -> l3_error :: ICMPError(1.1.1.1, timeexceeded, SET_FIX_ANNO false, COPY_ALL_ANNO true, PMTU_ANNO PMTU)
+
+
+ -> GetIPAddress(IP dst)
+ -> MirrorIPLookup(TABLE l3_route_table)
+ -> SwitchIntfClassifier(SWITCH_INTF_TABLE switch_intf_table, MARK_IP true)
+ -> StoreIPAddress(ANNO DST_IP, OFFSET src)
+ -> [0]; )
+-> l3_pre_routing
+-> d_l3_pre_routing :: DebugIP(l3_pre_routing)
+-> GetIPAddress(IP dst)
+-> l3_route_table :: RadixIPLookup()
+-> l3_frag :: IPFragmenter(MTU_ANNO PMTU)
+-> SwitchIntfClassifier(SWITCH_INTF_TABLE switch_intf_table, VLAN_ANNO VLAN_TCI, MARK_VLAN true)
+-> CheckPaint(ANNO SWITCH_STACK_FWD_MASTER, OP =, COLOR 0)
+=> ( [0] -> L3FlowLimiter -> [0];
+ [1] -> [0]; )
+-> l3_arpq
+=> ([0] -> l3_update_hardware
+ -> CheckPaint(ANNO PAINT_SFLOW_FACTOR, OP =, COLOR 0)
+ => ( [0] -> [0];
+ [1] -> CheckPaint(ANNO PAINT_SFLOW_INFO_ISTX, OP =, COLOR 0)
+ => ( [0] -> [0];
+ [1] -> client_eth_dst_tracker; )
+ -> [0]; )
+
+ -> output;
+ [1] -> SwitchIntfClassifier(SWITCH_INTF_TABLE switch_intf_table, MARK_IP true)
+ -> StoreIPAddress(28)
+ -> output; )
+-> direct_to_wan0_ignore_rx_port
+-> Paint(0, SWITCH_RX_PPORT)
+-> Paint(0, SWITCH_RX_LPORT)
+-> direct_to_wan0_lowprio;
+
+from_sockproxy0, from_sockproxy_pim
+-> SocketProxyDecap(VLAN_TCI_ANNO VLAN_TCI)
+-> CheckIPHeader(0, CHECKSUM false)
+-> SetIPChecksum
+-> sockproxy_ipcl :: IPClassifier(src 0.0.0.0, -)
+=> ([0] -> VLANSetSrcIP(VLAN_ANNO VLAN_TCI, CIT client_ip_table)
+ -> [0];
+ [1] -> [0]; )
+-> sockproxy_ipcl2 :: IPClassifier(ip proto udp, -)
+=> ([0] -> SetUDPChecksum -> [0];
+ [1] -> [0])
+-> sockproxy_ipcl3 :: IPClassifier(dst net 224.0.0.0/4, -)
+=> ([0] -> l3_arpq;
+ [1] -> l3_pre_routing; );
+
+
+from_wan0_ip_ospf
+-> ospf_vlan_filter :: VLANSwitch(VLAN_TCI, "0-4095 drop")
+-> IPClassifier(ip proto udp, -)
+=> ( [0] -> CheckUDPHeader -> [0];
+ [1] -> [0]; )
+-> sockproxy0_encap :: SocketProxyEncap(VLAN_TCI_ANNO VLAN_TCI)
+-> to_sockproxy0;
+
+from_wan0_ip_pim
+-> IPClassifier(ip proto udp, -)
+=> ( [0] -> CheckUDPHeader -> [0];
+ [1] -> [0]; )
+-> sockproxy_pim_encap :: SocketProxyEncap(VLAN_TCI_ANNO VLAN_TCI)
+-> to_sockproxy_pim;
+
+livetool_traceroute :: Tracer(ACTIVE false)
+=> ( [0] -> [0] nat;
+ [1] -> l3_pre_routing; )
+
+livetool_pinger :: Pinger(ACTIVE false)
+=> ( [0] -> [0] livetool_traceroute;
+ [1] -> l3_pre_routing; )
+
+from_wan0_ip_to_l3_interfaces
+-> l3_interface_traffic_vlan_filter :: VLANSwitch(VLAN_TCI, "0-4095 drop")
+-> Strip(14)
+-> l3_interface_traffic_type_cl :: IPClassifier(icmp type echo, ip proto 89, icmp type echo-reply, icmp type timeexceeded, false)
+=> ( [0] -> [0];
+ [1] -> from_wan0_ip_ospf;
+ [2] -> livetool_pinger;
+ [3] -> livetool_traceroute;
+ [4] -> [0] nat;)
+-> l3_interface_ping_rate_limiter :: RatedSplitter(0xFFFFFFFF)
+-> l3_interface_check_icmp :: CheckICMPHeader
+-> l3_interface_ping_resp :: ICMPPingResponder
+-> l3_pre_routing;
+
+from_wan0_ip_to_mgmt
+=> ( [0] -> [0];
+
+
+
+
+ [1] -> was_traffic_routable :: CheckPaint(ANNO SWITCH_DONT_SW_ROUTE, OP =, COLOR 0)
+ => ( [0] -> SwitchIntfClassifier(SWITCH_INTF_TABLE switch_intf_table)
+ => ( [0] -> [0];
+ [1] -> route_or_forward; )
+ -> [0];
+ [1] -> route_or_forward; )
+ -> [0]; )
+-> Strip(14)
+-> wan0_mgmt_cl :: IPClassifier(icmp type echo-reply, ip udp src port 53, -)
+=> ( [0] -> wan0_pinger -> livetool_pinger;
+ [1] -> wan0_resolver -> [0] nat;
+ [2] -> [0] nat; );
+
+ip6_out
+-> vlan_for_ndsolicit :: SetVLANAnno(1, VLAN_TCI_ANNO VLAN_TCI)
+-> wan0_ndsolicit
+-> direct_to_wan0_lowprio;
+
+nat [0]
+-> IPClassifier(vers 4, vers 6)
+=> ( [0] -> nat_wan0_frag :: IPFragmenter(MTU 1500, MTU_ANNO PMTU)
+ -> vlan_for_arpq :: SetVLANAnno(1, VLAN_TCI_ANNO VLAN_TCI)
+ -> nat_wan0_arpq
+ => direct_to_wan0_lowprio;
+ [1] -> ip6_out; );
+
+wan0_lan_connectivity [1]
+-> nat_wan0_vlan :: SetVLANAnno(1, VLAN_TCI_ANNO VLAN_TCI)
+-> switch_port_filter :: SwitchPortFilter(PPORT_ANNO SWITCH_TX_PPORT, LPORT_ANNO SWITCH_TX_LPORT, SWITCH_PORT_TABLE switch_port_table, SWITCH_AUTH_PORT_TABLE switch_auth_port_table)
+-> msstp_encap_check_mssid :: CheckMSSID(PORT_ANNO SWITCH_TX_PPORT, MSSID 0, SWITCH_PORT_TABLE switch_port_table)
+=> ( [0] -> [0];
+ [1] -> maybe_mdns_cl :: Classifier(12/0800, -)
+ => ( [0] -> forsure_mdns_cl :: IPClassifier(ip udp src port 5353 dst port 5353, -)
+ => ( [0] -> direct_to_switch;
+ [1] -> [0]; ) -> [0];
+ [1] -> [0]; )
+ -> msstp_encap_check_vid :: CheckVID(VLAN_TCI, 0)
+ => ( [0] -> msstp_encap
+ -> intra_stack_paint :: Paint(ANNO SWITCH_INTRA_STACK_TX, COLOR 1)
+ -> CheckPaint(ANNO PAINT_SWITCH_TX_COS, COLOR 0)
+ =>([0] -> retain_prio_copy :: CopyByteAnno(SRC_ANNO INGRESS_COSQ, DEST_ANNO PAINT_SWITCH_TX_COS) -> [0];
+ [1] -> [0];)
+ -> msstp_encap_inst :: MSSTPEncap(TX_PPORT_ANNO SWITCH_TX_PPORT, TX_LPORT_ANNO SWITCH_TX_LPORT,
+ RX_PPORT_ANNO SWITCH_RX_PPORT, RX_LPORT_ANNO SWITCH_RX_LPORT,
+ VLAN_ANNO VLAN_TCI, SWITCH_FLAGS_ANNO SWITCH_FLAGS,
+ ETHERLESS_L3_ANNO SWITCH_ETHERLESS_L3,
+ SWITCH_PORT_TABLE switch_port_table, HW_INTF sw0_ctrl)
+ -> msstp_encap_set_vid :: SetVLANAnno(VLAN_ID 4095, VLAN_TCI_ANNO VLAN_TCI)
+ -> [0];
+
+
+
+
+ [1] -> msstp_anno_check :: CheckPaint(ANNO MSSTP_ENCAPPED, OP =, COLOR 1)
+ => ( [0] -> Classifier(12/0800, 12/86DD, -)
+ => ( [0] -> igmp_filter :: IPClassifier(igmp, -)
+ => ( [0] -> igmp_query_MRD_membershipreport_filter :: Classifier(38/11, 38/30, 38/22, 38/16, 38/17, -)
+ => ( [0] -> copy_byte_anno :: CopyByteAnno(SRC_ANNO SWITCH_RX_PPORT_MSSID, DEST_ANNO SWITCH_TX_PPORT_MSSID)
+ -> Paint(ANNO SWITCH_TX_PPORT_PNUM, COLOR 255)
+ -> msstp_encap;
+ [1] -> copy_byte_anno;
+ [2] -> msstp_encap;
+ [3] -> msstp_encap;
+ [4] -> msstp_encap;
+ [5] -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+ -> [0];
+
+ [1] -> ip6_mcast_msstp::IPClassifier(dst net FF00::/8, -)
+ => ( [0] -> ip6_hopbyhop_msstp::IPClassifier(ip6[6] 0, -)
+ => ( [0] -> mld_query_MRD_membershipreport_filter :: Classifier(62/82, 62/97, 62/8F, 62/83, 62/84, -)
+ => ( [0] -> mld_copy_byte_anno :: CopyByteAnno(SRC_ANNO SWITCH_RX_PPORT_MSSID, DEST_ANNO SWITCH_TX_PPORT_MSSID)
+ -> Paint(ANNO SWITCH_TX_PPORT_PNUM, COLOR 255)
+ -> msstp_encap;
+ [1] -> mld_copy_byte_anno;
+ [2] -> msstp_encap;
+ [3] -> msstp_encap;
+ [4] -> msstp_encap;
+ [5] -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+ -> [0];
+
+ [2] -> [0];)
+ -> [0];
+
+ [1] -> [0]; )
+ -> [0]; )
+ -> [0]; )
+-> direct_to_switch
+-> switch_vlan_ctr_out :: VLANCounter(VLAN_ANNO VLAN_TCI)
+-> to_switch;
+
+from_intra_stack
+-> IntraStackResolver(TX_PPORT_ANNO SWITCH_TX_PPORT, SWITCH_PORT_TABLE switch_port_table, HW_INTF sw0_ctrl)
+-> msstp_encap;
+
+from_switch_for_tunnel
+-> msstp_encap;
+
+l3_to_master
+-> Paint(1, SWITCH_STACK_FWD_MASTER)
+
+-> msstp_encap;
+
+msstp_encap_highprio :: Paint(ANNO PAINT_SWITCH_TX_COS, COLOR 7)
+-> msstp_encap_inst;
+
+direct_to_switch_highprio
+-> direct_to_switch;
+
+direct_to_switch_lowprio
+-> direct_to_switch;
+
+direct_to_wan0_highprio
+-> switch_port_filter;
+
+direct_to_wan0_lowprio
+-> switch_port_filter;
+
+wake_on_lan :: WakeOnLAN(SRC __MY_MAC_ADDRESS__, VLAN_ANNO VLAN_TCI)
+-> direct_to_wan0_lowprio;
+
+nat_wan0_frag [1]
+-> nat_wan0_frag_err :: ICMPError(1.1.1.1, unreachable, needfrag, COPY_ALL_ANNO true, SET_FIX_ANNO false, ETHER false, PMTU 1500)
+-> [0] nat;
+
+wan0_pinger [1] -> vlan_for_arpq;
+wan0_resolver [1] -> vlan_for_arpq;
+uplink_dhcp_client -> direct_to_wan0_lowprio;
+uplink_v6conf_client -> ip6_out;
+uplink_gw_arp_prober [1] -> direct_to_wan0_lowprio;
+uplink_gw_nd_prober [1] -> direct_to_wan0_lowprio;
+
+nat [3]
+-> d_from_nat3 :: DebugIP(from_nat3)
+-> smc_cli_encap :: FindClientEncap(__MY_MAC_ADDRESS__, VAP_ANNO PAINT_VAP, TABLE client_ip_table, VID_ANNO VLAN_TCI, USE_SEEN_VID true)
+-> d_to_smc_cli :: DebugPrint(to_smc_cli)
+-> direct_to_wan0_lowprio;
+
+stp :: BridgeSTP(RX_PORT_ANNO SWITCH_RX_LPORT, TX_PORT_ANNO SWITCH_TX_LPORT,
+ STATE_CALL switch_port_table.set_ports_stp_state "$ports $state true",
+ AGE_CALL mactable_ports_flush.run "$ports true",
+ SWITCH_PORT_TABLE switch_port_table,
+ SWITCH_RPC_CLIENT switch_rpc_client,
+ EVENT_LOG event_log);
+
+lacp :: LACP(RX_SWPORT_ANNO SWITCH_RX_PPORT, TX_SWPORT_ANNO SWITCH_TX_PPORT, PORT_TABLE switch_port_table, LACP_CB switch_port_table);
+
+to_vrrp
+-> d_vrrp_rx :: DebugPrint(vrrp_rx)
+-> vrrp :: VRRPElector(STATE_CHANGE vrrp_state_change.run $state $vrrp_ips $ethaddr,
+ EVENT_LOG event_log, VLAN_ANNO VLAN_TCI)
+-> d_vrrp_tx :: DebugPrint(vrrp_tx)
+-> vrrp_vlan_count :: VLANCounter(VLAN_TCI)
+-> direct_to_wan0_ignore_rx_port;
+
+
+interface_announce :: ARPAnnouncer(ETH __MY_MAC_ADDRESS__, IVAL 100ms, DST_IP_ANNO DST_IP, LIMIT 3)
+-> Queue(512)
+-> Unqueue
+-> SwitchIntfClassifier(SWITCH_INTF_TABLE switch_intf_table, VLAN_ANNO VLAN_TCI, MATCH_IP true, MARK_VLAN true)
+-> direct_to_wan0_lowprio;
+
+
+vrrp_state_change :: Script(TYPE PASSIVE,
+ setq vrrp_ips_tmp $2,
+ setq vrrp_cmd "",
+
+ goto backup $(eq $1 backup),
+ writeq dhcp_switch_c2s.switch 0,
+ writeq dhcp_switch_s2s.switch 0,
+ goto loops,
+ label backup,
+ writeq dhcp_switch_c2s.switch -1,
+ writeq dhcp_switch_s2s.switch -1,
+
+ label loops,
+ goto add_loop $(eq $1 master),
+
+ label remove_loop,
+ set curr_ip $(shift vrrp_ips_tmp),
+ setq vrrp_cmd "$vrrp_cmd IP $curr_ip\n",
+ goto remove_loop $(ne $(length $vrrp_ips_tmp) 0),
+ writeq switch_intf_table.disable_virtual_interfaces $vrrp_cmd,
+ goto end,
+
+ label add_loop,
+ set curr_ip $(shift vrrp_ips_tmp),
+ setq vrrp_cmd "$vrrp_cmd IP $curr_ip, MAC $3\n",
+ goto add_loop $(ne $(length $vrrp_ips_tmp) 0),
+ writeq switch_intf_table.enable_virtual_interfaces $vrrp_cmd,
+);
+
+remove_ports_script :: Script(TYPE PASSIVE,
+ writeq stp.remove_ports "PORTS $1",
+ writeq stp_proxy.remove_ports "PORTS $1",
+);
+
+switch_auth_port_table :: SwitchAuthPortTable(NUM_PORTS __NUM_SWITCHPORTS__,
+ SWITCH_PORT_TABLE switch_port_table,
+ FROM_CLI_EAP eap_switch_from_cli,
+
+ SWITCH_SET_REDIRECT_ACL_CALL set_redirect_acl.run $port $mac,
+ SWITCH_ADD_REDIRECT_ACL_CALL set_additional_redirect_acl.run $port $mac $index $ip,
+ SWITCH_REMOVE_REDIRECT_ACL_CALL remove_redirect_acl.run $port $num_add_acls,
+ SWITCH_SET_RESTRICT_ACL_CALL set_port_restrict_acl.run $ports,
+
+ EVENT_LOG event_log);
+
+switch_port_table :: SwitchPortTable(LOCAL_BASE_MAC __MY_MAC_ADDRESS__, NUM_PORTS __NUM_SWITCHPORTS__,
+ CLIENT_IP_TABLE client_ip_table,
+ LPORT_STATUS_CALL switch_lport_change_script.run $port $up $mbps $fdx,
+ PPORT_STATUS_CALL switch_pport_change_script.run $port $up $mbps $fdx $is_local,
+ ADD_PORTS_CALL stp.add_ports "PORTS $ports",
+ REMOVE_PORTS_CALL remove_ports_script.run "$ports",
+ STACK_MEMBER_STATUS_CALL stack_member_change_script.run $master,
+ STACK_ARRIVAL_CALL stack_arrival_script.run $mac,
+ STACK_DEPARTURE_CALL stack_departure_script.run $mac,
+ STACK_SETTLED_CALL l3_update_hardware.refresh_hosts,
+ FIRST_UP_CALL uplinkstate.poke,
+ SWITCH_HARDWARE_INTERFACE sw0_ctrl,
+ LACP lacp,
+ EVENT_LOG event_log,
+ SWITCH_RPC_CLIENT switch_rpc_client,
+ STP stp,
+ SFP_MANAGER sfp_mgr,
+ UDLD udld,
+ SWITCH_AUTH_PORT_TABLE switch_auth_port_table);
+
+client_ip_tracker :: ClientIPTracker(client_ip_table, SWITCH_PORT_ANNO SWITCH_RX_LPORT, SET_SRC_CLI_ANNO SRC_CLI_PTR, SET_VAP_ANNO PAINT_VAP, READ_VLAN_ANNO VLAN_TCI, SWITCH_PORT_TABLE switch_port_table);
+switch_lldp_find_meraki_neighbor :: LLDPFindMerakiNeighbor(PORT_ANNO SWITCH_RX_PPORT_PNUM,
+ NUM_PORTS __NUM_SWITCHPORTS__,
+ PORT_CHANGE_CALL switch_port_table.set_meraki_neighbor_port $port $neighbor_state);
+
+switch_sflow_process :: SwitchSflowProcess(switch_port_table, SET_SFLOW_FACTOR_ANNO PAINT_SFLOW_FACTOR, RX_PPORT_ANNO SWITCH_RX_PPORT, SFLOW_INFO_ANNO PAINT_SFLOW_INFO_BYTE, SFLOW_TX_PPORT_ANNO PAINT_SFLOW_TX_PPORT);
+
+igmp_table :: IGMPSnoopTable(QUERIER igmp_querier, SNOOP igmp_snoop, MULTICAST_ROUTING_TABLE switch_mrt, SWITCH_HARDWARE_INTERFACE sw0_ctrl, SWITCH_PORT_TABLE switch_port_table, SWITCH_RPC_CLIENT switch_rpc_client, EVENT_LOG event_log);
+
+igmp_querier :: IGMPQuerier(ETH __MY_MAC_ADDRESS__, SET_VLAN_ANNO VLAN_TCI, SWITCH_PORT_ANNO SWITCH_TX_LPORT, SWITCH_PORT_TABLE switch_port_table, IGMP_SNOOP_TABLE igmp_table)
+-> direct_to_wan0_lowprio;
+
+igmp_client :: IGMPClient(ETH __MY_MAC_ADDRESS__, VLAN_ANNO VLAN_TCI, SWITCH_PORT_TABLE switch_port_table)
+-> VLANSetSrcIP(VLAN_ANNO VLAN_TCI, CIT client_ip_table)
+-> direct_to_wan0_lowprio;
+
+mrd_advertiser :: MRDAdvertiser(SET_VLAN_ANNO VLAN_TCI)
+-> l3_arpq;
+
+igmp_snoop :: IGMPSnoop(IGMP_SNOOP_TABLE igmp_table, IGMP_CLIENT igmp_client, SWITCH_PORT_ANNO SWITCH_RX_LPORT, VLAN_ANNO VLAN_TCI,
+ SWITCH_PORT_TABLE switch_port_table);
+
+flood_igmp_router :: IGMPFloodRouter(IGMP_SNOOP_TABLE igmp_table, LPORT_RX_ANNO SWITCH_RX_LPORT, LPORT_TX_ANNO SWITCH_TX_LPORT,
+ VLAN_ANNO VLAN_TCI, SWITCH_PORT_TABLE switch_port_table) [0]
+-> flood_queue :: Queue(200)
+-> Unqueue
+-> direct_to_wan0_lowprio;
+
+mld_table :: MLDSnoopTable(QUERIER mld_querier, SNOOP mld_snoop, SWITCH_HARDWARE_INTERFACE sw0_ctrl, SWITCH_PORT_TABLE switch_port_table, SWITCH_RPC_CLIENT switch_rpc_client, EVENT_LOG event_log);
+
+mld_querier :: MLDQuerier(ETH __MY_MAC_ADDRESS__, SET_VLAN_ANNO VLAN_TCI, SWITCH_PORT_ANNO SWITCH_TX_LPORT, SWITCH_PORT_TABLE switch_port_table, MLD_SNOOP_TABLE mld_table)
+-> direct_to_wan0_lowprio;
+
+mld_client :: MLDClient(ETH __MY_MAC_ADDRESS__, VLAN_ANNO VLAN_TCI, SWITCH_PORT_TABLE switch_port_table)
+
+-> direct_to_wan0_lowprio;
+
+mld_snoop :: MLDSnoop(MLD_SNOOP_TABLE mld_table, MLD_CLIENT mld_client, SWITCH_PORT_ANNO SWITCH_RX_LPORT, VLAN_ANNO VLAN_TCI,
+ SWITCH_PORT_TABLE switch_port_table);
+
+mld_flood_router :: MLDFloodRouter(MLD_SNOOP_TABLE mld_table, LPORT_RX_ANNO SWITCH_RX_LPORT, LPORT_TX_ANNO SWITCH_TX_LPORT,
+ VLAN_ANNO VLAN_TCI, SWITCH_PORT_TABLE switch_port_table) [0]
+-> mld_flood_queue :: Queue(200)
+-> Unqueue
+-> direct_to_wan0_lowprio;
+
+dhcp_blocker :: DHCPBlocker(VLAN_ANNO VLAN_TCI, EVENT_LOG event_log);
+
+dhcp_relay
+=> ( [0] -> GetIPAddress(IP dst) -> Strip(14) -> dhcp_relay_cl :: IPClassifier(dst 1.1.2.2, -)
+ => ( [0] -> nat_to_wired0;
+ [1] -> l2_dhcp_relay_sw :: Switch(0) => l3_route_table, nat_wan0_frag; );
+ [1] -> GetIPAddress(IP dst) -> Paint(1, SWITCH_DHCP_RELAYED) -> [1] dhcp_tracker; );
+
+dhcp_c2s_relay :: MyNull -> dhcp_switch_c2s :: Switch(0) -> [0] dhcp_relay;
+dhcp_s2s_relay -> dhcp_switch_s2s :: Switch(0) -> [1] dhcp_relay;
+
+from_switch
+-> MarkMACHeader(0, 14)
+-> msstp_decap_check_vid :: CheckVID(VLAN_TCI, 4095)
+=> ( [0] -> msstp_decap :: MSSTPDecap(TX_PPORT_ANNO SWITCH_TX_PPORT, RX_PPORT_ANNO SWITCH_RX_PPORT, VLAN_ANNO VLAN_TCI,
+ SWITCH_FLAGS_ANNO SWITCH_FLAGS, SWITCH_PORT_TABLE switch_port_table, HW_INTF sw0_ctrl)
+ => ( [0] -> Paint(ANNO MSSTP_ENCAPPED, COLOR 1)-> [0];
+ [1] -> CheckPaint(ANNO SWITCH_TX_PPORT_PNUM ,OP =, COLOR 255)
+ => ( [0] -> Paint(ANNO MSSTP_ENCAPPED, COLOR 1)
+ -> CheckIP6Header(OFFSET 14)
+ => ( [0] -> GetIP6Address(OFFSET 38)
+ -> intra_stack_lookup :: LookupIP6Route(fd09:9b09:1f7:100::/64 ::0 0, ::0/0 ::0 1)
+ => ( [0] -> Strip(14)
+ -> MarkIPHeader
+ -> Align(4, 2)
+ -> to_intra_stack;
+ [1] -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+ -> [0];
+ [1] -> direct_to_switch_highprio; )
+ -> [0];
+ [2] -> Align(4, 0) -> CheckIPHeader(OFFSET 0) -> l3_pre_routing; )
+ -> [0];
+ [1] -> Paint(ANNO MSSTP_ENCAPPED, COLOR 0) -> [0]; )
+-> set_lport_anno :: SetLPortAnno(PPORT_ANNO SWITCH_RX_PPORT, LPORT_ANNO SWITCH_RX_LPORT, SWITCH_PORT_TABLE switch_port_table)
+-> switch_vlan_ctr_in :: VLANCounter(VLAN_ANNO VLAN_TCI, NEW_VLAN_CALL add_dhcp_traffic_vlan.run $vlan)
+-> sflow_tx_split :: CheckPaint(ANNO PAINT_SFLOW_INFO_ISTX, OP =, COLOR 0)
+=> ( [0] -> switch_ic :: SwitchIngressControl(SWITCH_PORT_TABLE switch_port_table,
+ SWITCH_AUTH_PORT_TABLE switch_auth_port_table,
+ PPORT_ANNO SWITCH_RX_PPORT, LPORT_ANNO SWITCH_RX_LPORT,
+ LEARN_ANNO SWITCH_LEARN, VLAN_ANNO VLAN_TCI)
+ => ( [0] -> sflow_excl_split :: CheckPaint(ANNO PAINT_SFLOW_INFO_ISEXCL_SAMP, OP =, COLOR 0)
+ => ( [0] -> [0];
+ [1] -> from_switch_cl_sflow_excl :: Classifier(12/0800, 12/86dd, -)
+ => ( [0] -> sflow_excl_cip :: CheckIPHeader(14, DETAILS true) -> [0];
+ [1] -> sflow_excl_cip6 :: CheckIP6Header(OFFSET 14) -> [0];
+ [2] -> [0]; )
+ -> switch_sflow_process; )
+ -> [0];
+ [1] -> sflow_excl_split2 :: CheckPaint(ANNO PAINT_SFLOW_INFO_ISEXCL_SAMP, OP =, COLOR 0)
+ => ( [0] -> [0];
+ [1] -> switch_sflow_process; )
+ ->
+
+ Align(4, 0) ->
+
+ d_learn_eap :: DebugPrint(learn_eap) -> from_switch_eap :: MyNull;
+ [2] -> d_learn_drop :: DebugPrint(learn_drop) -> Discard;
+ [3] -> d_vlan_drop :: DebugPrint(vlan_drop) -> Discard; )
+ -> from_switch_cl :: Classifier(0/0180c2000000, 0/0180c2000002, 12/0800, 12/0806 20/0002, 12/86dd,
+ 0/01000ccccccc 14/aaaa0300000c0111 ,
+ 0/ffffffffffff 14/aaaa0300000c013C , -)
+ => ( [0] -> from_switch_stp :: MyNull;
+ [1] -> from_switch_lacp :: MyNull;
+ [2] -> from_switch_cip :: CheckIPHeader(14, DETAILS true)
+ -> d_from_switch_cip :: DebugIP(from_switch_cip)
+ -> from_switch_dhcp_ipcl :: IPClassifier(ip udp src port bootpc dst port bootps,
+ ip udp src port bootps dst port bootpc,
+ false,
+ -)
+ => ( [0] -> CheckPaint(ANNO SWITCH_STACK_FWD_MASTER, OP =, COLOR 1)
+ => ( [0] -> [0];
+ [1] -> CheckMSSID(PORT_ANNO SWITCH_RX_PPORT, MSSID 0, SWITCH_PORT_TABLE switch_port_table)
+ -> [0] dhcp_tracker [0]
+ -> [0]; )
+ -> Tee
+ => ( [0] -> CheckStackMaster(sw0_ctrl) => dhcp_c2s_relay, l3_proc_on_master;
+ [1] -> dhcp_routing_ef :: EtherDstFilter(__MY_MAC_ADDRESS__)
+ => ( [0] -> CheckStackMaster(sw0_ctrl) -> [0];
+ [1] -> CheckMSSID(PORT_ANNO SWITCH_RX_PPORT, MSSID 0, SWITCH_PORT_TABLE switch_port_table) -> [0]; )
+ -> [0]; )
+ -> [0];
+ [1] -> [1] dhcp_tracker [1]
+ -> CheckPaint(ANNO SWITCH_DHCP_RELAYED, OP =, COLOR 1)
+ => ( [0] -> dhcp_blocker_bp :: Bypass;
+ [1] -> [0];
+ )
+ -> CheckPaint(ANNO SWITCH_STACK_FWD_MASTER, OP =, COLOR 1)
+ => ( [0] -> CheckStackMaster(sw0_ctrl)
+ -> route_or_forward;
+ [1] -> [0]; )
+ -> dhcp_checkmssid_s2c :: CheckMSSID(PORT_ANNO SWITCH_RX_PPORT, MSSID 0, SWITCH_PORT_TABLE switch_port_table)
+ => ( [0] -> [0];
+ [1] -> HostEtherFilter(__MY_MAC_ADDRESS__) -> [0]; )
+ -> dhcp_blocker_bp
+ => ( [0] -> dhcp_blocker -> [0];
+ [1] -> [0]; )
+ -> CheckPaint(ANNO SWITCH_DHCP_RELAYED, OP =, COLOR 1)
+ => ( [0] -> direct_to_wan0_ignore_rx_port;
+ [1] -> [0]; )
+ -> [0];
+ [2] -> CheckStackMaster(sw0_ctrl)
+
+
+
+ => ( [0] -> [0];
+ [1] -> CheckMSSID(PORT_ANNO SWITCH_RX_PPORT, MSSID 0, SWITCH_PORT_TABLE switch_port_table)
+ -> encap_check_igmp_slave :: CheckPaint(ANNO MSSTP_ENCAPPED, OP =, COLOR 1)
+ => ( [0] -> Paint(ANNO SWITCH_TX_PPORT_PNUM, COLOR 0)
+ -> Paint(ANNO SWITCH_TX_LPORT_PNUM, COLOR 0)
+ -> direct_to_switch_lowprio;
+ [1] -> msstp_encap; ); )
+ -> igmp_snoop
+ => ( [0] -> Tee => [0], direct_to_wan0_lowprio;
+ [1] -> flood_igmp_router [1] -> [0]; )
+ -> [0];
+ [3] -> [0]; )
+ -> [0];
+ [3] -> Tee
+ => ( [0] -> arping_res_check_ip_vid;
+ [1] -> [0]; )
+ -> [0];
+ [4] -> from_switch_cip6 :: CheckIP6Header(OFFSET 14)
+ -> d_from_switch_cip6 :: DebugIP(from_switch_cip6)
+ -> ip6_mcast::IPClassifier(dst net FF00::/8, -)
+ => ([0] -> [0];
+ [1] -> switch_sflow_process;)
+ -> ip6_hopbyhop::IPClassifier(ip6[6] 0, -)
+ => ([0] -> [0];
+ [1] -> switch_sflow_process;)
+ -> from_switch_ip6_mld :: Switch(1)
+ => ([0] -> [0];
+ [1] -> switch_sflow_process;)
+ -> CheckStackMaster(sw0_ctrl)
+ => ([0] -> mld_snoop
+ => ([0] -> Tee => [0], direct_to_wan0_lowprio;
+ [1] -> mld_flood_router [1] -> [0];)
+ -> switch_sflow_process;
+ [1] -> CheckMSSID(PORT_ANNO SWITCH_RX_PPORT, MSSID 0, SWITCH_PORT_TABLE switch_port_table)
+ => ([0] -> [0];
+ [1] -> switch_sflow_process;)
+ -> encap_check_mld_slave :: CheckPaint(ANNO MSSTP_ENCAPPED, OP =, COLOR 1)
+ => ([0] -> Paint(ANNO SWITCH_TX_PPORT_PNUM, COLOR 0)
+ -> Paint(ANNO SWITCH_TX_LPORT_PNUM, COLOR 0)
+ -> direct_to_switch_lowprio;
+ [1] -> Tee => msstp_encap, switch_sflow_process;););
+ [5] -> from_switch_udld :: MyNull;
+ [6] -> loop_detection :: LoopDetection(RX_LPORT_ANNO SWITCH_RX_LPORT, TX_LPORT_ANNO SWITCH_TX_LPORT,
+ SWITCH_PORT_TABLE switch_port_table, EVENT_LOG event_log,
+ SWITCH_HARDWARE_INTERFACE sw0_ctrl,
+ PROBE_PACKET_PERIOD 10, EVENT_LOG_PERIOD 30)
+ -> direct_to_wan0_highprio;
+ [7] -> switch_lldp_find_meraki_neighbor
+ -> switch_lldpsnoop :: LLDPSnoop(TABLE switch_table, LLDP_SOURCE lldp_source, PORT_ANNO SWITCH_RX_PPORT_PNUM,
+ FAST_START_CALL fast_start_script.run $port $up $disc_packets $disc_interval,
+ SWITCH_AUTH_PORT_TABLE switch_auth_port_table,
+ DROP true)
+ -> switch_cdpsnoop :: CDPSnoop(TABLE switch_table, PORT_ANNO SWITCH_RX_PPORT_PNUM, DROP true, PORT_POWER_REQUEST_CALL cdp_source.set_port_power_request, REMOVE_DATA_DEVICE_CALL switch_auth_port_table.remove_data_device)
+ -> [0]; )
+ -> [0];
+ [1] -> from_switch_cl_tx :: Classifier(12/0800, 12/86dd, -)
+ => ( [0] -> sflow_tx_cip :: CheckIPHeader(14, DETAILS true) -> [0];
+ [1] -> sflow_tx_cip6 :: CheckIP6Header(OFFSET 14) -> [0];
+ [2] -> [0]; )
+ -> [0]; )
+-> switch_sflow_process
+-> dns_snoop :: DNSSnoop
+-> from_switch_check_sflow :: CheckPaint(ANNO PAINT_SFLOW_FACTOR, OP =, COLOR 0)
+=> ( [0] -> [0];
+ [1] -> switch_sflow_print :: Print(sflow, ACTIVE false, PRINTANNOLIST "SWITCH_RX_LPORT PAINT_SFLOW_INFO_BYTE PAINT_SFLOW_FACTOR")
+ -> CheckPaint(ANNO PAINT_SFLOW_INFO_ISSAMP, OP =, COLOR 1)
+ => ( [0] -> switch_sflow_rate :: SwitchSFlowRate(SET_SAMPLERATE_CALL switch_port_table.set_sflow_samplerate, INTERVAL 500ms, TARGET_PER_INTERVAL 200, AUTO true) -> [0];
+ [1] -> [0]; )
+ -> CheckPaint(ANNO PAINT_SFLOW_INFO_ISTX, OP =, COLOR 0)
+ => ( [0] -> client_ip_tracker
+ -> upload_tap :: TrafficAnalysisPusher(cli_h/traffic_analysis, DIRECTION upload)
+ -> sflow_rx_cl1 :: Classifier(12/0800, -)
+ => ( [0] -> sflow_rx_ipcl :: IPClassifier(ip udp src port bootpc dst port bootps, udp src port 5353 dst port 5353, -)
+ => ( [0] -> from_switch_dhcp_fingerprint :: DHCPFingerprint(CLI_PTR_ANNO SRC_CLI_PTR) -> [0];
+ [1] -> from_switch_mdns_names :: MDNSSnoopName(CLI_PTR_ANNO SRC_CLI_PTR, CIT client_ip_table) -> [0];
+ [2] -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+ -> [0];
+ [1] -> sflow_eth_filter :: EtherDstFilter(__MY_MAC_ADDRESS__)
+ => ( [0] -> CheckPaint(ANNO PAINT_SFLOW_INFO_FAKETX, OP =, COLOR 0)
+ => ( [0] -> Strip(14) -> l3_pre_routing;
+ [1] -> [0]; )
+ -> [0];
+ [1] -> [0]; )
+ -> client_eth_dst_tracker
+ -> download_tap :: TrafficAnalysisPusher(cli_h/traffic_analysis, DIRECTION download)
+ -> [0]; )
+ -> switch_sflow_cit_counter :: SwitchCITCounter(client_ip_table, cli_h/traffic_analysis, SFLOW_INFO_ANNO PAINT_SFLOW_INFO_BYTE, SFLOW_FACTOR_ANNO PAINT_SFLOW_FACTOR)
+ -> CheckPaint(ANNO PAINT_SFLOW_INFO_FAKETX, OP =, COLOR 1)
+ => ( [0] -> Paint(ANNO PAINT_SFLOW_INFO_ISTX, COLOR 0) -> Paint(ANNO PAINT_SFLOW_INFO_FAKETX, COLOR 0) -> [0];
+ [1] -> [0]; )
+ -> [0]; )
+-> drop_sflow_tx :: CheckPaint(ANNO PAINT_SFLOW_INFO_ISTX, OP =, COLOR 0)
+-> drop_sflow_excl :: CheckPaint(ANNO PAINT_SFLOW_INFO_ISEXCL_SAMP, OP =, COLOR 0)
+-> from_wan0;
+
+from_switch_stp
+-> stp_check_master :: CheckStackMaster(sw0_ctrl)
+=> ( [0] -> [0];
+ [1] -> stp_slave_mark_intra_stack_tx :: Paint(ANNO SWITCH_INTRA_STACK_TX, COLOR 1)
+ -> msstp_encap_highprio; )
+-> d_stp_rx :: Print(stp_rx, ACTIVE false)
+-> stp
+-> d_stp_tx :: Print(stp_tx, ACTIVE false)
+-> direct_to_wan0_highprio;
+
+stp_proxy :: BridgeSTPProxy(TX_PORT_ANNO SWITCH_TX_LPORT, SWITCH_PORT_TABLE switch_port_table, EVENT_LOG event_log)
+-> d_stp_tx;
+
+from_switch_lacp
+-> lacp_check_master :: CheckStackMaster(sw0_ctrl)
+=> ( [0] -> [0];
+ [1] -> lacp_slave_mark_intra_stack_tx :: Paint(ANNO SWITCH_INTRA_STACK_TX, COLOR 1)
+ -> msstp_encap_highprio; )
+-> d_lacp_rx :: Print(lacp_rx, ACTIVE false)
+-> lacp
+-> d_lacp_tx :: Print(lacp_tx, ACTIVE false)
+-> direct_to_wan0_highprio;
+
+elementclass UserEAP { $num, $minornum |
+
+ usocket :: Socket("UNIX", /dev/click_eap$num);
+ input
+ -> d_rx :: Print(eap_rx$num, ACTIVE false)
+ -> Queue(100)
+ -> usocket
+ -> d_tx :: Print(eap_tx$num, ACTIVE false)
+ -> output;
+# 1348 "click-config/switch.template"
+}
+eap0 :: UserEAP(0, 10);
+eap1 :: UserEAP(1, 11);
+eap2 :: UserEAP(2, 12);
+eap3 :: UserEAP(3, 13);
+eap4 :: UserEAP(4, 14);
+eap5 :: UserEAP(5, 15);
+eap6 :: UserEAP(6, 16);
+eap7 :: UserEAP(7, 17);
+eap8 :: UserEAP(8, 18);
+
+from_switch_eap
+-> d_eap_rx :: Print(eap_rx, ACTIVE false)
+-> eap_client_ip_tracker :: ClientIPTracker(client_ip_table, SWITCH_PORT_ANNO SWITCH_RX_LPORT, SET_SRC_CLI_ANNO SRC_CLI_PTR, SET_VAP_ANNO PAINT_VAP, READ_VLAN_ANNO VLAN_TCI, SWITCH_PORT_TABLE switch_port_table)
+-> eap_switch_from_cli :: SwitchEapFromClient(switch_auth_port_table, SWITCH_RX_PPORT_PNUM)
+=> eap0, eap1, eap2, eap3, eap4, eap5, eap6, eap7, eap8
+=> eap_switch_to_cli :: SwitchEapToClient(SWITCH_PORT_TABLE switch_port_table,
+ SWITCH_AUTH_PORT_TABLE switch_auth_port_table,
+ SET_PORT_ANNO SWITCH_TX_PPORT_PNUM,
+ SET_EAP_VLAN_ANNO EAP_VLAN)
+-> VLANEncap(EAP_VLAN)
+-> Align(4, 2)
+-> d_eap_tx :: Print(eap_tx, ACTIVE false)
+-> direct_to_wan0_lowprio;
+
+lldp_source :: LLDPSource(INTERVAL 30s,
+ CHASSIS_ID __MY_MAC_ADDRESS__,
+ ACTIVE false,
+ PORT_ANNO SWITCH_TX_PPORT_PNUM,
+ PORT_COUNT __NUM_SWITCHPORTS__,
+ IS_BRIDGE true,
+ IS_ROUTER false,
+ IS_POE_PSE true,
+ INFO_ELT switch_port_table)
+-> direct_to_wan0_lowprio;
+
+enable_lldp :: Script(TYPE PASSIVE,
+ write lldp_source.active $1);
+
+set_lldp_system_desc :: Script(TYPE PASSIVE,
+ write lldp_source.system_desc $args);
+
+set_lldp_system_name :: Script(TYPE PASSIVE,
+ write lldp_source.system_name $args);
+
+cdp_source :: CDPSource(PORT_ANNO SWITCH_TX_PPORT_PNUM,
+ PORT_COUNT __NUM_SWITCHPORTS__,
+ INTERVAL 60s,
+ ACTIVE false,
+ IS_BRIDGE true,
+ AVAILABLE_PORT_POWER __PORT_POE_MW__,
+ INFO_ELT switch_port_table)
+-> d_from_cdp :: DebugPrint(from_cdp)
+-> direct_to_wan0_lowprio;
+
+from_switch_udld
+-> udld :: UDLD(RX_PPORT_ANNO SWITCH_RX_PPORT, TX_PPORT_ANNO SWITCH_TX_PPORT, SWITCH_PORT_TABLE switch_port_table,
+ HW_INTF sw0_ctrl, EVENT_LOG event_log)
+-> direct_to_wan0_highprio;
+
+nat [4]
+-> mgmt_arpq :: ARPQuerier(10.128.128.130, __MY_MAC_ADDRESS__, BROADCAST 10.255.255.255, COPY_ANNO true)
+=> ( [0] -> mgmt_frag :: IPFragmenter(MTU 1500, MTU_ANNO PMTU)
+ => ( [0] -> [0];
+ [1] -> mgmt_frag_err :: ICMPError(10.128.128.131, unreachable, needfrag, COPY_ALL_ANNO true, SET_FIX_ANNO false, PMTU 1500)
+ -> [4] nat; )
+ -> [0];
+ [1] -> [0]; )
+-> mgmt0_q :: Queue(30)
+-> d_to_mgmt0 :: DebugPrintNoCl(to_mgmt0)
+-> to_mgmt0;
+
+mgmt_dhcp_server :: DHCPServerHash(10.128.128.130,
+ __MY_MAC_ADDRESS__,
+ AUTHORITATIVE true,
+ HASH_PREFIX 10.128.128.130/255.0.0.0,
+ SUBNET_MASK 255.0.0.0,
+ ROUTER 10.128.128.130,
+ DNS 10.128.128.130,
+ VENDOR "00180a1",
+ DEBUG false);
+
+from_mgmt0
+-> d_from_mgmt0 :: DebugPrint(from_mgmt0)
+-> mgmt0_in_cl :: Classifier(12/0806 20/0001, 12/0806 20/0002, 12/0800)
+=> ( [0] -> mgmt_ar :: ARPResponder(COPY_ANNO true, 10.128.128.130 __MY_MAC_ADDRESS__)
+ -> mgmt0_q;
+ [1] -> [1] mgmt_arpq;
+ [2] -> [0]; )
+-> from_mgmt0_cip :: CheckIPHeader(14)
+-> IPReassembler(HIMEM 131072, MAX_MTU_ANNO PMTU)
+-> mgmt_dhcp_cl :: IPClassifier(ip udp src port bootpc dst port bootps, -)
+=> ( [0] -> [0];
+ [1] -> Strip(14) -> [4] nat; )
+-> mgmt_dhcp_server
+-> mgmt0_q;
+
+from_linux_mgmt
+-> d_from_linux_mgmt :: DebugPrint(from_linux_mgmt)
+-> from_linux_mgmt_cip :: CheckIPHeader(0)
+-> IPReassembler(HIMEM 131072, MAX_MTU_ANNO PMTU)
+-> [5] nat [5]
+-> d_to_linux_mgmt :: DebugPrint(to_linux_mgmt)
+-> to_linux_mgmt;
+
+nat [7]
+-> CheckStackMaster(sw0_ctrl)
+=> ( [0] -> [0];
+ [1] -> Align(4, 2)
+ -> Paint(ANNO SWITCH_RX_PPORT_PNUM, COLOR 255)
+ -> Paint(ANNO SWITCH_ETHERLESS_L3, COLOR 1)
+ -> msstp_encap;
+ )
+-> l3_pre_routing;
+
+l2_intfs :: Script(TYPE PASSIVE,
+ init ips,
+ init vlans,
+ setq vlan_ips "",
+ setq l3_arpvlan_filter_cfg "",
+
+ writeq wan0_l3_ar.config "COPY_ANNO true",
+
+ label loop,
+ goto end $(eq $(length $ips) 0),
+ set ip $(shift ips),
+ set vlan $(shift vlans),
+
+ setq vlan_ips $(if $(eq $(length $vlan_ips) 0) "\"$vlan $ip\"" "$vlan_ips \"$vlan $ip\""),
+ setq l3_arpvlan_filter_cfg $(if $(eq $(length $l3_arpvlan_filter_cfg) 0) "$ip $vlan" "$l3_arpvlan_filter_cfg, $ip $vlan"),
+ write wan0_l3_ar.add $ip __MY_MAC_ADDRESS__,
+
+ goto loop,
+ label end,
+
+ write wan0_l3_arp_vlan_filter.set $l3_arpvlan_filter_cfg,
+ write ingress_resp_dai_handler/wan0_l3_arp_resp_vlan_filter.set $l3_arpvlan_filter_cfg,
+
+ write set_l3_interface_rules_helper_hw.set l2_switch true,
+ write set_l3_interface_rules_hw.set interfaces $vlan_ips,
+ write reconfigure_sensitive_acls_hw.run,
+
+);
+
+
+set_cdp_config :: Script(TYPE PASSIVE,
+ write cdp_source.active $1,
+ write cdp_source.device_id $2,
+ write cdp_source.ttl $3,
+ write cdp_source.product_model $4,
+ write cdp_source.interval_ms $5);
+
+set_snmp_state :: Script(TYPE PASSIVE,
+ write cdp_source.snmp_enabled $1);
+
+reset_all_stats :: Script(TYPE PASSIVE,
+
+ write sw0_ctrl.reset_counters,
+
+ write event_log.reset,
+ write big_acl.clear_bigacl,
+ write client_ip_table.clear,
+ write live_traffic.reset,
+ write cli_h/traffic_analysis.reset,
+ write mdns_services.reset);
+
+set_network_id_hash :: Script(TYPE PASSIVE,
+ write reset_all_stats.run,
+ write lldp_source.include_meraki_nethash $(gt $1 0),
+ set val $(if $(gt $1 0) $1 0),
+ write lldp_source.meraki_nethash $val,
+ write switch_lldp_find_meraki_neighbor.meraki_nethash $val);
+
+
+
+
+switch_lport_change_script :: Script(TYPE PASSIVE,
+ write stp.set_port_status $1 $2 $3 $4,
+ write $(if $2 client_ip_table.noop igmp_table.flush_port) $1,
+ write $(if $2 client_ip_table.noop mld_table.flush_port) $1,
+ write $(if $2 client_ip_table.noop dhcp_tracker.snoop_port_flush) $1,
+);
+
+
+
+
+stack_member_change_script :: Script(TYPE PASSIVE,
+ write $(if $1 stp_proxy.reset client_ip_table.noop),
+ write stp.enabled $1,
+ writeq igmp_table.stacking_mode $(if $1 "master, 2s" "slave"),
+ writeq mld_table.stacking_mode $(if $1 "master, 2s" "slave"),
+ write igmp_table.clear,
+ write mld_table.clear,
+ write sw0_ctrl.mactable_flush_mcast,
+ write sw0_ctrl.flush_ipmc,
+);
+
+
+switch_pport_change_script :: Script(TYPE PASSIVE,
+ write lacp.update_linkstate $1 $2 $3 $4,
+ writeq udld.update_linkstate "PORT $1, UP $2",
+ writeq loop_detection.update_linkstate "PORT $1, UP $2",
+ goto end $(not $5),
+ writeq $(if $2 client_ip_table.noop lldp_source.set_port_power_requested) "PORT $1, POWER 0, MEDPOWER 0",
+ writeq $(if $2 client_ip_table.noop lldp_source.set_port_power_allocated) "PORT $1, POWER 0, MEDPOWER 0",
+ writeq $(if $2 client_ip_table.noop cdp_source.set_port_power_request) "PORT $1, REQUEST_ID 0",
+ init disc_packets 16,
+ init disc_interval 2000,
+ write fast_start_script.run $1 $2 $disc_packets $disc_interval,
+);
+
+
+stack_arrival_script :: Script(TYPE PASSIVE,
+ write igmp_table.add_slave $1,
+ write mld_table.add_slave $1,
+ write switch_mrt.add_slave $1,
+ write l3_update_hardware.add_slave $1,
+);
+
+
+stack_departure_script :: Script(TYPE PASSIVE,
+ write rpc_mrmp_tx.reset_connection $1,
+ write igmp_table.flush_slave $1,
+ write switch_mrt.flush_slave $1,
+ write mld_table.flush_slave $1,
+ write l3_update_hardware.flush_slave $1,
+);
+
+
+fast_start_script :: Script(TYPE PASSIVE,
+ write $(if $2 lldp_source.poke client_ip_table.noop) $1 $3 $4,
+ write $(if $2 cdp_source.poke client_ip_table.noop) $1 $3 $4,
+);
+
+
+set_host_ip :: Script(TYPE PASSIVE,
+ write nat_wan0_vlan.vlan_tci $6,
+ write vlan_for_arpq.vlan_tci $6,
+
+
+
+
+
+
+
+ write set_arping_hw.run $1,
+ write set_host_ip_hw.set switch_ip $1,
+ write set_host_ip_hw.set management_vid $6,
+ write reconfigure_sensitive_acls_hw.run,
+ write sw0_pcap_process/mtun_filter_config.set management_ip $1,
+ write sw0_pcap_process/mtun_filter_config.run,
+
+ write nat_wan0_frag.mtu $4,
+ write nat_wan0_frag_err.pmtu $4,
+ write nat_wan0_frag_err.src $1,
+ writeq nat_wan0_arpq.config "IP $1/$2, GATEWAY $3, BROADCAST $5, COPY_ANNO true, VLAN_ANNO VLAN_TCI, ETH" __MY_MAC_ADDRESS__,
+ writeq wan0_mgmt_ar.config "COPY_ANNO true, $1 " __MY_MAC_ADDRESS__,
+ write wan0_mgmt_arp_vlan_filter.set $1 $6,
+ write ingress_resp_dai_handler/wan0_mgmt_arp_resp_vlan_filter.set $1 $6,
+ write mgmt_vid_check.vid $6,
+ write wan0_pinger.src $1,
+ write wan0_resolver.src $1,
+ write wan0_lan_connectivity.src $1,
+ write wan0_lan_connectivity.gateway_ip $3,
+ write mtun/set_src_ips.run $1,
+ write mtun/poke.run all,
+ write syslog_event_log.src_ip $1,
+ write syslog_event_log.setup_udp,
+ write lldp_source.management_ip $1,
+ write lldp_source.management_vid $6,
+ write cdp_source.management_ip $1,
+ write set_mgmt_ip_filter.set mgmt_ip $1,
+ write set_mgmt_ip_filter.run,
+ write nat/common_switch_nat/set_nat_host_ip.run $1,
+ writeq from_arping_iprw.config "ADDR $1, OFFSET 28",
+ );
+
+
+
+set_smc_filter_with_redirect :: Script(TYPE PASSIVE,
+ writeq nat/common_switch_nat/from_smc_filter.config "allow ip tcp dst port " 2100 ", "$1,
+);
+
+set_alt_conf :: Script(TYPE PASSIVE,
+ init classifier_src_pattern "false",
+ init classifier_dst_pattern "false",
+ init route_ip 1.1.2.2,
+
+ writeq nat/alt_route_cl.pattern0 $(if $(eq $route_ip "1.1.2.2") "false" $classifier_dst_pattern),
+ writeq nat/to_sw0_cl.pattern0 $(if $(eq $route_ip "1.1.2.2") "false" $classifier_dst_pattern),
+ writeq l3_interface_traffic_type_cl.pattern4 $(if $(eq $route_ip "1.1.2.2") "false" $classifier_src_pattern),
+ writeq prelim_ip_cl.pattern2 $(if $(eq $route_ip "1.1.2.2") "false" $classifier_src_pattern),
+ writeq nat/from_sw0_alt_cl.pattern0 $(if $(eq $route_ip "1.1.2.2") "false" $classifier_src_pattern),
+ writeq nat/from_sw0_alt_ip_filter.conf0 $(if $(eq $route_ip "1.1.2.2") "true" "dst "$route_ip),
+ write nat/from_host_alt_nat_rw.pattern0 pattern $route_ip 0-65535 - - 0 common_switch_nat/from_sw0_nat_rw:0,
+);
+
+
+set_host_ip6 :: Script(TYPE PASSIVE,
+ write vlan_for_ndsolicit.vlan_tci $6,
+
+
+
+
+
+
+ write set_host_ip6_hw.set switch_ip6local $1,
+ write set_host_ip6_hw.set switch_ip6 $2,
+ write set_host_ip6_hw.set management_vid $6,
+ write reconfigure_sensitive_acls_hw.run,
+
+ writeq wan0_ndsolicit.config "IP6 $2/$3, GATEWAY $4, COPY_ANNO true, VLAN_ANNO VLAN_TCI, MULTICAST_POLL true, ETH" __MY_MAC_ADDRESS__,
+ writeq wan0_mgmt_ndadv.config "COPY_ANNO true, $1 $2" __MY_MAC_ADDRESS__,
+ setq nd_filter_config_str $(if $(eq "$2" "") "$1 $6" "$1 $6, $2 $6"),
+ write wan0_mgmt_nd_vlan_filter.set $nd_filter_config_str,
+ write mgmt_vid6_check.vid $6,
+ write mtun/set_src_ip6s.run $2,
+ write mtun/poke.run non-http,
+ write set_mgmt_ip6_filter.set mgmt_ip6local $1,
+ write set_mgmt_ip6_filter.set mgmt_ip6 $2,
+ write set_mgmt_ip6_filter.run,
+ write nat/common_switch_nat/set_nat_host_ip6.run $2,
+ );
+
+set_internal_ip :: Script(TYPE PASSIVE,
+ write mtun/client_rw/set_ip.run $1,
+ write nat/common_switch_nat/set_nat_internal_ip.run $1,
+ write nat/hostapd_radius_das_forwarder.daddr $1,
+ writeq to_arping_iprw.config "ADDR $1, OFFSET 38",
+ write dhcp_relay_cl.conf0 dst $1
+ );
+
+set_internal_ip6:: Script(TYPE PASSIVE,
+ write nat/common_switch_nat/set_nat_internal_ip6.run $1,
+ );
+
+set_mgmt_ip_filter :: Script(TYPE PASSIVE,
+ init mgmt_ip 0.0.0.0,
+ init mgmt_ip_is_l3_iface false,
+
+ goto is_l3_iface $mgmt_ip_is_l3_iface,
+ write from_wan0_ip_cl2.conf5 dst $mgmt_ip,
+ goto end,
+
+ label is_l3_iface,
+ write from_wan0_ip_cl2.conf5 dst $mgmt_ip and not icmp type echo,
+ );
+
+set_mgmt_ip6_filter :: Script(TYPE PASSIVE,
+ init mgmt_ip6local "",
+ init mgmt_ip6 "",
+
+ setq mgmt_ip6_filter $(if $(eq $(length $mgmt_ip6) 0) "dst $mgmt_ip6local" "dst $mgmt_ip6local or $mgmt_ip6"),
+ write from_wan0_ip6_cl1.conf4 $mgmt_ip6_filter
+ );
+
+
+set_switch_meraki_com_ip :: Script(TYPE PASSIVE,
+
+
+
+
+
+ write set_switch_meraki_com_ip_hw.set smc_enabled $1,
+ write set_switch_meraki_com_ip_hw.set smc_ip $2,
+ write reconfigure_sensitive_acls_hw.run,
+
+ goto down $(not $1),
+ writeq wan0_smc_ar.config "COPY_ANNO true, $2" __MY_MAC_ADDRESS__,
+ write wan0_smc_arp_vlan_filter.set $2,
+ write ingress_resp_dai_handler/wan0_smc_arp_resp_vlan_filter.set $2,
+ write prelim_ip_cl.conf0 dst $2,
+ goto end,
+ label down,
+ writeq wan0_smc_ar.config "COPY_ANNO true",
+ write wan0_smc_arp_vlan_filter.set,
+ write ingress_resp_dai_handler/wan0_smc_arp_resp_vlan_filter.set,
+ write prelim_ip_cl.conf0 false);
+
+
+
+
+master_to_slaves_rpc :: Script(TYPE PASSIVE,
+ setq rpc $(shift args),
+ setq node_list "$(switch_port_table.master_to_slaves_eth)",
+ label node_loop,
+ goto end $(eq $(length $node_list) 0),
+ set node_mac $(shift node_list),
+ writeq "switch_rpc_client.method_$rpc" "$(sprintf "$args" $node_mac)",
+ goto node_loop);
+
+mactable_ports_flush :: Script(TYPE PASSIVE,
+ goto meraki_rpc $(switch_port_table.stack_supports_meraki_rpc_method "mactable_ports_flush"),
+ label vendor_rpc,
+ writeq sw0_ctrl.mactable_ports_flush "PORTS $1, USE_VENDOR_RPC_WITH_DEST_MAC FF:FF:FF:FF:FF:FF",
+ goto end,
+ label meraki_rpc,
+ writeq sw0_ctrl.mactable_ports_flush "PORTS $1, ASYNC $2",
+ writeq master_to_slaves_rpc.run "mactable_ports_flush" "%s,$1,"'RESULT_HANDLER mactable_ports_flush_cb.run $rpc_status $result $dest_mac $tstamp $args',
+);
+
+
+mactable_ports_flush_cb :: Script(TYPE PASSIVE,
+ goto end $(not $(eq $1 3)),
+ writeq sw0_ctrl.mactable_ports_flush "PORTS "$(unquote $5)", USE_VENDOR_RPC_WITH_DEST_MAC $3",
+);
+
+
+
+
+
+add_route :: Script(TYPE PASSIVE,
+ write l3_update_hardware.add_route $1 $2 $3 $4 $5,
+ goto local_vlan $(eq "$2" "0.0.0.0"),
+ goto ospf $(ne "$4" "0.0.0.0"),
+ writeq route_state_table.set_routes "TYPE static, SUBNET $1, GATEWAY_IP $2",
+ goto end,
+
+ label local_vlan,
+ writeq route_state_table.set_routes "TYPE local_vlan, SUBNET $1, VLAN_ID $3",
+ goto end,
+
+ label ospf,
+ writeq route_state_table.set_routes "TYPE ospf, SUBNET $1, GATEWAY_IP $2, SRC_ROUTER $4"
+);
+
+
+
+
+
+remove_route :: Script(TYPE PASSIVE,
+ write l3_update_hardware.del_route $1 $2 $5,
+ goto local_vlan $(eq "$2" "0.0.0.0"),
+ goto ospf $(ne "$4" "0.0.0.0"),
+ writeq route_state_table.del_route "TYPE static, SUBNET $1, GATEWAY_IP $2",
+ goto end,
+
+ label local_vlan,
+ writeq route_state_table.del_route "TYPE local_vlan, SUBNET $1, VLAN_ID $3",
+ goto end,
+
+ label ospf,
+ writeq route_state_table.del_route "TYPE ospf, SUBNET $1, GATEWAY_IP $2, SRC_ROUTER $4"
+);
+
+
+init_mrt :: Script(TYPE PASSIVE,
+ goto disable $(not $1),
+ write from_wan0_ip_cl2.conf4 proto 103 or proto 2,
+ write from_wan0_ip_cl2.conf6 dst 224.0.0.0/4,
+ goto config_mrt,
+
+ label disable,
+ write from_wan0_ip_cl2.conf4 false,
+ goto config_mrt $(or $(add_router_ports_unknown_mc.enabled) $(add_router_ports_mrt_forward.enabled)),
+ write from_wan0_ip_cl2.conf6 false,
+
+ label config_mrt,
+ write switch_mrt.enabled $1,
+);
+
+
+init_l2_mcast_flood_ctrl :: Script(TYPE PASSIVE,
+ write igmp_table.clear,
+ write mld_table.clear,
+ write sw0_ctrl.mactable_flush_mcast,
+ goto flood_enable $1,
+ write sw0_ctrl.set_l2_mc_flood_ctrl false,
+ write igmp_table.flood_unknown false,
+ write mld_table.flood_unknown false,
+
+ write from_wan0_ip_cl2.conf6 dst 224.0.0.0/4,
+ write add_router_ports_unknown_mc.enabled true,
+ write add_router_ports_unknown_mc_ip6.enabled true,
+ write add_router_ports_mrt_forward.enabled true,
+
+ goto end,
+
+ label flood_enable,
+ write sw0_ctrl.set_l2_mc_flood_ctrl true,
+ write igmp_table.flood_unknown true,
+ write mld_table.flood_unknown true,
+
+ write add_router_ports_unknown_mc.enabled false,
+ write add_router_ports_unknown_mc_ip6.enabled false,
+ write add_router_ports_mrt_forward.enabled false,
+ goto end $(switch_mrt.enabled),
+ write from_wan0_ip_cl2.conf6 false,
+
+);
+
+
+
+reset_routes :: Script(TYPE PASSIVE,
+
+
+
+ goto do_reset_routes $(or $(sw0_ctrl.i_am_stack_master) $(eq $(length $1) 0)),
+ goto end,
+ label do_reset_routes,
+ writeq l3_update_hardware.clear_routes "",
+ writeq master_to_slaves_rpc.run "route_reset" "%s",
+ writeq route_state_table.reset_routes ""
+);
+
+
+
+set_interface_data :: Script(TYPE PASSIVE,
+
+ init l3_ifaces_ips,
+ init l3_ifaces_vids,
+ init l3_ifaces_netmasks,
+ init l3_ifaces_broadcast_ips,
+ init l3_ifaces_ospf_vids,
+ init l3_ifaces_types,
+
+ setq ospf_filter_str "0-4095 drop, ",
+ setq cit_vlan_mappings "",
+
+ goto set_ifs $(ne "$l3_ifaces_ips" ""),
+ write switch_intf_table.flush_interfaces,
+ goto no_l3,
+
+ label set_ifs,
+ set l3_ifaces_ips_temp $l3_ifaces_ips,
+ set l3_ifaces_vids_temp $l3_ifaces_vids,
+ set l3_ifaces_netmasks_temp $l3_ifaces_netmasks,
+ set l3_ifaces_broadcast_temp $l3_ifaces_broadcast_ips,
+ set l3_ifaces_types_temp $l3_ifaces_types,
+
+ setq set_mgmt_ip_filter.set mgmt_ip_is_l3_iface false,
+ setq add_interfaces_str "",
+
+ label ifaces_loop,
+ set curr_ip $(shift l3_ifaces_ips_temp),
+ set curr_vid $(shift l3_ifaces_vids_temp),
+ set curr_netmask $(shift l3_ifaces_netmasks_temp),
+ set curr_broadcast $(shift l3_ifaces_broadcast_temp),
+ set curr_type $(shift l3_ifaces_types_temp),
+
+
+
+ goto skip_cit $(ne $curr_type static),
+ setq cit_vlan_mappings "$cit_vlan_mappings $curr_vid $curr_ip/$curr_netmask,",
+ label skip_cit,
+ goto iface_not_mgmt $(ne "$curr_ip" "$(set_mgmt_ip_filter.get mgmt_ip)"),
+ write set_mgmt_ip_filter.set mgmt_ip_is_l3_iface true,
+ label iface_not_mgmt,
+ setq add_interfaces_str "$add_interfaces_str\nIP $curr_ip, MASK $curr_netmask, VID $curr_vid, TYPE $curr_type",
+ goto ifaces_loop $(ne $(length $l3_ifaces_ips_temp) 0),
+
+ writeq switch_intf_table.set_interfaces $add_interfaces_str,
+
+ goto no_l3 $(eq $(length $l3_ifaces_ospf_vids) 0),
+ set l3_ifaces_ospf_vids_temp $l3_ifaces_ospf_vids,
+ label ospf_loop,
+ set curr_ospf_vid $(shift l3_ifaces_ospf_vids_temp),
+ setq ospf_filter_str "$ospf_filter_str $curr_ospf_vid 0,",
+ goto ospf_loop $(ne $(length $l3_ifaces_ospf_vids_temp) 0),
+ label no_l3,
+
+ write ospf_vlan_filter.vlan_config $ospf_filter_str,
+ write set_mgmt_ip_filter.run,
+
+ write client_ip_table.set_vlan_mappings $cit_vlan_mappings,
+
+ write configure_ospf_hw.run $(ne "$l3_ifaces_ips" ""),
+
+ );
+
+
+
+
+
+
+
+configure_mcast_snoop :: Script(TYPE PASSIVE,
+ write igmp_table.clear,
+ write mld_table.clear,
+ write sw0_ctrl.mactable_flush_mcast,
+ );
+
+configure_igmp_snoop :: Script(TYPE PASSIVE,
+ write configure_mcast_snoop.run igmp $(if $1 true false),
+ write from_switch_dhcp_ipcl.conf2 $(if $1 igmp false),
+
+
+
+
+ write configure_igmp_snoop_hw.run $1,
+
+ );
+
+configure_mld_snoop :: Script(TYPE PASSIVE,
+ write configure_mcast_snoop.run mld $(if $1 true false),
+ write from_switch_ip6_mld.switch $(if $1 0 1),
+ write configure_mld_snoop_hw.run $1,
+ );
+
+
+configure_dhcp_blocker :: Script(TYPE PASSIVE,
+ write dhcp_blocker.default_to_allowed $2,
+ write dhcp_blocker.servers $3,
+ write dhcp_blocker_bp.active $1
+ );
+
+
+announce_uplink_ip :: Script(TYPE PASSIVE,
+ init vers,
+ init ips,
+ init vlans,
+ init is_statics,
+
+ setq new_vers "",
+ setq new_ips "",
+ setq new_vlans "",
+ setq new_is_statics "",
+
+ label loop,
+ goto doneloop $(eq $(length $ips) 0),
+ set curr_ver $(shift vers),
+ set curr_ip $(shift ips),
+ set curr_vlan $(shift vlans),
+ set curr_is_static $(shift is_statics),
+
+ goto loop $(and $(eq $curr_ver $1) $(eq $curr_ip $2) $(eq $curr_vlan $3) $(eq $curr_is_static $4)),
+
+ setq new_vers "$new_vers $curr_ver",
+ setq new_ips "$new_ips $curr_ip",
+ setq new_vlans "$new_vlans $curr_vlan",
+ setq new_is_statics "$new_is_statics $curr_is_static",
+ goto loop,
+
+ label doneloop,
+ setq vers $(if $5 "$new_vers $1" "$new_vers"),
+ setq ips $(if $5 "$new_ips $2" "$new_ips"),
+ setq vlans $(if $5 "$new_vlans $3" "$new_vlans"),
+ setq is_statics $(if $5 "$new_is_statics $4" "$new_is_statics"),
+
+
+
+
+
+
+
+ write set_uplink_ips_hw.set vers $vers,
+ write set_uplink_ips_hw.set ips $ips,
+ write set_uplink_ips_hw.set vlans $vlans,
+ write reconfigure_sensitive_acls_hw.run,
+
+ );
+
+
+configure_ns_handling :: Script(TYPE PASSIVE,
+
+
+
+
+ write set_ns_handling_hw.set dns_inspection_enabled $1,
+ write set_ns_handling_hw.set mdns_inspection_enabled $2,
+
+
+
+ write reconfigure_sensitive_acls_hw.run,
+
+ );
+
+
+self_sw_arp_timeout :: Script(TYPE PASSIVE,
+ writeq l3_update_hardware.sw_arp_timeout "$1 $2 $3",
+ writeq master_to_slaves_rpc.run "host_del" "%s,$1,$2,$3",
+ );
+
+set_dashboard_pcap_ports :: Script(TYPE PASSIVE,
+ writeq switch_port_table.set_dashboard_pcap_ports "$args",
+);
+AlignmentInfo(Classifier@107  4 0,
+  from_wired0_cip  4 0,
+  from_wired0_cip6  4 0,
+  Classifier@167  4 2,
+  eth_ip_mcast_cl  4 2,
+  Classifier@205  4 2,
+  Classifier@210  4 2,
+  Classifier@214  4 2,
+  Classifier@260  4 2,
+  CheckIPHeader@362  4 0,
+  CheckIPHeader@411  4 0,
+  maybe_mdns_cl  4 2,
+  Classifier@510  4 2,
+  igmp_query_MRD_membershipreport_filter  4 2,
+  mld_query_MRD_membershipreport_filter  4 2,
+  CheckIP6Header@611  4 2,
+  CheckIPHeader@624  4 0,
+  from_switch_cl_sflow_excl  4 2,
+  sflow_excl_cip  4 2,
+  sflow_excl_cip6  4 2,
+  from_switch_cl  4 2,
+  from_switch_cip  4 2,
+  from_switch_cip6  4 2,
+  from_switch_cl_tx  4 2,
+  sflow_tx_cip  4 2,
+  sflow_tx_cip6  4 2,
+  sflow_rx_cl1  4 2,
+  mgmt0_in_cl  4 2,
+  from_mgmt0_cip  4 2,
+  from_linux_mgmt_cip  4 0,
+  d_from_sw0/cl  4 2,
+  sw0_pcap_process/Classifier@1  4 2,
+  sw0_pcap_process/cip  4 2,
+  mtun/server1/check_ip  4 0,
+  mtun/server2/check_ip  4 0,
+  mtun/server3/check_ip  4 0,
+  d_from_wired0/cl  4 0,
+  d_to_wired0/cl  4 0,
+  d_to_arping/cl  4 2,
+  d_from_arping/cl  4 2,
+  stack_fwd_radius/dst_port_cl  4 2,
+  d_to_smc_cli/cl  4 2,
+  d_vrrp_rx/cl  4 2,
+  d_vrrp_tx/cl  4 2,
+  d_learn_eap/cl  4 0,
+  d_learn_drop/cl  4 2,
+  d_vlan_drop/cl  4 2,
+  dns_snoop/dns_snoop_cl  4 2,
+  d_from_cdp/cl  4 2,
+  d_from_mgmt0/cl  4 2,
+  d_from_linux_mgmt/cl  4 0,
+  d_to_linux_mgmt/cl  4 0);

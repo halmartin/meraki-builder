@@ -1,0 +1,578 @@
+/*
+ * Meraki Brumby support
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/meraki/tam.h>
+#include "skeleton.dtsi"
+
+/ {
+	model = "Meraki Brumby";
+	compatible = "meraki,brumby",
+	             "broadcom,hr3";
+	interrupt-parent = <&gic>;
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a9";
+			next-level-cache = <&L2>;
+			reg = <0x0>;
+		};
+	};
+
+	L2: l2-cache {
+		compatible = "arm,pl310-cache";
+		reg = <0x19022000 0x1000>;
+		cache-unified;
+		cache-level = <2>;
+		arm,aux-value = <0x00030000>;
+		arm,aux-mask= <0xfff0ffff>;
+		arm,filter-ranges = <0x60000000 0x80000000>;
+	};
+
+	memory {
+		reg = <0x60000000 0x40000000>;
+	};
+
+	gic: interrupt-controller@0x19021000 {
+		compatible = "arm,cortex-a9-gic";
+		#interrupt-cells = <3>;
+		interrupt-controller;
+		reg = <0x19021000 0x1000>, <0x19020100 0x100>;
+	};
+
+	clocks {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		osc: oscillator {
+			#clock-cells = <0>;
+			compatible = "fixed-clock";
+			clock-frequency = <25000000>;
+		};
+
+		a9pll: arm_clk@0x19000000 {
+			#clock-cells = <0>;
+			compatible = "brcm,iproc-armpll";
+			clocks = <&osc>;
+			reg = <0x19000000 0x1000>;
+		};
+
+		periph_clk: periph_clk@0x19000000 {
+			#clock-cells = <0>;
+			compatible = "fixed-factor-clock";
+			clocks = <&a9pll>;
+			clock-div = <2>;
+			clock-mult = <1>;
+		};
+
+		axi_clk: axi_clk@0x1800fc00 {
+			#clock-cells = <0>;
+			compatible = "brcm,iproc-genpll";
+			clocks = <&osc>;
+			reg = <0x1800fc00 0x1c>;
+		};
+
+		apb_clk: apb_clk@0x1800fc00 {
+			#clock-cells = <0>;
+			compatible = "fixed-factor-clock";
+			clocks = <&axi_clk>;
+			clock-div = <4>;
+			clock-mult = <1>;
+		};
+	};
+
+	local-timer@0x19020600 {
+		compatible = "arm,cortex-a9-twd-timer";
+		reg = <0x19020600 0x100>;
+		interrupts = <GIC_PPI 13 IRQ_TYPE_EDGE_RISING>;
+		clocks = <&periph_clk>;
+	};
+
+        timer@0x19020200 {
+		compatible = "arm,cortex-a9-global-timer";
+		reg = <0x19020200 0x100>;
+		interrupts = <GIC_PPI 11 IRQ_TYPE_EDGE_RISING>;
+		clocks = <&periph_clk>;
+	};
+
+	dmu-pcu@0x1800f000 {
+		compatible = "broadcom,hr3-dmu-pcu";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x1800f000 0xc00>;
+	};
+
+	iproc-wrap-ctrl@0x1800fc00 {
+		compatible = "broadcom,hr3-wrap-ctrl";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x1800fc00 0x100>;
+	};
+
+	iproc-idm@0x18100000 {
+		compatible = "broadcom,hr3-idm";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x18100000 0x100000>;
+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+	};
+
+	amba {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "arm,amba-bus", "simple-bus";
+		interrupt-parent = <&gic>;
+		ranges;
+
+		wdt@0x18009000 {
+			compatible = "arm,sp805", "arm,primecell";
+			reg = <0x18009000 0x1000>,
+			      <0x1800f014 0x4>;
+			clocks = <&apb_clk>;
+			clock-names = "apb_pclk";
+		};
+	};
+
+	uart0: serial@0x18020000 {
+		compatible = "snps,dw-apb-uart";
+		reg = <0x18020000 0x100>;
+		interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&apb_clk>;
+		reg-io-width = <4>;
+		reg-shift = <2>;
+	};
+
+	gpio_cmic: gpio@0x03202000 {
+		compatible = "broadcom,hr3-gpio,ccg";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		#gpio-cells = <2>;
+		reg = <0x03202000 0x50>;
+		ngpios = <4>;
+		pin-offset = <0>;
+		pin-base = <0>;
+		irq-base = <256>;
+		gpio-controller;
+		interrupt-controller;
+		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+	};
+
+	gpio_cpu: gpio@0x1800a000 {
+		compatible = "broadcom,hr3-gpio,ccg";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		#gpio-cells = <2>;
+		reg = <0x1800a000 0x50>;
+		ngpios = <12>;
+		pin-offset = <4>;
+		pin-base = <4>;
+		irq-base = <256>;
+		gpio-controller;
+		interrupt-controller;
+		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+	};
+
+	gpio-cfg {
+		compatible = "iproc-gpio-cfg";
+
+		sfp-plus-reset {
+			gpios = <&gpio_chip1 2 GPIO_ACTIVE_LOW>;
+			default-state = "off";
+			direction = "out";
+		};
+
+		poe-disable {
+			gpios = <&gpio_cpu 3 GPIO_ACTIVE_LOW>;
+		};
+
+		act2-reset {
+			gpios = <&gpio_chip0 10 GPIO_ACTIVE_LOW>;
+			default-state = "off";
+			direction = "out";
+		};
+	};
+
+	gpio-buttons {
+		compatible = "gpio-keys-polled";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		poll-interval = <250>;
+		autorepeat;
+		button@1 {
+			label = "soft_reset";
+			linux,code = <KEY_RESTART>;
+			gpios = <&gpio_cpu 11 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	i2c0: i2c@0x18008000 {
+		compatible = "brcm,iproc-i2c";
+		reg = <0x18008000 0x100>;
+		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
+		#bus-id = <0>;
+		clock-frequency = <100000>;
+
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		amc6821@18 {
+			compatible = "amc6821";
+			reg = <0x18>;
+		};
+
+		gpio_chip0: gpio-controller@21 {
+			compatible = "nxp,pca9555";
+			reg = <0x21>;
+			gpio-controller;
+			#gpio-cells = <2>;
+			interrupt-controller;
+			#interrupt-cells = <1>;
+			interrupt-parent = <&gpio_cpu>;
+			interrupts = <8>;
+		};
+
+		gpio_chip1: gpio-controller@22 {
+			compatible = "nxp,pca9555";
+			reg = <0x22>;
+			gpio-controller;
+			#gpio-cells = <2>;
+			interrupt-controller;
+			#interrupt-cells = <1>;
+			interrupt-parent = <&gpio_cpu>;
+			interrupts = <10>;
+		};
+
+		gpio_chip2: gpio-controller@26 {
+			compatible = "nxp,pca9555";
+			reg = <0x26>;
+			gpio-controller;
+			#gpio-cells = <2>;
+			interrupt-controller;
+			#interrupt-cells = <1>;
+			interrupt-parent = <&gpio_cpu>;
+			interrupts = <9>;
+		};
+
+		lp5521@32 {
+			compatible = "national,lp5521";
+			reg = <0x32>;
+			clock-mode = /bits/ 8 <1>;
+
+			chan0 {
+				chan-name = "tricolor0:red";
+				led-cur = /bits/ 8 <0xaf>;
+				max-cur = /bits/ 8 <0xff>;
+			};
+
+			chan1 {
+				chan-name = "tricolor0:green";
+				led-cur = /bits/ 8 <0xaf>;
+				max-cur = /bits/ 8 <0xff>;
+			};
+
+			chan2 {
+				chan-name = "tricolor0:blue";
+				led-cur = /bits/ 8 <0xaf>;
+				max-cur = /bits/ 8 <0xff>;
+			};
+		};
+
+		temp-sensor@49 {
+			compatible = "ti,tmp75";
+			reg = <0x49>;
+		};
+
+		temp-sensor@4a {
+			compatible = "ti,tmp75";
+			reg = <0x4a>;
+		};
+
+		config_eeprom: eeprom@51 {
+			compatible = "24c64";
+			reg = <0x51>;
+			pagesize = <32>;
+		};
+
+		act2@70 {
+			compatible = "cisco,act-i2c";
+			reg = <0x70>;
+			write_buf_size = /bits/ 16 <259>;
+			reset = <&gpio_chip0 10 GPIO_ACTIVE_LOW>;
+			chip_family = <TAM_FAMILY_ACT2>;
+		};
+
+		i2c-mux@71 {
+			compatible = "nxp,pca9548";
+			reg = <0x71>;
+
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			i2c-mux-idle-disconnect;
+
+			i2c_qsfp1: i2c@0 {
+				reg = <0>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+			};
+
+			i2c_qsfp2: i2c@1 {
+				reg = <1>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+			};
+
+#if defined(MS250)
+			i2c_psu1: i2c@2 {
+				reg = <2>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+			};
+
+			i2c_psu2: i2c@3 {
+				reg = <3>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+			};
+#endif
+		};
+	};
+
+	board-data {
+		compatible = "meraki,meraki-config";
+		i2c-eeprom = <&config_eeprom>;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		power-orange {
+			label = "power:orange";
+			gpios = <&gpio_chip1 8 GPIO_ACTIVE_HIGH>;
+			default-state = "on";
+		};
+
+		power-white {
+			label = "power:white";
+			gpios = <&gpio_chip1 9 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+	};
+
+	gmac0: ethernet@0x18042000 {
+		compatible = "brcm,iproc-gmac";
+		reg = <0x18042000 0x1000>;
+		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+	};
+
+	mdio-ext@0x03233000 {
+		compatible = "brcm,iproc-cmicd-mdio";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x03233000 0x1000>,
+		      <0x03210000 0x1000>;
+		#bus-id = <0>;
+		bus-type = "external";
+		clocks = <&apb_clk>;
+		clock-names = "apb_clk";
+	};
+
+	pcie0: pcie@0x18012000 {
+		compatible = "broadcom,hr3-pcie";
+		reg = <0x18012000 0x1000>;
+		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>,
+		             <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+		status = "okay";
+		#address-cells = <3>;
+		#size-cells = <2>;
+		device_type = "pci";
+		ranges = <0x82000000 0 0x20000000 0x20000000 0 0x20000000>;
+		phy-addr = <0>;
+	};
+
+	rps {
+		compatible = "meraki,cisco-rps";
+		max_poe_power = <740000>;
+		max_system_power = <250000>;
+		status_0 = <&gpio_chip0 14 GPIO_ACTIVE_HIGH>;
+		status_1 = <&gpio_chip0 13 GPIO_ACTIVE_HIGH>;
+		i2c = <&i2c0>;
+	};
+
+#if defined(MS250)
+	psu1 {
+		id = <1>;
+		compatible = "meraki,cisco-mps";
+		power_good = <&gpio_chip0 2 GPIO_ACTIVE_HIGH>;
+		present = <&gpio_chip0 0 GPIO_ACTIVE_HIGH>;
+		reg-names = "control-i2c", "data-i2c";
+		reg = <0x5a 1>, <0x52 1>;
+		i2c = <&i2c_psu1>;
+	};
+
+	psu2 {
+		id = <2>;
+		compatible = "meraki,cisco-mps";
+		power_good = <&gpio_chip0 3 GPIO_ACTIVE_HIGH>;
+		present = <&gpio_chip0 1 GPIO_ACTIVE_HIGH>;
+		reg-names = "control-i2c", "data-i2c";
+		reg = <0x5b 1>, <0x53 1>;
+		i2c = <&i2c_psu2>;
+	};
+#endif
+
+	nand0: nand@0x18046000 {
+		compatible = "brcm,nand-iproc",
+		             "brcm,brcmnand-v6.1",
+		             "brcm,brcmnand";
+		reg = <0x18046000 0x600>,
+		      <0x1811d408 0x600>,
+		      <0x18046f00 0x20>;
+		reg-names = "nand",
+		            "iproc-idm",
+		            "iproc-ext";
+		interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+		interrupt-names = "nand_ctlrdy";
+		#chip-select = <0>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		brcm,nand-has-wp;
+
+		nandcs@0 {
+			compatible = "brcm,nandcs";
+			reg = <0>;
+
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			nand-ecc-strength = <4>;
+			nand-ecc-step-size = <512>;
+
+			partition@0 {
+				label = "ubi";
+				reg   = <0x0 0x10000000>;
+			};
+		};
+	};
+
+	spi0: spi@0x18047000 {
+		compatible = "brcm,qspi";
+		reg = <0x18047200 0x188>,
+		      <0x18047000 0x050>,
+		      <0x18047100 0x024>,
+		      <0x180473a0 0x01c>,
+		      <0x1811f408 0x004>,
+		      <0x1800e000 0x004>;
+		interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		clocks = <&apb_clk>;
+
+		m25p80@0 {
+			compatible = "macronix,mx25l12805d";
+			reg = <0>;
+
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			spi-max-frequency = <62500000>;
+			m25p,fast-read = <1>;
+
+			partition@0 {
+				label = "uboot";
+				reg   = <0x0 0x100000>;
+			};
+
+			partition@1 {
+				label = "bootkernel1";
+				reg   = <0x100000 0x700000>;
+			};
+
+			partition@2 {
+				label = "bootkernel2";
+				reg   = <0x800000 0x700000>;
+			};
+		};
+	};
+
+	sfp-bus {
+		compatible = "simple-bus";
+
+		sfp@1 {
+			compatible = "meraki,sfp-user";
+			id = <1>;
+			mod-abs = <&gpio_chip2 0 GPIO_ACTIVE_HIGH>;
+			rx-los = <&gpio_cmic 0 GPIO_ACTIVE_HIGH>;
+		};
+
+		sfp@2 {
+			compatible = "meraki,sfp-user";
+			id = <2>;
+			mod-abs = <&gpio_chip2 2 GPIO_ACTIVE_HIGH>;
+			rx-los = <&gpio_cmic 1 GPIO_ACTIVE_HIGH>;
+		};
+
+		sfp@3 {
+			compatible = "meraki,sfp-user";
+			id = <3>;
+			mod-abs = <&gpio_chip2 4 GPIO_ACTIVE_HIGH>;
+			rx-los = <&gpio_cmic 2 GPIO_ACTIVE_HIGH>;
+		};
+
+		sfp@4 {
+			compatible = "meraki,sfp-user";
+			id = <4>;
+			mod-abs = <&gpio_chip2 6 GPIO_ACTIVE_HIGH>;
+			rx-los = <&gpio_cmic 3 GPIO_ACTIVE_HIGH>;
+		};
+
+		sfp@5 {
+			compatible = "meraki,sfp-user";
+			id = <5>;
+			mod-abs = <&gpio_chip1 6 GPIO_ACTIVE_HIGH>;
+			lpmode = <&gpio_chip1 4 GPIO_ACTIVE_HIGH>;
+			i2c = <&i2c_qsfp2>;
+		};
+
+		sfp@6 {
+			compatible = "meraki,sfp-user";
+			id = <6>;
+			mod-abs = <&gpio_chip1 14 GPIO_ACTIVE_HIGH>;
+			lpmode = <&gpio_chip1 12 GPIO_ACTIVE_HIGH>;
+			i2c = <&i2c_qsfp1>;
+		};
+	};
+};

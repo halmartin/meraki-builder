@@ -34,7 +34,7 @@ start() {
     # ethernet
     load_eth
     # broadcom module for switch fabric
-    load_bcm
+    #load_bcm
 }
 
 stop() {

@@ -1,0 +1,10 @@
+--- package/Config.in	2022-01-24 19:17:18.635994665 +0100
++++ package/Config.in	2022-01-24 19:18:14.949438468 +0100
+@@ -2045,6 +2045,7 @@
+ 	source "package/taskd/Config.in"
+ 	source "package/wine/Config.in"
+ 	source "package/xutil_util-macros/Config.in"
++	source "package/findhdr/Config.in"
+ endmenu
+ 
+ menu "Networking applications"

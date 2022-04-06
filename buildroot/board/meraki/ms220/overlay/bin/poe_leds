@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# check if the switch has PoE
+if [ $(board_data model | grep -Ec 'P$') -eq 0 ]; then
+    echo "This model does not support PoE"
+    exit
+fi
+
+# -f for foreground
+if [[ "$1" != "-f" ]]; then
+    nohup "$0" -f >/dev/null 2>&1 &
+    exit $?
+fi
+
+while true; do
+    NUM_PORTS=$(cat /click/sw0_ctrl/poe_led_state | wc -l)
+    pd690xx -l | tail -n +2 | head -$NUM_PORTS | tr -d '.' | awk 'BEGIN{FS=OFS="\t"}{state[$1]=$6}END{for(key in state){printf "/bin/echo PORT "; printf key; printf ", STATE "; if (int(state[key]) > 0) { printf "1" } else { printf "0" }; printf " > /click/sw0_ctrl/poe_led_state; "}}' | sh
+    sleep 15
+done

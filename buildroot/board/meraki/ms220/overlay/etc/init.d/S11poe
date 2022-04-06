@@ -43,6 +43,11 @@ start() {
     echo 0 > /sys/class/gpio/gpio${GPIO1}/value
     echo 1 > /sys/class/gpio/gpio${GPIO2}/value
     # usleep(500000)
+    # I would like to put this into /usr/local/bin/
+    # but that's not in the path unless you patch busybox
+    if [ -f /bin/poe_leds ]; then
+        /bin/poe_leds
+    fi
 }
 
 stop() {

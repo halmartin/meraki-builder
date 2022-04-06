@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2020-2021 - Hal Martin (github.com/halmartin)
+# Copyright (C) 2020-2022 - Hal Martin (github.com/halmartin)
 #
 # This was written by reverse engineering the functionality
 # of switch_brain, included in Meraki's stock firmware
@@ -30,6 +30,10 @@ start() {
         echo "vc_click is loaded, but something is wrong with the /click configuration; aborting!"
         exit
     fi
+
+    # enable link lights on luton
+    echo -e link > /click/sw0_ctrl/led_mode
+
     echo -e "0" > /click/client_ip_table/boot_count
     echo -e "1" > /click/switch_port_table/snooptable_version
     if [ -d  /sys/class/net/wired0 ]; then

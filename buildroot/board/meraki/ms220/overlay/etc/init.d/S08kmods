@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2020-2021 - Hal Martin (github.com/halmartin)
+# Copyright (C) 2020-2022 - Hal Martin (github.com/halmartin)
 #
 # Load kernel modules for managing the Vitesse ASIC
 #
@@ -10,6 +10,7 @@ determine_board() {
     if [ -f /etc/boardinfo ]; then
         model=$(grep MODEL /etc/boardinfo | grep -Eo "MS[234]2(0-[248]([48])?)?(P)?")
     # next, try to get the board info from the board-config partition on NAND
+    else
         model=$(board_data model)
         if [ ! -f /etc/boardinfo ]; then
             # persist model in overlayfs
@@ -17,23 +18,33 @@ determine_board() {
         fi
     fi
 
+    # model was not correctly determined?! use cpuinfo instead
+    if [ -z $model ]; then
+        model=$(cat /proc/cpuinfo | grep 'system type' | grep -Eo 'VSC74[23][457]( Dual)?')
+    fi
+
+    # this will print a big error if we can't determine the model
+    # or if we fell back to using cpuinfo
     if [ $(echo $model | grep -c -E "MS[234]2(0-[248]([48])?(P|LP|FP)?)?") -ne 1 ]; then
         echo "!!! IMPORTANT !!!"
         echo -n "Couldn't determine board model, THINGS WILL BE BROKEN. "
-        echo -n "model=${model}, product=${product_number} "
-        echo "please open an issue on github.com/halmartin/meraki-builder"
+        echo -n "model=${model} "
+        echo -n "please open an issue on github.com/halmartin/meraki-builder"
+        echo -n
+        echo -n "You can fix this by executing 'echo MS220-X > /etc/boardinfo && reboot'"
+        echo "where X is 8/8P/24/24P/48/48LP/48FP according to your switch model"
         echo "!!! IMPORTANT !!!"
         sleep 30
     fi
 
     # detect the mod_dir and switch_board from boardinfo
-    case $model in
-        MS220-8|MS220-8P)
+    case "$model" in
+        MS220-8|MS220-8P|VSC7425)
             mod_dir=luton26
             switch_board=MERAKI_BOARD_MS220_8
             echo 10 > /tmp/NUM_PORTS
         ;;
-        MS220-24|MS220-24P)
+        MS220-24|MS220-24P|VSC7427)
             mod_dir=luton26
             switch_board=MERAKI_BOARD_MS220_24
             echo 24 > /tmp/NUM_PORTS
@@ -43,12 +54,12 @@ determine_board() {
             switch_board=MERAKI_BOARD_MS220_48
             echo 52 > /tmp/NUM_PORTS
         ;;
-        MS320-24|MS320-24P)
+        MS320-24|MS320-24P|VSC7434)
             mod_dir=jaguar
             switch_board=MERAKI_BOARD_MS320_24
             echo 24 > /tmp/NUM_PORTS
         ;;
-        MS320-48|MS320-48P)
+        MS320-48|MS320-48P|"VSC7434 Dual")
             mod_dir=jaguar_dual
             switch_board=MERAKI_BOARD_MS320_48
             echo 52 > /tmp/NUM_PORTS

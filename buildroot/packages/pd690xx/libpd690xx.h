@@ -1,10 +1,5 @@
-#ifndef pd690xx
-#define pd690xx
-// gathered from I2C trace of libpoecore
-#define PD690XX0_I2C_ADDR 0x30
-#define PD690XX1_I2C_ADDR 0x31
-#define PD690XX2_I2C_ADDR 0x33
-#define PD690XX3_I2C_ADDR 0x35
+#ifndef libpd690xx
+#define libpd690xx
 
 // All values sourced from Auto Mode PD690xx Registers Map
 
@@ -65,21 +60,37 @@
 #define PORT_PRIO_HIGH 1
 #define PORT_PRIO_LOW 2
 
-int i2c_init();
-void i2c_close();
+#define MAX_PD690XX_COUNT 4
+
+struct pd690xx_cfg {
+    // Array of file descriptors used to talk to the I2C bus 1 and 2
+    int i2c_fds[2];
+    // pd690xx addresses
+    unsigned char pd690xx_addrs[4];
+    // detect if the pd690xx devices are present
+    int pd690xx_pres[4];
+};
+
+void i2c_init(struct pd690xx_cfg *pd690xx);
+void i2c_close(struct pd690xx_cfg *pd690xx);
 int i2c_write(int, unsigned char, unsigned int, unsigned int);
 int i2c_read(int, unsigned char, unsigned int, unsigned int *);
-unsigned char get_pd690xx_addr(int);
-int pd690xx_bus(int);
-int pd690xx_pres_count();
+unsigned char get_pd690xx_addr(struct pd690xx_cfg *pd690xx, int);
+int pd690xx_bus(struct pd690xx_cfg *pd690xx, int);
+int pd690xx_pres_count(struct pd690xx_cfg *pd690xx);
 unsigned int port_base_addr(int, int);
-int port_able(int, int);
-int port_enable(int);
-int port_disable(int);
-int port_force(int);
-int port_state(int);
-int port_type(int);
-int port_priority(int);
-void list_all();
+int port_able(struct pd690xx_cfg *pd690xx, int, int);
+int port_enable(struct pd690xx_cfg *pd690xx, int);
+int port_disable(struct pd690xx_cfg *pd690xx, int);
+int port_reset(struct pd690xx_cfg *pd690xx, int);
+int port_force(struct pd690xx_cfg *pd690xx, int);
+int port_state(struct pd690xx_cfg *pd690xx, int);
+int port_type(struct pd690xx_cfg *pd690xx, int);
+int get_power(struct pd690xx_cfg *pd690xx, int);
+int get_voltage(struct pd690xx_cfg *pd690xx);
+int get_temp(struct pd690xx_cfg *pd690xx);
+float port_power(struct pd690xx_cfg *pd690xx, int);
+int port_priority(struct pd690xx_cfg *pd690xx, int);
+void enable_debug(void);
 
 #endif

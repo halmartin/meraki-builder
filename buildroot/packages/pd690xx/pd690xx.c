@@ -140,13 +140,6 @@ int main (int argc, char **argv) {
         // pd690xx_pres
         {0, 0, 0 ,0}
     };
-    // set the pd690xx addresses for a Meraki switch
-    // pd690xx.i2c_fds = {-1, -1};
-    // pd690xx.pd690xx_addrs[0] = PD690XX0_I2C_ADDR;
-    // pd690xx.pd690xx_addrs[1] = PD690XX1_I2C_ADDR;
-    // pd690xx.pd690xx_addrs[2] = PD690XX2_I2C_ADDR;
-    // pd690xx.pd690xx_addrs[3] = PD690XX3_I2C_ADDR;
-    // pd690xx.pd690xx_pres = {0, 0, 0, 0};
 
     // first, enable debugging if requested
     if (debug) {

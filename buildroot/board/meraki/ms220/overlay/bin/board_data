@@ -1,9 +1,25 @@
 #!/bin/sh
 # Copyright (C) 2022 - Hal Martin (github.com/halmartin)
 
+copy_eeprom() {
+    eeprom_file=/tmp/.board-config.bin
+    # check if the file exists and starts with 5311, otherwise copy it again
+    if [ -f ${eeprom_file} ] && [ $(grep -c 5311 ${eeprom_file}) -eq 1 ]; then
+        return
+    fi
+    if [ -f /sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom ]; then
+        # reading over i2c is slow, copy to a file on tmpfs
+        cat /sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom > ${eeprom_file}
+    fi
+}
+
 get_board_config_mtd() {
-    if [ $(grep -c "board-config" /proc/mtd) -ne 0 ]; then
-        grep "board-config" /proc/mtd | awk -F':' '{print $1}' | grep -Eo "[0-9]"
+    copy_eeprom
+    if [ -f /tmp/.board-config.bin ]; then
+        echo /tmp/.board-config.bin
+    elif [ $(grep -c "board-config" /proc/mtd) -ne 0 ]; then
+        mtd_num=$(grep "board-config" /proc/mtd | awk -F':' '{print $1}' | grep -Eo "[0-9]")
+        echo /dev/mtdblock${mtd_num}
     else
         >&2 echo "board-config not found!"
     fi
@@ -72,28 +88,33 @@ get_board_cpu() {
             echo "MS320-24"
         ;;
         "VSC7434 Dual")
-            # could be either the MS220-48 or MS320-48
-            # but since we have no way to know, assume MS320
-            echo "MS320-48"
+            # check if there are MPS present
+            if [ $(ls -1 -d /sys/class/power_supply/cisco-mps.* 2>/dev/null | wc -l) -ne 0 ]; then
+                echo "MS320-48"
+            else
+                # The MS220-48 uses Jaguar Dual, but doesn't have removable power supplies
+                # and there are issues if we configure it to be an MS320-48 (missing 10G PHY)
+                echo "MS220-48"
+            fi
         ;;
     esac
 }
 
 get_product_number() {
     MTD_PART=$(get_board_config_mtd)
-    echo $(dd if=/dev/mtdblock${MTD_PART} bs=8 skip=1 count=8 2>/dev/null | grep -Eo "(600-2[018]0[1-9]0)|(0[9])")
+    echo $(dd if=${MTD_PART} bs=8 skip=1 count=8 2>/dev/null | grep -Eo "(600-2[018]0[1-9]0)|(0[9])")
 }
 
 get_serial_number() {
     MTD_PART=$(get_board_config_mtd)
-    echo $(dd if=/dev/mtdblock${MTD_PART} bs=4 skip=31 count=3 2>/dev/null)
+    echo $(dd if=${MTD_PART} bs=4 skip=31 count=3 2>/dev/null)
 }
 
 get_mac_addr() {
     MTD_PART=$(get_board_config_mtd)
     if [ "${MTD_PART}" != "" ]; then
         # this will get the device's original MAC address from the "board-config" mtd
-        echo $(dd if=/dev/mtdblock${MTD_PART} bs=6 skip=17 count=1 2>/dev/null | xxd -g 1 | awk 'BEGIN{OFS=":"} {print $2,$3,$4,$5,$6,$7}')
+        echo $(dd if=${MTD_PART} bs=6 skip=17 count=1 2>/dev/null | xxd -g 1 | awk 'BEGIN{OFS=":"} {print $2,$3,$4,$5,$6,$7}')
     fi
 }
 

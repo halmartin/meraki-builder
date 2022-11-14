@@ -212,7 +212,9 @@ unsigned int port_base_addr(int type, int port) {
         default:
             port_base = PORT_CR_BASE;
     }
-    return (port_base-2)+(unsigned int)(port*2);
+    // ensure that we only operate on ports < 12
+    // or we calculate the wrong port address
+    return port_base+(unsigned int)(((port-1)%12)*2);
 }
 
 int port_able(struct pd690xx_cfg *pd690xx, int op, int port) {
@@ -252,14 +254,23 @@ int port_able(struct pd690xx_cfg *pd690xx, int op, int port) {
 }
 
 int port_disable(struct pd690xx_cfg *pd690xx, int port) {
+    if (DEBUG) {
+        fprintf(stderr, "Disabling port %d\n", port);
+    }
     return port_able(pd690xx, PORT_DISABLED, port);
 }
 
 int port_enable(struct pd690xx_cfg *pd690xx, int port) {
+    if (DEBUG) {
+        fprintf(stderr, "Enabling port %d\n", port);
+    }
     return port_able(pd690xx, PORT_ENABLED, port);
 }
 
 int port_force(struct pd690xx_cfg *pd690xx, int port) {
+    if (DEBUG) {
+        fprintf(stderr, "Forcing port %d\n", port);
+    }
     return port_able(pd690xx, PORT_FORCED, port);
 }
 

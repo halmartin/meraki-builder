@@ -97,12 +97,15 @@ int main (int argc, char **argv) {
       switch(c) {
         case 'd':
           disable = 1;
+          port = atoi(optarg);
           break;
         case 'e':
           enable = 1;
+          port = atoi(optarg);
           break;
         case 'f':
           force = 1;
+          port = atoi(optarg);
           break;
         case 'l':
           list = 1;
@@ -112,6 +115,7 @@ int main (int argc, char **argv) {
           break;
         case 'r':
           reset = 1;
+          port = atoi(optarg);
           break;
         case 's':
           voltage = 1;
@@ -155,16 +159,16 @@ int main (int argc, char **argv) {
     }
 
     if (disable) {
-        port_disable(&pd690xx, atoi(optarg));
+        port_disable(&pd690xx, port);
     }
     if (enable) {
-        port_enable(&pd690xx, atoi(optarg));
+        port_enable(&pd690xx, port);
     }
     if (force) {
-        port_force(&pd690xx, atoi(optarg));
+        port_force(&pd690xx, port);
     }
     if (reset) {
-        port_reset(&pd690xx, atoi(optarg));
+        port_reset(&pd690xx, port);
     }
     if (list) {
         list_all(&pd690xx);

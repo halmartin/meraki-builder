@@ -212,6 +212,10 @@ unsigned int port_base_addr(int type, int port) {
         default:
             port_base = PORT_CR_BASE;
     }
+    // sanity check the port number
+    if (port < 1) {
+        port = 1;
+    }
     // ensure that we only operate on ports < 12
     // or we calculate the wrong port address
     return port_base+(unsigned int)(((port-1)%12)*2);

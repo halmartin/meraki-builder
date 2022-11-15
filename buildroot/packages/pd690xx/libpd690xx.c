@@ -158,6 +158,9 @@ int i2c_read(int i2c_fd, unsigned char slave_addr, unsigned int reg, unsigned in
 unsigned char get_pd690xx_addr(struct pd690xx_cfg *pd690xx, int port) {
     // check the port number AND verify that the pd690xx is present
     // on the bus before returning the address
+    if (port > 0) {
+        port = port-1;
+    }
     int select = abs(port/12);
     // shouldn't have more than 4 (MAX_PD690XX_COUNT) pd690xx in the switch
     // port number is too high

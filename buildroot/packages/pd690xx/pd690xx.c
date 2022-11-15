@@ -19,7 +19,7 @@
 void list_all(struct pd690xx_cfg *pd690xx) {
     printf("Port\tStatus\t\tType\tPriority\tPower\n");
     int total_ports = 12*pd690xx_pres_count(pd690xx);
-    for (int i=1; i<total_ports; i++) {
+    for (int i=1; i<=total_ports; i++) {
         // print port number
         printf("%d\t", i);
         // print port status
@@ -112,6 +112,14 @@ int main (int argc, char **argv) {
           break;
         case 'p':
           power = 1;
+          if (argv[optind] == NULL) {
+              port = 0;
+          } else {
+              // optarg doesn't seem to work if the
+              // option has an optional value
+              // dirty workaround
+              port = atoi(argv[optind]);
+          }
           break;
         case 'r':
           reset = 1;
@@ -159,29 +167,26 @@ int main (int argc, char **argv) {
     }
 
     if (disable) {
+        if (port < 1 || port > 48) { return 1; };
         port_disable(&pd690xx, port);
     }
     if (enable) {
+        if (port < 1 || port > 48) { return 1; };
         port_enable(&pd690xx, port);
     }
     if (force) {
+        if (port < 1 || port > 48) { return 1; };
         port_force(&pd690xx, port);
     }
     if (reset) {
+        if (port < 1 || port > 48) { return 1; };
         port_reset(&pd690xx, port);
     }
     if (list) {
         list_all(&pd690xx);
     }
     if (power) {
-        if (argv[optind] == NULL) {
-              port = 0;
-          } else {
-              // optarg doesn't seem to work if the
-              // option has an optional value
-              // dirty workaround
-              port = atoi(argv[optind]);
-          }
+        if (port < 1 || port > 48) { return 1; };
         get_power(&pd690xx, port);
     }
     if (voltage) {

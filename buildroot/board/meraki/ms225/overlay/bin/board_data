@@ -26,32 +26,26 @@ product_number_to_model() {
     case $1 in
         600-58020|600-58025-A)
             echo MS225-24P
-            break
         ;;
         600-58030)
             echo MS225-48LP
-            break
         ;;
         600-58045-A|600-58055-A)
             # from "Red October/Crazy Ivan" regex in S10boot
             # could be MS350, MS410, or MS425 (and maybe MS420?)
             echo unknown
-            break
         ;;
         600-58045-B|600-58055-B)
             # from "Red October/Crazy Ivan" regex in S10boot
             echo unknown
-            break
         ;;
         600-58000-C|600-58020-C|600-58040-C)
             # from "Red October/Crazy Ivan" regex in S10boot
             echo unknown
-            break
         ;;
         600-58000-D|600-58040-D)
             # from "Red October/Crazy Ivan" regex in S10boot
             echo unknown
-            break
         ;;
         *)
             echo MS225-24

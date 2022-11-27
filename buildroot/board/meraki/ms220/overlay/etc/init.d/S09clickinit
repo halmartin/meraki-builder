@@ -9,13 +9,7 @@ get_mac_addr() {
     if [ -f /bin/board_data ]; then
         /bin/board_data mac
     else
-        MTD_PART=$(grep "board-config" /proc/mtd | awk -F':' '{print $1}' | grep -Eo "[0-9]")
-        if [ "${MTD_PART}" != "" ]; then
-            # this will get the device's original MAC address from the "board-config" mtd
-            dd if=/dev/mtdblock${MTD_PART} bs=6 skip=17 count=1 2>/dev/null | hexdump -C | head -1 | awk '{print $2,$3,$4,$5,$6,$7}' | tr ' ' ':'
-        else
-            echo 88:15:44:$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2)
-        fi
+        dd if=/sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom bs=6 skip=17 count=1 2>/dev/null | hexdump -C | head -1 | awk '{print $2,$3,$4,$5,$6,$7}' | tr ' ' ':' || echo 88:15:44:$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2)
     fi
 }
 

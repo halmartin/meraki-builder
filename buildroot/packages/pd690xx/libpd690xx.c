@@ -261,24 +261,48 @@ int port_able(struct pd690xx_cfg *pd690xx, int op, int port) {
 }
 
 int port_disable(struct pd690xx_cfg *pd690xx, int port) {
-    if (DEBUG) {
-        fprintf(stderr, "Disabling port %d\n", port);
+    // only toggle the port if desired != present state
+    if (port_state(pd690xx, port) != PORT_DISABLED) {
+        if (DEBUG) {
+            fprintf(stderr, "Disabling port %d\n", port);
+        }
+        return port_able(pd690xx, PORT_DISABLED, port);
+    } else {
+        if (DEBUG) {
+            fprintf(stderr, "Port %d already disabled\n", port);
+        }
     }
-    return port_able(pd690xx, PORT_DISABLED, port);
+    return 0;
 }
 
 int port_enable(struct pd690xx_cfg *pd690xx, int port) {
-    if (DEBUG) {
-        fprintf(stderr, "Enabling port %d\n", port);
+    // only toggle the port if desired != present state
+    if (port_state(pd690xx, port) != PORT_ENABLED) {
+        if (DEBUG) {
+            fprintf(stderr, "Enabling port %d\n", port);
+        }
+        return port_able(pd690xx, PORT_ENABLED, port);
+    } else {
+        if (DEBUG) {
+            fprintf(stderr, "Port %d already enabled\n", port);
+        }
     }
-    return port_able(pd690xx, PORT_ENABLED, port);
+    return 0;
 }
 
 int port_force(struct pd690xx_cfg *pd690xx, int port) {
-    if (DEBUG) {
-        fprintf(stderr, "Forcing port %d\n", port);
+    // only toggle the port if desired != present state
+    if (port_state(pd690xx, port) != PORT_FORCED) {
+        if (DEBUG) {
+            fprintf(stderr, "Forcing port %d\n", port);
+        }
+        return port_able(pd690xx, PORT_FORCED, port);
+    } else {
+        if (DEBUG) {
+            fprintf(stderr, "Port %d already forced\n", port);
+        }
     }
-    return port_able(pd690xx, PORT_FORCED, port);
+    return 0;
 }
 
 

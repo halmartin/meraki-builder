@@ -1,12 +1,13 @@
 #!/bin/sh
 #
-# Copyright (C) 2022 - Hal Martin (github.com/halmartin)
+# Copyright (C) 2022-2023 - Hal Martin (github.com/halmartin)
 #
 # Load broadcom kernel modules
 #
 
 load_pwm() {
     if [ -f /lib/modules/amc6821.ko ]; then
+        modprobe -r amc6821
         insmod /lib/modules/amc6821.ko pwminv=1
     fi
 }
@@ -34,7 +35,7 @@ start() {
     # ethernet
     load_eth
     # broadcom module for switch fabric
-    #load_bcm
+    load_bcm
 }
 
 stop() {

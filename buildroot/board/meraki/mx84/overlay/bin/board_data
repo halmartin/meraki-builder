@@ -1,0 +1,77 @@
+#!/bin/sh
+# Copyright (C) 2022 - Hal Martin (github.com/halmartin)
+
+copy_eeprom() {
+    eeprom_file=/tmp/.board-config.bin
+    # check if the file exists and starts with 5311, otherwise copy it again
+    if [ -f ${eeprom_file} ] && [ $(grep -c 5311 ${eeprom_file}) -eq 1 ]; then
+        return
+    fi
+    if [ -f /sys/class/i2c-dev/i2c-1/device/1-0054/eeprom ]; then
+        # reading over i2c is slow, copy to a file on tmpfs
+        cat /sys/class/i2c-dev/i2c-1/device/1-0054/eeprom > ${eeprom_file}
+    fi
+}
+
+get_board_config_mtd() {
+    copy_eeprom
+    if [ -f /tmp/.board-config.bin ]; then
+        echo /tmp/.board-config.bin
+    else
+        >&2 echo "board-config not found!"
+    fi
+}
+
+product_number_to_model() {
+    echo $(get_model)
+}
+
+get_model() {
+    MTD_PART=$(get_board_config_mtd)
+    echo $(dd if=${MTD_PART} bs=4 skip=2 count=2 2>/dev/null)
+}
+
+get_product_number() {
+    # MX84 doesn't have a product number :-/
+    echo ""
+}
+
+get_serial_number() {
+    MTD_PART=$(get_board_config_mtd)
+    echo $(dd if=${MTD_PART} bs=4 skip=31 count=3 2>/dev/null)
+}
+
+get_mac_addr() {
+    MTD_PART=$(get_board_config_mtd)
+    if [ "${MTD_PART}" != "" ]; then
+        # this will get the device's original MAC address from the "board-config" mtd
+        echo $(dd if=${MTD_PART} bs=6 skip=17 count=1 2>/dev/null | xxd -g 1 | awk 'BEGIN{OFS=":"} {print $2,$3,$4,$5,$6,$7}')
+    fi
+}
+
+usage() {
+  echo "Usage $0: [mac|model|serial|product_number]"
+  exit 0
+}
+
+if [ $# -eq 1 ]; then
+  case $1 in
+    mac)
+      get_mac_addr
+    ;;
+    model)
+      product_number_to_model $(get_product_number)
+    ;;
+    product_number)
+      get_product_number
+    ;;
+    serial)
+      get_serial_number
+    ;;
+    *)
+      usage
+    ;;
+  esac
+else
+  usage
+fi

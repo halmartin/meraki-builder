@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+# Copyright (C) 2023 - Hal Martin (github.com/halmartin)
+#
+
+start() {
+    if [ -f /bin/board_data ]; then
+        MAC=$(/bin/board_data mac)
+        LAST_OCTET=$(echo $MAC | awk -F':' '{print $6}')
+    fi
+    interfaces=$(ls -d /sys/class/net/eth*)
+    if [ ! -z $MAC ]; then
+        for i in $interfaces; do
+            i=$(basename $i)
+            int=$(echo $i | grep -Eo '[0-9]')
+            NEW_LAST_OCTET=$(printf "%02x" $((0x$LAST_OCTET+$int)))
+            ifconfig ${i} hw ether $(echo $MAC | sed "s/$LAST_OCTET\$/$NEW_LAST_OCTET/g")
+            # bring up the eth interface or MDIO will fail
+            ifconfig ${i} up
+        done
+    fi
+
+    VTSS_SOCKET=/tmp/vtss.sock
+    dtach -n $VTSS_SOCKET /usr/bin/vtss_poca_d.static
+    pid=$!
+    echo $pid > /tmp/vtss_poca_d.pid
+    echo -n "VTSS switching: "
+    # wait for the switch to initialise
+    # yeah there might be a better way to detect this...
+    sleep 12
+    # VTSS should be initialised now
+    # turn up all the eth interfaces
+    for i in $interfaces; do
+        int=$(basename $i)
+        ifconfig $int up
+        if [ $(echo $int | grep -c 3) -eq 0 ]; then
+            ifconfig $int promisc
+        else
+            # MTU 1508 to accomodate VTSS tagging
+            ifconfig $int mtu 1508
+        fi
+    done
+    # set up the VTSS ports to allow traffic
+    printf "port state 1-17 enable\n" | dtach -p $VTSS_SOCKET
+    # this feels... wrong
+    printf "port state 1-17 enable\n" | dtach -p $VTSS_SOCKET
+    sleep 2
+    printf "vlan add 1 1-17\n" | dtach -p $VTSS_SOCKET
+    printf "vlan add 1 1-17\n" | dtach -p $VTSS_SOCKET
+    sleep 1
+    printf "vlan pvid 1-17 1\n" | dtach -p $VTSS_SOCKET
+    printf "vlan pvid 1-17 1\n" | dtach -p $VTSS_SOCKET
+    sleep 1
+    # we should have connectivity now, maybe?
+}
+
+stop() {
+    # kill vtss_poca_d; why? I don't know, you like pain
+    VTSS_SOCKET=/tmp/vtss.sock
+    echo "exit" | dtach -p $VTSS_SOCKET
+    echo "" | dtach -p $VTSS_SOCKET
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+      start
+    ;;
+  stop)
+      stop
+    ;;
+  restart|reload)
+      restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?

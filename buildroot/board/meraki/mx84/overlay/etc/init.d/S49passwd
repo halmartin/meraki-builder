@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# Copyright (C) 2023 - Hal Martin (github.com/halmartin)
+#
+
+start() {
+    # set the root password to the device serial
+    if [ -f /bin/board_data ]; then
+        serial=$(board_data serial)
+    else
+        serial=$(cat /sys/class/i2c-dev/i2c-1/device/1-0054/eeprom | grep Q2)
+    fi
+    echo -e "$serial\n$serial" | passwd root 1>&2 >/dev/null
+}
+
+stop() {
+    /bin/true
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+      start
+    ;;
+  stop)
+      stop
+    ;;
+  restart|reload)
+      restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?

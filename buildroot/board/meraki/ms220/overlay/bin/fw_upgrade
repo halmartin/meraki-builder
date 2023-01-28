@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+if [ ! -n "$1" ]; then
+  echo "error: must pass path to firmware bin or squashfs"
+  echo "usage: $0 ./path/to/firmware.bin"
+  exit 1
+fi
+FILE="$1"
+
+case "$FILE" in
+  *.bin)
+    # extract sqaushfs from bin
+    tmp=$(mktemp squashfs.XXXXXX)
+    busybox dd if="$FILE" bs=1M skip=3 count=8 of="$tmp"
+    FILE="$tmp"
+  ;;
+  *.squashfs)
+    # copy to /tmp, if not already there
+    case "$(realpath $FILE)" in
+      /tmp/*)
+      ;;
+      *)
+        cp "$FILE" /tmp/
+      ;;
+    esac
+  ;;
+  *)
+    echo "error: cannot determine input filetype; must have .bin or .squashfs suffix"
+    exit 1
+  ;;
+esac
+
+cp -f /bin/busybox /usr/sbin/flash_erase /tmp/
+cd /tmp/
+
+killall chrony syslogd klogd uhttpd || true
+
+./flash_erase /dev/mtd3 0 0
+./busybox dd if="$FILE" of=/dev/mtdblock3 bs=65535 conv=fsync
+
+# reboot
+echo b > /proc/sysrq-trigger

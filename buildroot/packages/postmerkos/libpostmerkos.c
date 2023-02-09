@@ -8,24 +8,6 @@
 #include <time.h>
 
 
-// has_poe returns true if the device is PoE-capable, false otherwise
-bool has_poe() {
-  // there's probably a better way to do this than guessing based on the device
-  // name
-  bool has = false;
-
-  FILE *file = fopen(DEVICE_FILE, "r");
-  char line[100];
-  if (fgets(line, sizeof(line), file)) {
-    if (starts_with(line, "MODEL=") && ends_with(line, "P\n")) {
-      has = true;
-    }
-  }
-
-  fclose(file);
-  return has;
-}
-
 // get_time returns the current time in ISO 8601 format
 char* get_time() {
   time_t now = time(NULL);

@@ -4,7 +4,6 @@
 #define DEVICE_FILE "/etc/boardinfo"
 #define PORTS_FILE "/click/switch_port_table/dump_pports"
 
-_Bool has_poe();
 char *get_time();
 _Bool starts_with(const char*, const char*);
 _Bool ends_with(const char*, const char *);

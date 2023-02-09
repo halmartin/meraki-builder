@@ -195,9 +195,9 @@ int main(int argc, char **argv) {
   }
 
   // determine whether board is poe capable
-  poe_capable = has_poe();
-  if (poe_capable) {
-    i2c_init(&pd690xx);
+  i2c_init(&pd690xx);
+  if (pd690xx_pres_count(&pd690xx)) {
+    poe_capable = true;
   }
 
   // create config file if it doesn't exist

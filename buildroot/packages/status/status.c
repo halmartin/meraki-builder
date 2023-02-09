@@ -23,9 +23,9 @@ struct pd690xx_cfg pd690xx = {
 };
 
 int main(int argc, char **argv) {
-  poe_capable = has_poe();
-  if (poe_capable) {
-    i2c_init(&pd690xx);
+  i2c_init(&pd690xx);
+  if (pd690xx_pres_count(&pd690xx)) {
+    poe_capable = true;
   }
 
   struct json_object *jobj = json_object_new_object();

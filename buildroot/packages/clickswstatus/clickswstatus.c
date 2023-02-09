@@ -1,7 +1,7 @@
 #include <libpostmerkos.h>
 #include <libpd690xx.h>
 #include "pd690xx_meraki.h"
-#include "status.h"
+#include "clickswstatus.h"
 
 #include <dirent.h>
 #include <json-c/json.h>

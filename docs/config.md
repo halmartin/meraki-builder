@@ -58,9 +58,9 @@ The following binaries are related to device configuration and status.
 The `configd` daemon will poll (with a 1 second wait) the `/etc/switch.json` file (and create it, if one doesn't exist) for changes and apply them to the switch using the `/click` interface.
 
 
-### `status`
+### `clickswstatus`
 
-The `status` command will report read-only values in json format.
+The `clickswstatus` command will report read-only values in json format.
 
 It's the logic behind the `/status` API documented below.
 

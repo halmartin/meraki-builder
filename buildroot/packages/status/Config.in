@@ -1,5 +1,0 @@
-config BR2_PACKAGE_STATUS
-bool "status"
-help
-The status utility is used to read the switch's status
-select BR2_PACKAGE_JSON_C

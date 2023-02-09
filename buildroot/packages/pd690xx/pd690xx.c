@@ -16,6 +16,14 @@
 
 // Copyright(C) 2020-2022 - Hal Martin <hal.martin@gmail.com>
 
+// print str and then add an extra \t if str is short
+void printf_pad(char* str) {
+    printf("%s\t", str);
+    if (strlen(str) < 8) {
+      printf("\t");
+    }
+}
+
 void list_all(struct pd690xx_cfg *pd690xx) {
     printf("Port\tStatus\t\tType\tPriority\tPower\n");
     int total_ports = 12*pd690xx_pres_count(pd690xx);
@@ -23,44 +31,11 @@ void list_all(struct pd690xx_cfg *pd690xx) {
         // print port number
         printf("%d\t", i);
         // print port status
-        switch(port_state(pd690xx, i)) {
-            case PORT_DISABLED:
-                printf("Disabled\t");
-                break;
-            case PORT_ENABLED:
-                printf("Enabled\t\t");
-                break;
-            case PORT_FORCED:
-                printf("Forced\t\t");
-                break;
-            default:
-                printf("Unknown\t");
-        }
+        printf_pad(port_state_str(pd690xx, i));
         // print port type
-        switch(port_type(pd690xx, i)) {
-            case PORT_MODE_AF:
-                printf("af\t");
-                break;
-            case PORT_MODE_AT:
-                printf("at\t");
-                break;
-            default:
-                printf("Unknown\t");
-        }
+        printf("%s\t", port_type_str(pd690xx, i));
         // print port priority
-        switch(port_priority(pd690xx, i)) {
-            case PORT_PRIO_CRIT:
-                printf("Critical\t");
-                break;
-            case PORT_PRIO_HIGH:
-                printf("High\t\t");
-                break;
-            case PORT_PRIO_LOW:
-                printf("Low\t\t");
-                break;
-            default:
-                printf("Unknown\t");
-        }
+        printf_pad(port_priority_str(pd690xx, i));
         // print port power
         printf("%.1f\n", port_power(pd690xx, i));
     }
@@ -193,7 +168,10 @@ int main (int argc, char **argv) {
         get_voltage(&pd690xx);
     }
     if (temp) {
-        get_temp(&pd690xx);
+        float* temps = get_temp(&pd690xx);
+        for (int i=0; i<sizeof(temps); i++) {
+          printf("%.1f C\n", temps[i]);
+        }
     }
 
     i2c_close(&pd690xx);

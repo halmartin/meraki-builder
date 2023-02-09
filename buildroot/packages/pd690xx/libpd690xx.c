@@ -352,6 +352,19 @@ int port_state(struct pd690xx_cfg *pd690xx, int port) {
     return port_enabled;
 }
 
+char* port_state_str(struct pd690xx_cfg *pd690xx, int port) {
+    switch(port_state(pd690xx, port)) {
+        case PORT_DISABLED:
+            return "Disabled";
+        case PORT_ENABLED:
+            return "Enabled";
+        case PORT_FORCED:
+            return "Forced";
+        default:
+            return "Unknown";
+    }
+}
+
 int port_type(struct pd690xx_cfg *pd690xx, int port) {
     unsigned int res;
     int port_mode = -1;
@@ -375,6 +388,17 @@ int port_type(struct pd690xx_cfg *pd690xx, int port) {
         }
     }
     return port_mode;
+}
+
+char* port_type_str(struct pd690xx_cfg *pd690xx, int port) {
+    switch(port_type(pd690xx, port)) {
+        case PORT_MODE_AF:
+            return "af";
+        case PORT_MODE_AT:
+            return "at";
+        default:
+            return "Unknown";
+    }
 }
 
 int port_priority(struct pd690xx_cfg *pd690xx, int port) {
@@ -405,15 +429,29 @@ int port_priority(struct pd690xx_cfg *pd690xx, int port) {
     return port_prio;
 }
 
-int get_temp(struct pd690xx_cfg *pd690xx) {
+char* port_priority_str(struct pd690xx_cfg *pd690xx, int port) {
+    switch(port_priority(pd690xx, port)) {
+        case PORT_PRIO_CRIT:
+            return "Critical";
+        case PORT_PRIO_HIGH:
+            return "High";
+        case PORT_PRIO_LOW:
+            return "Low";
+        default:
+            return "Unknown";
+    }
+}
+
+float* get_temp(struct pd690xx_cfg *pd690xx) {
     unsigned int res;
     int pd690xx_count = pd690xx_pres_count(pd690xx);
+    float* temps = malloc (sizeof (float) * pd690xx_count);
     for (int i=0; i<pd690xx_count; i++) {
         int i2c_fd = pd690xx_fd(pd690xx, i*12);
         i2c_read(i2c_fd, pd690xx->pd690xx_addrs[i], AVG_JCT_TEMP, &res);
-        printf("%.1f C\n", (((int)res-684)/-1.514)-40);
+        temps[i] = (((int)res-684)/-1.514)-40;
     }
-    return 0;
+    return temps;
 }
 
 int get_power(struct pd690xx_cfg *pd690xx, int port) {

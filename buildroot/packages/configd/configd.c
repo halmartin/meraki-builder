@@ -140,18 +140,20 @@ int write_config(struct json_object *json) {
 }
 
 // poll config file for changes
-void poll() {
+void poll(int polling_interval, char* config_file) {
   time_t mtime;
   time(&mtime);
   struct stat st;
   struct json_object *current = read_config();
   struct json_object *modified;
 
-  int file = open(CONFIG_FILE, O_RDONLY);
+  int file = open(config_file, O_RDONLY);
   if(file == -1) { 
     printf("unable to open file\n"); 
     return; 
   } 
+
+  printf("polling %s for changes every %i seconds\n", config_file, polling_interval);
 
   while(true) {
     // get file modification time
@@ -163,19 +165,34 @@ void poll() {
 
     if (difftime(st.st_mtime, mtime) > 0) {
       mtime = st.st_mtime;
-      modified = json_object_from_file(CONFIG_FILE);
+      modified = json_object_from_file(config_file);
       if (!json_object_equal(current, modified)) {
         current = modified;
         write_config(modified);
       }
     }
 
-    sleep(1);
+    sleep(polling_interval);
   }
 
 }
 
 int main(int argc, char **argv) {
+
+  char* config_file = "/etc/switch.json";
+  int polling_interval = 10;
+  int c;
+
+  while ((c = getopt (argc, argv, "c:p:")) != -1) {
+    switch(c) {
+      case 'c':
+        config_file = optarg;
+        break;
+      case 'p':
+        polling_interval = atoi(optarg);
+        break;
+    }
+  }
 
   // determine whether board is poe capable
   poe_capable = has_poe();
@@ -184,9 +201,9 @@ int main(int argc, char **argv) {
   }
 
   // create config file if it doesn't exist
-  if(access(CONFIG_FILE, F_OK) != 0) {
-    printf("new config file created at %s\n", CONFIG_FILE);
-    FILE *file = fopen(CONFIG_FILE, "w");
+  if(access(config_file, F_OK) != 0) {
+    printf("new config file created at %s\n", config_file);
+    FILE *file = fopen(config_file, "w");
     const char * json = json_object_to_json_string_ext(
                    read_config(), JSON_C_TO_STRING_SPACED | JSON_C_TO_STRING_PRETTY);
     fprintf(file, json);
@@ -196,6 +213,6 @@ int main(int argc, char **argv) {
   // inotify is not currently enabled and returns the following error:
   //   inotify_init: Function not implemented
   // so lets poll for now
-  poll();
+  poll(polling_interval, config_file);
 
 }

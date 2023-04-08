@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# Change the password from 'postmerkOS' to the device serial
+#
+
+start() {
+    # determine if we have the default password
+    password_salt=$(echo "postmerkOS" | mkpasswd -S c8TqezDW -m sha256)
+    # set a device specific password
+    if [ $(grep -c $password_salt /etc/shadow) -eq 1 ]; then
+        serial=$(board_data serial) 
+        if [ ! -z ${serial} ]; then
+            echo -e "${serial}\n${serial}" | passwd -a sha256 root >/dev/null 2>&1
+            echo "Set root password to: ${serial}"
+        fi
+    fi
+}
+
+stop() {
+    /bin/true
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+      start
+    ;;
+  stop)
+      stop
+    ;;
+  restart|reload)
+      restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?

@@ -1,0 +1,193 @@
+#!/bin/sh
+#set -x
+
+OPTIND=1
+VERIFY=0
+FORCE_FLASH=0
+FLASH=1
+FLASH_KERNEL=0
+REBOOT_AFTER_FLASH=1
+if [ -f /etc/lsb-release ]; then
+    CURRENT_VERSION=$(cat /etc/lsb-release | grep -E '^DISTRIB_RELEASE' | grep -Eo '[0-9]{8}')
+fi
+
+usage() {
+    echo "usage: $0 [-v] [-f] ./path/to/firmware.bin"
+}
+
+exit_fail() {
+    echo $1 1>2
+    exit 1
+}
+
+is_squashfs() {
+    if [ $(wc -c $1 | awk '{print $1}') -gt 8388608 ] || [ $(dd if=$1 bs=8 count=1 2>/dev/null | grep -c hsqs) -ne 1 ]; then
+        exit_fail "$1 is not a valid squashfs file"
+    fi
+}
+
+is_redboot() {
+    if [ $(wc -c $1 | awk '{print $1}') -ne 16777216 ] && [ $(dd if=$1 bs=8 count=1 2>/dev/null | hexdump -C | grep -c '26 d0 5a 03') -ne 1 ]; then
+        exit_fail "$1 is not a valid firmware file"
+    fi
+}
+
+is_kernel() {
+    if [ $(strings $1 | grep -c "Uncompressing Linux at load address") -eq 0 ]; then
+        exit_fail "$1 is not a kernel image"
+    fi
+    if [ $(strings $1 | grep -Ec '^SPIM') -ne 1 ]; then
+        exit_fail "$1 is not a MIPS kernel"
+    fi
+    KERNEL_SIZE=$((0x$(cat /proc/mtd | grep kernel | awk '{print $2}')))
+    if [ $(wc -c $1 | awk '{print $1}') -gt ${KERNEL_SIZE} ]; then
+        exit_fail "$1 exceeds maximum allowed size (${KERNEL_SIZE})"
+    fi
+}
+
+required_tools() {
+    if [ ! -f /bin/busybox ] || [ ! -f /usr/sbin/flash_erase ]; then
+        exit_fail "Could not find busybox or flash_erase binaries"
+    fi
+}
+
+copy_tools() {
+    cp -f /bin/busybox /usr/sbin/flash_erase /tmp/
+}
+
+verify() {
+    FILE=$1
+    case "$FILE" in
+    *.bin)
+        # extract squashfs from bin
+        is_redboot ${FILE}
+        # clean up any previously carved files
+        rm -f /tmp/squashfs.*
+        tmp=$(mktemp squashfs.XXXXXX)
+        busybox dd if="${FILE}" bs=1M skip=3 count=8 of="$tmp"
+        is_squashfs ${tmp}
+        # overwrite FILE with the new extracted tmpfile
+        export FILE=${tmp}
+    ;;
+    *.squashfs)
+        is_squashfs ${FILE}
+    ;;
+    *)
+        exit_fail "error: cannot determine input filetype; must have .bin or .squashfs suffix"
+    ;;
+    esac
+}
+
+get_mtd() {
+    MTD_DEV=$(cat /proc/mtd | grep -E "\"$1\"$" | grep -Eo 'mtd[0-9]')
+    echo ${MTD_DEV}
+}
+
+mtd_num() {
+    echo $1 | grep -Eo '[0-9]$'
+}
+
+kill_daemons() {
+    killall chrony syslogd klogd uhttpd >/dev/null 2>&1 || true
+}
+
+flash_system() {
+    MTD_DEV=$1
+    MTD_NUM=$(mtd_num ${MTD_DEV})
+    FILE=$2
+    FLASH_LOG=/tmp/flash.log
+    cd /tmp/
+    echo "Erasing ${MTD_DEV}" 1>2
+    ./flash_erase /dev/${MTD_DEV} 0 0
+    echo "Writing ${FILE} to ${MTD_DEV}" 1>2
+    ./busybox dd if="${FILE}" of=/dev/mtdblock${MTD_NUM} bs=65535 conv=fsync > ${FLASH_LOG} 2>&1
+}
+
+is_same_version() {
+    if [ ! -z ${CURRENT_VERSION} ] && [ $(basename $1 | grep -c $CURRENT_VERSION) -eq 1 ] && [ $FORCE_FLASH != 1 ]; then
+        echo "You are trying to flash ${CURRENT_VERSION} but this matches the current firmware. Use '-f' to force overwriting"
+        exit 1
+    fi
+}
+
+while getopts "h?vfk" opt; do
+    case "$opt" in
+        h|\?)
+            usage
+            exit 0
+            ;;
+        v)
+            VERIFY=1
+            FLASH=0
+            ;;
+        f)
+            FORCE_FLASH=1
+            ;;
+        k)
+            FLASH_KERNEL=1
+            # don't automatically reboot after flashing the kernel,
+            # because we might need to flash userspace too
+            REBOOT_AFTER_FLASH=0
+            ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+[ "${1:-}" = "--" ] && shift
+
+FILE="$1"
+
+if [ ! -f $FILE ]; then
+    exit_fail "$FILE not found"
+fi
+
+is_same_version $FILE
+# either we have a different version or force flash was specified
+if [ ${FLASH_KERNEL} -ne 1 ]; then
+    verify $FILE
+else
+    is_kernel $FILE
+fi
+if [ $VERIFY -eq 1 ]; then
+    # called with the verify option only, so don't flash
+    exit 0
+fi
+# we verified the sanity of the input file
+required_tools
+copy_tools
+# we have the required tools
+kill_daemons
+# kill daemons to prevent issues
+if [ $FLASH_KERNEL -eq 1 ]; then
+    MTD=$(get_mtd kernel)
+else
+    MTD=$(get_mtd squashfs)
+fi
+if [ -z ${MTD} ]; then
+    echo "Could not find appropriate mtd device to flash!"
+    exit 1
+fi
+MTD_NUM=$(mtd_num $MTD)
+# go and write the new firmware
+flash_system $MTD $FILE
+
+# reboot
+FLASH_STATUS=$?
+if [ $FLASH_STATUS -eq 0 ]; then
+    echo "Flash completed!"
+    if [ $REBOOT_AFTER_FLASH -eq 1 ]; then
+        echo "Rebooting..."
+        sleep 3
+        echo b > /proc/sysrq-trigger
+    else
+        echo "Continue flashing or reboot with:"
+        echo "echo b > /proc/sysrq-trigger"
+    fi
+else
+    echo "!!! FLASHING FAILED !!!"
+    echo "Error output:"
+    if [ -f ${FLASH_LOG} ]; then
+        cat ${FLASH_LOG}
+    fi
+fi

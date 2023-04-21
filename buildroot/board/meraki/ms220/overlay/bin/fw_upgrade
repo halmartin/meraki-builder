@@ -16,7 +16,7 @@ usage() {
 }
 
 exit_fail() {
-    echo $1 1>2
+    echo $1
     exit 1
 }
 
@@ -70,6 +70,7 @@ verify() {
         export FILE=${tmp}
     ;;
     *.squashfs)
+    *.region)
         is_squashfs ${FILE}
     ;;
     *)
@@ -97,9 +98,9 @@ flash_system() {
     FILE=$2
     FLASH_LOG=/tmp/flash.log
     cd /tmp/
-    echo "Erasing ${MTD_DEV}" 1>2
+    echo "Erasing ${MTD_DEV}"
     ./flash_erase /dev/${MTD_DEV} 0 0
-    echo "Writing ${FILE} to ${MTD_DEV}" 1>2
+    echo "Writing ${FILE} to ${MTD_DEV}"
     ./busybox dd if="${FILE}" of=/dev/mtdblock${MTD_NUM} bs=65535 conv=fsync > ${FLASH_LOG} 2>&1
 }
 

@@ -1,5 +1,7 @@
 #!/bin/sh
 #
+# Copyright (C) Hal Martin (github.com/halmartin)
+#
 # Set up GPIO for the PD690xx
 #
 
@@ -10,6 +12,7 @@ start() {
     # MS220-8P:  switch_type 3 (VSC7425)
     # MS220-24P: switch_type 5 (VSC7427)
     # MS220-48P: switch_type 6 (VSC7434 dual)
+    # MS320-24: switch_type 7 (VSC7434)
     # this is to configure the PD690xx (to auto mode?)
     # libpoecore.so: hard_init
     if [ $(cat /proc/cpuinfo | grep -c 7425) -eq 1 ]; then
@@ -21,6 +24,10 @@ start() {
       GPIO1=82
       GPIO2=81
     elif [ $(cat /proc/cpuinfo | grep -c 7434) -eq 1 ]; then
+      # switch_type 7
+      GPIO1=9
+      GPIO2=8
+    elif [ $(cat /proc/cpuinfo | grep -c "7434 Dual") -eq 1 ]; then
       # switch_type 6
       GPIO1=41
       GPIO2=40

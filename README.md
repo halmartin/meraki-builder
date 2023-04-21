@@ -1,11 +1,16 @@
 # meraki-builder
+
+## MS switches
 Scripts and tools to assemble firmware images for the following Meraki switches:
 * MS220-8(P)
 * MS220-24(P), MS220-48(LP|FP)
 * MS22(P) and MS42(P)
 * MS320-24(P) and MS320-48(LP|FP)
 
-There is also an overlay for building a firmware image for the Meraki MX80, see `buildroot/board/meraki/mx80`.
+## MX routers
+buildroot support exists for the following MX router models:
+* MX80 (`buildroot/board/meraki/mx80`)
+* MX84 (`buildroot/board/meraki/mx84`)
 
 # Build instructions
 

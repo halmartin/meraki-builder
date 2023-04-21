@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2020-2022 - Hal Martin (github.com/halmartin)
+# Copyright (C) Hal Martin (github.com/halmartin)
 #
 # Load kernel modules for managing the Vitesse ASIC
 #
@@ -57,7 +57,7 @@ determine_board() {
         MS320-24|MS320-24P|VSC7434)
             mod_dir=jaguar
             switch_board=MERAKI_BOARD_MS320_24
-            echo 24 > /tmp/NUM_PORTS
+            echo 28 > /tmp/NUM_PORTS
         ;;
         MS320-48|MS320-48P|"VSC7434 Dual")
             mod_dir=jaguar_dual

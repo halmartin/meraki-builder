@@ -5,7 +5,7 @@
 
 start() {
     # determine if we have the default password
-    password_salt=$(echo "postmerkOS" | mkpasswd -S c8TqezDW -m sha256)
+    password_salt=$(echo "postmerkOS" | mkpasswd -S __SALT__ -m sha256)
     # set a device specific password
     if [ $(grep -c $password_salt /etc/shadow) -eq 1 ]; then
         serial=$(board_data serial) 

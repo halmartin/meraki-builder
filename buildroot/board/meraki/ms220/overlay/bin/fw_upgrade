@@ -69,8 +69,7 @@ verify() {
         # overwrite FILE with the new extracted tmpfile
         export FILE=${tmp}
     ;;
-    *.squashfs)
-    *.region)
+    *.squashfs|*.region)
         is_squashfs ${FILE}
     ;;
     *)

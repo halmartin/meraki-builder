@@ -21,7 +21,7 @@ DISTRIB_DESCRIPTION="postmerkOS mipsel"
 EOF
 
 # get the salt from /etc/shadow and replace it in the initscript
-salt=$(grep -E '^root' ${TARGET_DIR}/etc/shadow | awk -F'$' '{print $3}')
+salt=$(grep -E '^root' ${TARGET_DIR}/etc/shadow | awk -F'$' '{print $3}' | tr '/' '\/')
 if [ -f ${TARGET_DIR}/etc/init.d/S14passwd ]; then
     sed -i "s/__SALT__/${salt}/g" ${TARGET_DIR}/etc/init.d/S14passwd
     echo "Changed salt to \"${salt}\" in /etc/init.d/S14passwd"

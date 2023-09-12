@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2022 - Hal Martin (github.com/halmartin)
+# Copyright (C) Hal Martin (github.com/halmartin)
 
 copy_eeprom() {
     eeprom_file=/tmp/.board-config.bin
@@ -9,7 +9,15 @@ copy_eeprom() {
     fi
     if [ -f /sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom ]; then
         # reading over i2c is slow, copy to a file on tmpfs
-        cat /sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom > ${eeprom_file}
+        cat /sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom > ${eeprom_file} 2>/dev/null
+        if [ $? -ne 0 ]; then
+          # Error reading EEPROM?
+          # Fall back to board-config from flash, even though it may be wrong
+          if [ $(grep -c "board-config" /proc/mtd) -ne 0 ]; then
+            mtd_num=$(grep "board-config" /proc/mtd | awk -F':' '{print $1}' | grep -Eo "[0-9]")
+            cat /dev/mtdblock${mtd_num} > ${eeprom_file}
+          fi
+        fi
     fi
 }
 
@@ -18,6 +26,23 @@ get_board_config_mtd() {
     if [ -f /tmp/.board-config.bin ]; then
         echo /tmp/.board-config.bin
     elif [ $(grep -c "board-config" /proc/mtd) -ne 0 ]; then
+        mtd_num=$(grep "board-config" /proc/mtd | awk -F':' '{print $1}' | grep -Eo "[0-9]")
+        echo /dev/mtdblock${mtd_num}
+    else
+        >&2 echo "board-config not found!"
+    fi
+}
+
+get_real_board_config() {
+    if [ -f /sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom ]; then
+        # test that it works
+        cat /sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom > /dev/null 2>/dev/null
+        if [ $? -eq 0 ]; then
+            echo "/sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom"
+            return
+        fi
+    fi
+    if [ $(grep -c "board-config" /proc/mtd) -ne 0 ]; then
         mtd_num=$(grep "board-config" /proc/mtd | awk -F':' '{print $1}' | grep -Eo "[0-9]")
         echo /dev/mtdblock${mtd_num}
     else
@@ -102,19 +127,74 @@ get_board_cpu() {
 
 get_product_number() {
     MTD_PART=$(get_board_config_mtd)
-    echo $(dd if=${MTD_PART} bs=8 skip=1 count=8 2>/dev/null | grep -Eo "(600-2[018]0[1-9]0)|(0[9])")
+    PRODUCT_NUMBER=$(dd if=${MTD_PART} bs=8 skip=1 count=8 2>/dev/null | grep -Eo "(600-2[018]0[1-9]0)|(0[9])")
+    # this shouldn't happen!
+    if [ -z ${PRODUCT_NUMBER} ]; then
+        PRODUCT_NUMBER=600-21050
+        >&2 echo "Could not get product number, using: ${PRODUCT_NUMBER}"
+    fi
+    echo $PRODUCT_NUMBER
 }
 
 get_serial_number() {
     MTD_PART=$(get_board_config_mtd)
-    echo $(dd if=${MTD_PART} bs=4 skip=31 count=3 2>/dev/null)
+    SERIAL=$(dd if=${MTD_PART} bs=4 skip=31 count=3 2>/dev/null)
+    if [ -z ${SERIAL} ]; then
+        SERIAL=Q2XXXXXXXXXV
+        >&2 echo "Could not get serial, using: ${SERIAL}"
+    fi
+    echo $SERIAL
 }
 
 get_mac_addr() {
     MTD_PART=$(get_board_config_mtd)
     if [ "${MTD_PART}" != "" ]; then
         # this will get the device's original MAC address from the "board-config" mtd
-        echo $(dd if=${MTD_PART} bs=6 skip=17 count=1 2>/dev/null | xxd -g 1 | awk 'BEGIN{OFS=":"} {print $2,$3,$4,$5,$6,$7}')
+        MAC=$(dd if=${MTD_PART} bs=6 skip=17 count=1 2>/dev/null | xxd -g 1 | awk 'BEGIN{OFS=":"} {print $2,$3,$4,$5,$6,$7}')
+    fi
+    # obtaining a MAC address from the config mtd failed, generate a random one instead
+    if [ -z ${MAC} ]; then
+        MAC=$(echo 88:15:44:$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2))
+        >&2 echo "Could not get MAC, using random: ${MAC}"
+    fi
+    echo $MAC
+}
+
+set_mac_addr() {
+    [[ -z "$DANGERZONE" ]] && return 1
+    if [ $(echo "$1" | grep -Ec '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$') -ne 1 ]; then
+        echo "Invalid MAC address: $1"
+        return 1
+    fi
+    MTD_PART=$(get_real_board_config)
+    if [ "${MTD_PART}" != "" ]; then
+        # this will write the device's MAC address
+        echo $1 | awk -F':' '{print "00000000:",$1,$2,$3,$4,$5,$6,$7}' | xxd -r | dd of=${MTD_PART} bs=6 seek=17 count=1 conv=notrunc 2>/dev/null
+    fi
+}
+
+set_product_number() {
+    [[ -z "$DANGERZONE" ]] && return 1
+    if [ $(echo "$1" | grep -Ec '^600-2[018]0[0-9]0$') -ne 1 ]; then
+        echo "Invalid product number: $1"
+        return 1
+    fi
+    MTD_PART=$(get_real_board_config)
+    if [ "${MTD_PART}" != "" ]; then
+        echo -n "meraki_$(product_number_to_model $1) $1" | dd of=${MTD_PART} bs=8 seek=1 count=8 conv=notrunc 2>/dev/null
+    fi
+}
+
+set_serial_number() {
+    [[ -z "$DANGERZONE" ]] && return 1
+    serial=$(echo "$1" | tr -d '-')
+    if [ $(echo "$serial" | grep -Ec '^Q2[A-Z0-9]{10}$') -ne 1 ]; then
+        echo "Invalid serial number: $1"
+        return 1
+    fi
+    MTD_PART=$(get_real_board_config)
+    if [ "${MTD_PART}" != "" ]; then
+        echo -n "$serial" | dd of=${MTD_PART} bs=4 seek=31 count=3 conv=notrunc 2>/dev/null
     fi
 }
 
@@ -123,7 +203,7 @@ usage() {
   exit 0
 }
 
-if [ $# -eq 1 ]; then
+if [ $# -ge 1 ]; then
   case $1 in
     mac)
       get_mac_addr
@@ -136,6 +216,15 @@ if [ $# -eq 1 ]; then
     ;;
     serial)
       get_serial_number
+    ;;
+    set_mac)
+      return $(set_mac_addr $2)
+    ;;
+    set_serial)
+      return $(set_serial $2)
+    ;;
+    set_product_number)
+      return $(set_product_number $2)
     ;;
     *)
       usage

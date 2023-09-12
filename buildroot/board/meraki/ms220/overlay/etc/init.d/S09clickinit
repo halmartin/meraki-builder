@@ -1,28 +1,36 @@
 #!/bin/sh
 #
-# Copyright (C) 2020-2022 - Hal Martin (github.com/halmartin)
+# Copyright (C) Hal Martin (github.com/halmartin)
 #
 # Mount click filesystem for managing the Vitesse ASIC
 #
 
 get_mac_addr() {
+    MAC=""
     if [ -f /bin/board_data ]; then
-        /bin/board_data mac
+        MAC=$(/bin/board_data mac)
     else
-        dd if=/sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom bs=6 skip=17 count=1 2>/dev/null | hexdump -C | head -1 | awk '{print $2,$3,$4,$5,$6,$7}' | tr ' ' ':' || echo 88:15:44:$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2)
+        if [ -f /sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom ]; then
+            MAC=$(dd if=/sys/devices/platform/i2c-gpio.1/i2c-1/1-0051/eeprom bs=6 skip=17 count=1 2>/dev/null | hexdump -C | head -1 | awk '{print $2,$3,$4,$5,$6,$7}' | tr ' ' ':')
+        fi
     fi
+    if [ -z ${MAC} ] || [ $(echo "$MAC" | grep -Ec '([0-9a-f]{2}:){5}[0-9a-f]{2}') -ne 1 ]; then
+        # the MAC is empty or invalid
+        MAC=$(echo 88:15:44:$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2):$(echo $RANDOM | cut -c0-2))
+    fi
+    echo $MAC
 }
 
 start() {
     if [ ! -f /etc/MERAKI_MAC ]; then
         # generate it to /tmp/, just in case the overlay mount failed
         # and /etc isn't writable
-        get_mac_addr > /tmp/MERAKI_MAC
+        echo $(get_mac_addr) > /tmp/MERAKI_MAC
         cp /tmp/MERAKI_MAC /etc/
     else
         cp /etc/MERAKI_MAC /tmp/
     fi
-    cp /etc/MERAKI_MAC /tmp/
+    echo "Using MAC address: $(cat /tmp/MERAKI_MAC)"
     # extract the bottom three octets to use as IP
     # Meraki's logic, not mine
     cat /tmp/MERAKI_MAC | sed -n 's/.*:.*:.*:\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\):\([0-9A-Za-z:]*\).*/printf 6.%d.%d.%d\\\\n 0x\1 0x\2 0x\3/p' | xargs -0 sh -c > /tmp/MERAKI_IP

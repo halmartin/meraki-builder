@@ -1,14 +1,14 @@
 current_dir:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 patches:=$(shell find src/meraki-builder/buildroot/patches/ -type f -name "*.patch" -exec basename {} \;)
-BUILDROOT_VERSION=2021.02.8
+BUILDROOT_VERSION=2023.02.4
 
 .PHONY: all
 
 target: all
 
 deps:
-	wget -c https://www.buildroot.org/downloads/buildroot-$(BUILDROOT_VERSION).tar.bz2
-	if [ ! -d src/buildroot ]; then mkdir -p src/buildroot && tar -C src/buildroot --strip-components=1 -jxf buildroot-$(BUILDROOT_VERSION).tar.bz2; fi
+	wget -c https://www.buildroot.org/downloads/buildroot-$(BUILDROOT_VERSION).tar.xz
+	if [ ! -d src/buildroot ]; then mkdir -p src/buildroot && tar -C src/buildroot --strip-components=1 -Jxf buildroot-$(BUILDROOT_VERSION).tar.xz; fi
 	if [ ! -d src/meraki-builder ]; then git clone https://github.com/halmartin/meraki-builder.git src/meraki-builder; else cd src/meraki-builder && git pull && cd ../../; fi
 	cd src/buildroot/board && ln -sf ../../meraki-builder/buildroot/board/meraki . && cd ../../../
 	cd src/buildroot/package && ln -sf ../../meraki-builder/buildroot/packages/pd690xx . && cd ../../../

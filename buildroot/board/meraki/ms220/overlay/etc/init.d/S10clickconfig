@@ -106,7 +106,10 @@ start() {
     echo -e "route_ip 1.1.2.2" > /click/set_alt_conf/set
     echo -e "1024" > /click/sw0_ctrl/set_default_queue_rate_limit
     echo -e "HYBRID_8021x_TIMEOUT 8000, HYBRID_MAC_RADIUS_TIMEOUT 8000 " > /click/switch_auth_port_table/set_hybrid_auth_timeouts
-    for i in $(seq 1 $NUM_PORTS); do
+    # only 9 access policies permitted:
+    # Write handler 'switch_auth_port_table.set_access_policies' error:
+    # NUM: value 10 out of range, bound 9
+    for i in $(seq 1 9); do
       echo -e "NUM $i, ENABLED false" > /click/switch_auth_port_table/set_access_policies
     done
     for i in $(seq 1 $NUM_PORTS); do

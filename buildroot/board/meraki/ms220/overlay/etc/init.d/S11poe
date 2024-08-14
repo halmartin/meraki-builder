@@ -23,10 +23,6 @@ start() {
       # switch_type 1, 4, or 5
       GPIO1=82
       GPIO2=81
-    elif [ $(cat /proc/cpuinfo | grep -c 7434) -eq 1 ]; then
-      # switch_type 7
-      GPIO1=9
-      GPIO2=8
     elif [ $(cat /proc/cpuinfo | grep -c "7434 Dual") -eq 1 ]; then
       # switch_type 6
       GPIO1=41
@@ -35,6 +31,10 @@ start() {
       # so this might not work for MS42P
       # we'd have to use /etc/boardinfo for that?
       # someone with an MS42P can strace poe_server and find out
+    elif [ $(cat /proc/cpuinfo | grep -c 7434) -eq 1 ]; then
+      # switch_type 7
+      GPIO1=9
+      GPIO2=8
     fi
     echo $GPIO1 > /sys/class/gpio/export
     echo $GPIO2 > /sys/class/gpio/export

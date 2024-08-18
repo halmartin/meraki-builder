@@ -15,19 +15,19 @@ start() {
     # MS320-24: switch_type 7 (VSC7434)
     # this is to configure the PD690xx (to auto mode?)
     # libpoecore.so: hard_init
-    if [ $(cat /proc/cpuinfo | grep -c 7425) -eq 1 ]; then
+    if [ $(cat /proc/cpuinfo | grep -Ec "VSC7425$") -eq 1 ]; then
       # switch_type 3
       GPIO1=7
       GPIO2=12
-    elif [ $(cat /proc/cpuinfo | grep -c 7427) -eq 1 ]; then
+    elif [ $(cat /proc/cpuinfo | grep -Ec "VSC7427$") -eq 1 ]; then
       # switch_type 1, 4, or 5
       GPIO1=82
       GPIO2=81
-    elif [ $(cat /proc/cpuinfo | grep -c 7434) -eq 1 ]; then
+    elif [ $(cat /proc/cpuinfo | grep -Ec "VSC7434$") -eq 1 ]; then
       # switch_type 7
       GPIO1=9
       GPIO2=8
-    elif [ $(cat /proc/cpuinfo | grep -c "7434 Dual") -eq 1 ]; then
+    elif [ $(cat /proc/cpuinfo | grep -Ec "VSC7434 Dual$") -eq 1 ]; then
       # switch_type 6
       GPIO1=41
       GPIO2=40

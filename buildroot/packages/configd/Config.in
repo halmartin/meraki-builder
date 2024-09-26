@@ -1,0 +1,5 @@
+config BR2_PACKAGE_CONFIGD
+bool "configd"
+help
+The configd utility is used to read/write the switch's config
+select BR2_PACKAGE_JSON_C

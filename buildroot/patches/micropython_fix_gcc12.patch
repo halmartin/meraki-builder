@@ -1,0 +1,10 @@
+--- package/micropython/micropython.mk.orig
++++ package/micropython/micropython.mk
+@@ -42,7 +42,7 @@
+
+ define MICROPYTHON_BUILD_CMDS
+-	$(MICROPYTHON_MAKE_ENV) $(MAKE) -C $(@D)/mpy-cross
++	$(MICROPYTHON_MAKE_ENV) $(MAKE) -C $(@D)/mpy-cross CWARN=
+ 	$(MICROPYTHON_MAKE_ENV) $(MAKE) -C $(@D)/ports/unix \
+ 		$(MICROPYTHON_MAKE_OPTS)
+ endef

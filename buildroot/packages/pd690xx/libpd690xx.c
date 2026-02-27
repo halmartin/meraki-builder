@@ -390,14 +390,14 @@ int port_type(struct pd690xx_cfg *pd690xx, int port) {
     return port_mode;
 }
 
-char* port_type_str(struct pd690xx_cfg *pd690xx, int port) {
-    switch(port_type(pd690xx, port)) {
+const char *port_type_str(struct pd690xx_cfg *pd690xx, int port) {
+    switch (port_type(pd690xx, port)) {
         case PORT_MODE_AF:
             return "af";
         case PORT_MODE_AT:
             return "at";
         default:
-            return "Unknown";
+            return "unknown";
     }
 }
 

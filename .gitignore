@@ -11,3 +11,10 @@ docker/*/src
 # ignore shared libraries
 *.so
 *.o
+
+# devenv
+.devenv/
+.devenv.flake.nix
+
+# nix build directory
+/build/

@@ -1,0 +1,12 @@
+--- package/Config.in.orig
++++ package/Config.in
+@@ -6653,6 +6653,9 @@
+ 	source "package/cfm/Config.in"
+ 	source "package/chrony/Config.in"
+ 	source "package/civetweb/Config.in"
++	source "package/click/Config.in"
++	source "package/clickswstatus/Config.in"
++	source "package/configd/Config.in"
+ 	source "package/connman/Config.in"
+ 	source "package/connman-gtk/Config.in"
+ 	source "package/conntrack-tools/Config.in"
